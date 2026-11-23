@@ -1,0 +1,2901 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Control del Director - PbtA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #ffffff;
+      --border-color: #cbd5e1;
+      --accent-color: #1e293b;
+      --accent-active: #0f172a;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --danger: #e11d48;
+      --radius: 6px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding: 15px;
+      display: flex;
+      gap: 15px;
+      min-height: 100vh;
+      align-items: flex-start;
+    }
+
+    /* BARRA LATERAL DEL MÁSTER */
+    .sidebar {
+      width: 300px;
+      background: #1e293b;
+      color: white;
+      border-radius: var(--radius);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 15px;
+      max-height: calc(100vh - 30px);
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      text-align: center;
+      color: #38bdf8;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+    }
+
+    .btn-side {
+      background: #0d9488;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: center;
+      display: block;
+      width: 100%;
+      transition: background 0.2s;
+    }
+
+    .btn-side:hover { background: #0f766e; }
+
+    .pj-list, .map-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 180px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .pj-item, .map-item {
+      background: #334155;
+      padding: 8px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+      gap: 6px;
+    }
+
+    .pj-item:hover, .map-item:hover { background: #475569; }
+    .pj-item.active, .map-item.active { border-color: #38bdf8; background: #0f172a; }
+
+    .pj-info, .map-info-side {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      overflow: hidden;
+    }
+
+    .pj-name-input, .map-name-input {
+      background: transparent;
+      border: 1px solid transparent;
+      color: white;
+      font-weight: 600;
+      font-size: 0.85rem;
+      outline: none;
+      width: 100%;
+      border-radius: 2px;
+    }
+    .pj-name-input:focus, .map-name-input:focus {
+      background: #1e293b;
+      border-color: #38bdf8;
+    }
+
+    .pj-type {
+      font-size: 0.65rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+    }
+
+    .pj-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .btn-del-pj {
+      background: none;
+      border: none;
+      color: #f87171;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 0 2px;
+    }
+    .btn-del-pj:hover { color: #ef4444; }
+
+    /* ÁREA PRINCIPAL */
+    .main-content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 1000px;
+    }
+
+    .gm-topbar {
+      background: #1e293b;
+      padding: 12px 20px;
+      border-radius: var(--radius);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .gm-topbar h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      color: #38bdf8;
+    }
+
+    .gm-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .gm-buttons button, .gm-buttons label.btn-top {
+      background: #334155;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .gm-buttons button:hover, .gm-buttons label.btn-top:hover { background: #475569; }
+
+    .gm-buttons button.btn-drive {
+      background: #0f766e;
+    }
+    .gm-buttons button.btn-drive:hover {
+      background: #115e59;
+    }
+
+    .scene-panel {
+      background: #ffffff;
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 800px) {
+      .scene-panel { grid-template-columns: 1fr; }
+      body { flex-direction: column; }
+      .sidebar { width: 100%; position: static; max-height: none; }
+    }
+
+    .scene-box {
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 12px;
+      background: #f8fafc;
+    }
+
+    .scene-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-color);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .amenaza-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .amenaza-checks {
+      display: flex;
+      gap: 8px;
+    }
+
+    .amenaza-unit-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: white;
+      border: 1.5px solid var(--border-color);
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+
+    .amenaza-unit-box label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-color);
+      font-family: 'Cinzel', serif;
+    }
+
+    .amenaza-unit-box input {
+      width: 40px;
+      border: none;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+      color: var(--danger);
+      background: transparent;
+    }
+
+    .scene-tags-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .tag-input {
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 4px 6px;
+      font-size: 0.8rem;
+      background: #fff;
+      text-align: center;
+      min-height: 26px;
+    }
+
+    .empty-notice {
+      background: #ffffff;
+      padding: 40px;
+      border-radius: var(--radius);
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      color: var(--text-muted);
+    }
+
+    /* VISOR DE MAPA ACTIVO */
+    .map-viewer-container {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .map-canvas-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #0f172a;
+      border-radius: var(--radius);
+      padding: 15px;
+      overflow: auto;
+      border: 1px solid var(--border-color);
+    }
+
+    .map-canvas-wrapper canvas {
+      background: #020617;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+      border-radius: 4px;
+    }
+
+    .sheet-container {
+      width: 100%;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+      padding: 25px;
+      border: 1px solid var(--border-color);
+      position: relative;
+    }
+
+    .sheet-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 850px) {
+      .sheet-grid { grid-template-columns: 1fr; }
+    }
+
+    .col { display: flex; flex-direction: column; gap: 16px; }
+
+    .box {
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 8px 12px;
+      position: relative;
+    }
+
+    .box-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--accent-color);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .box-subtitle {
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .editable {
+      width: 100%;
+      min-height: 24px;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      background: transparent;
+      word-break: break-word;
+      padding: 2px 4px;
+      border-radius: 3px;
+      border: 1px transparent solid;
+    }
+    .editable:focus { background: #f8fafc; border-color: var(--border-color); }
+    .editable:empty:before { content: attr(placeholder); color: #a0aec0; pointer-events: none; display: block; }
+    .editable strike, .editable s, .editable [style*="strike"] { text-decoration: line-through; color: var(--text-muted); }
+
+    .header-row { display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap; }
+    .header-item { flex: 1; min-width: 180px; border-bottom: 2px solid var(--accent-color); padding-bottom: 2px; }
+    .header-item label { font-family: 'Cinzel', serif; font-weight: 700; font-size: 0.8rem; color: var(--accent-color); display: block; }
+
+    .portrait-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
+    .portrait-area {
+      min-height: 150px;
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      background: #f8fafc;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .portrait-area img { width: 100%; height: auto; max-height: 250px; object-fit: contain; display: block; border-radius: 3px; }
+    .portrait-placeholder { font-family: 'Cinzel', serif; color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 5px; }
+
+    .tags-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .stat-box { border: 1.5px solid var(--border-color); border-radius: var(--radius); padding: 6px; text-align: center; }
+    .stat-title { font-family: 'Cinzel', serif; font-size: 0.7rem; font-weight: 700; margin-bottom: 4px; color: var(--accent-color); }
+
+    .bienestar-container { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 8px 0; }
+    .bienestar-top-row { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 15px; width: 100%; }
+    .hearts-row { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+    .heart-btn { background: none; border: none; font-size: 1.4rem; color: #cbd5e1; cursor: pointer; padding: 0; line-height: 1; }
+    .heart-btn.active { color: var(--danger); }
+
+    .checks-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .checkbox-square {
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid var(--accent-color);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border-radius: 2px;
+    }
+    .checkbox-square.checked::after { content: "✔"; font-size: 11px; color: var(--accent-color); }
+
+    .table-container { width: 100%; overflow-x: auto; }
+    .table-custom { width: 100%; border-collapse: collapse; font-size: 0.8rem; min-width: 300px; }
+    .table-custom th { font-family: 'Cinzel', serif; text-align: left; font-size: 0.7rem; padding: 4px; border-bottom: 1px solid var(--border-color); color: var(--accent-color); }
+    .table-custom td { padding: 3px 2px; border-bottom: 1px solid #f1f5f9; }
+    .check-cell { width: 24px; text-align: center; }
+
+    .flex-row-boxes { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; }
+    .exp-boxes { display: flex; gap: 4px; align-items: center; justify-content: center; flex-wrap: wrap; }
+    .exp-check { width: 16px; height: 16px; border: 1.5px solid var(--accent-color); cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 2px; }
+    .exp-check.dashed { border-style: dashed; }
+    .exp-check.checked::after { content: "■"; font-size: 10px; color: var(--accent-color); }
+
+    /* --- WIDGET Y LANZADOR FLOTANTE ARRASTRABLES (POSICIÓN MÓVIL SEGURA) --- */
+    #floatingDiceLauncher {
+      position: fixed;
+      bottom: 75px;
+      right: 25px;
+      width: 54px;
+      height: 54px;
+      background: var(--accent-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: grab;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+      z-index: 1000;
+      border: 2px solid #38bdf8;
+      user-select: none;
+      touch-action: none;
+    }
+    #floatingDiceLauncher:active { cursor: grabbing; }
+
+    #diceWidgetModal {
+      position: fixed;
+      bottom: 140px;
+      right: 25px;
+      width: 330px;
+      background: #1e293b;
+      color: white;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      border: 1.5px solid #38bdf8;
+      z-index: 1001;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+    }
+
+    .dice-modal-header {
+      background: #0f172a;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: grab;
+      border-bottom: 1px solid #334155;
+      touch-action: none;
+    }
+    .dice-modal-header:active { cursor: grabbing; }
+    .dice-modal-header span {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #38bdf8;
+    }
+    .dice-modal-close {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+    .dice-modal-close:hover { color: white; }
+
+    .dice-tabs {
+      display: flex;
+      background: #0f172a;
+      border-bottom: 1px solid #334155;
+      flex-wrap: wrap;
+    }
+    .dice-tab {
+      flex: 1;
+      min-width: 60px;
+      padding: 8px 3px;
+      text-align: center;
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: #94a3b8;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .dice-tab.active {
+      color: #38bdf8;
+      background: #1e293b;
+      border-bottom: 2px solid #38bdf8;
+    }
+
+    .dice-tab-content {
+      padding: 14px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      text-align: center;
+      position: relative;
+    }
+    .dice-tab-content.active { display: flex; }
+
+    /* SUB-VENTANA FLOTANTE DE ASISTENCIA */
+    #asistenciaSubModal {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.95);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      z-index: 10;
+      padding: 15px;
+    }
+    .asistencia-close-btn {
+      position: absolute;
+      top: 8px; right: 10px;
+      background: none; border: none;
+      color: #94a3b8; font-size: 1.2rem;
+      cursor: pointer;
+    }
+    .asistencia-close-btn:hover { color: white; }
+
+    .dice-container {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      margin: 4px 0;
+      flex-wrap: wrap;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    .d4-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .d4 {
+      width: 62px;
+      height: 56px;
+      background: #334155;
+      color: #f8fafc;
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 700;
+      padding-top: 14px;
+      cursor: pointer;
+      filter: drop-shadow(0 3px 4px rgba(0,0,0,0.4));
+      transition: transform 0.15s;
+    }
+    .d4:active { transform: scale(0.92); }
+
+    .d6 {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 700;
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.3), 0 4px 8px rgba(0,0,0,0.3);
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .d6:active { transform: scale(0.92); }
+
+    .d6-white {
+      background: #ffffff;
+      color: #0f172a;
+      border: 1px solid #cbd5e1;
+    }
+
+    .d6-black {
+      background: #0f172a;
+      color: #ffffff;
+      border: 1px solid #475569;
+    }
+
+    .roll-btn-container {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .roll-btn {
+      background: #0d9488;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .roll-btn:hover { background: #0f766e; }
+
+    .mod-btn {
+      background: #334155;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .mod-btn:hover { background: #475569; }
+
+    .dice-result-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      min-height: 22px;
+    }
+    .dice-sub-status {
+      font-size: 0.72rem;
+      font-weight: 600;
+      min-height: 16px;
+    }
+    .dice-extra-info {
+      font-size: 0.65rem;
+      font-weight: 600;
+      min-height: 14px;
+    }
+
+    /* MODAL DE CONFIRMACIÓN FLOTANTE */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+    .modal-box {
+      background: #1e293b;
+      color: white;
+      padding: 20px;
+      border-radius: var(--radius);
+      border: 1.5px solid #38bdf8;
+      width: 320px;
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .modal-box h3 { font-family: 'Cinzel', serif; color: #38bdf8; margin-bottom: 10px; font-size: 1rem; }
+    .modal-box p { font-size: 0.85rem; color: #cbd5e1; margin-bottom: 15px; }
+    .modal-buttons { display: flex; justify-content: center; gap: 10px; }
+    .modal-buttons button {
+      padding: 6px 14px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-modal-cancel { background: #334155; color: white; }
+    .btn-modal-cancel:hover { background: #475569; }
+    .btn-modal-confirm { background: #e11d48; color: white; }
+    .btn-modal-confirm:hover { background: #be123c; }
+
+    #floatingToolbar {
+      position: absolute;
+      display: none;
+      background: #0f172a;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 1000;
+      align-items: center;
+      gap: 6px;
+    }
+    #floatingToolbar button {
+      background: #334155;
+      color: white;
+      border: none;
+      padding: 3px 8px;
+      font-size: 0.75rem;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    #floatingToolbar button:hover { background: #475569; }
+
+    .toast-msg {
+      position: fixed;
+      bottom: 18px;
+      left: 18px;
+      background: #1e293b;
+      color: #f8fafc;
+      border: 1px solid #38bdf8;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
+      z-index: 3000;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.2s ease;
+      pointer-events: none;
+      max-width: 360px;
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media print {
+      body { background: white; padding: 0; display: block; }
+      .sidebar, .gm-topbar, #floatingToolbar, .modal-overlay, #floatingDiceLauncher, #diceWidgetModal, .toast-msg { display: none !important; }
+      .scene-panel { border: none; box-shadow: none; padding: 0; margin-bottom: 20px; }
+      .sheet-container, .map-viewer-container { box-shadow: none; border: none; padding: 0; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BOTÓN FLOTANTE ARRASTRABLE PARA ABRIR DADOS -->
+  <div id="floatingDiceLauncher" title="Lanzador de Dados PbtA (Arrástrame)">
+    🎲
+  </div>
+
+  <!-- VENTANA FLOTANTE DE DADOS CON CINCO PESTAÑAS -->
+  <div id="diceWidgetModal">
+    <div class="dice-modal-header" id="diceModalHeader">
+      <span>DADOS DE DIRECTOR</span>
+      <button class="dice-modal-close" onclick="closeDiceWidget(event)">×</button>
+    </div>
+    <div class="dice-tabs">
+      <button class="dice-tab active" onclick="switchDiceTab(0)">Interferencias</button>
+      <button class="dice-tab" onclick="switchDiceTab(1)">Tirada reto</button>
+      <button class="dice-tab" onclick="switchDiceTab(2)">Tirar 1d4</button>
+      <button class="dice-tab" onclick="switchDiceTab(3)">Tiradas daño</button>
+      <button class="dice-tab" onclick="switchDiceTab(4)">Tiradas curación</button>
+    </div>
+
+    <!-- PESTAÑA 1: INTERFERENCIAS (2d4 con botones +1 individuales) -->
+    <div class="dice-tab-content active" id="diceTab0">
+      <div class="dice-container">
+        <div class="d4-group">
+          <div class="d4" id="d4First" onclick="rollInterferences()">-</div>
+          <button class="mod-btn" onclick="modifyD4(0, 1)">+1</button>
+        </div>
+        <div class="d4-group">
+          <div class="d4" id="d4Second" onclick="rollInterferences()">-</div>
+          <button class="mod-btn" onclick="modifyD4(1, 1)">+1</button>
+        </div>
+      </div>
+      <button class="roll-btn" onclick="rollInterferences()">🎲 Tirar 2d4</button>
+      <div>
+        <div class="dice-result-title" id="interferResult" style="color: #38bdf8; font-size: 0.9rem;">Individuales: [-] y [-]</div>
+      </div>
+    </div>
+
+    <!-- PESTAÑA 2: TIRADA DE RETO -->
+    <div class="dice-tab-content" id="diceTab1">
+      <div class="dice-container">
+        <div class="d6 d6-white" id="diceWhite" onclick="rollRetoDice()" title="Clic para tirar">-</div>
+        <div class="d6 d6-black" id="diceBlack" onclick="rollRetoDice()" title="Clic para tirar">-</div>
+      </div>
+      <div class="roll-btn-container">
+        <button class="roll-btn" onclick="rollRetoDice()">🎲 Tirar</button>
+        <button class="mod-btn" onclick="modifyRetoSum(1)">+1</button>
+        <button class="mod-btn" onclick="modifyRetoSum(-1)">-1</button>
+      </div>
+      <div class="roll-btn-container">
+        <button class="roll-btn" style="background: #0284c7;" onclick="openAsistenciaSubModal()">🤝 Asistencia</button>
+      </div>
+      <div>
+        <div class="dice-result-title" id="retoResultTitle" style="color: #94a3b8;">Suma: -</div>
+        <div class="dice-sub-status" id="retoSubStatus" style="color: #cbd5e1;"></div>
+        <div class="dice-extra-info" id="retoExtraInfo"></div>
+      </div>
+
+      <!-- SUB-VENTANA FLOTANTE DE ASISTENCIA INTERACTIVA -->
+      <div id="asistenciaSubModal">
+        <button class="asistencia-close-btn" onclick="closeAsistenciaSubModal()">✕</button>
+        <div style="font-family: 'Cinzel', serif; font-size: 0.8rem; color: #38bdf8; font-weight: 700;" id="asistenciaPromptText">ELIGE EL DADO A SUSTITUIR:</div>
+        
+        <div class="dice-container" id="asistenciaDiceChoice">
+          <div class="d6 d6-white" onclick="selectAsistenciaTarget('white')" title="Elegir Dado Blanco">B</div>
+          <div class="d6 d6-black" onclick="selectAsistenciaTarget('black')" title="Elegir Dado Negro">N</div>
+        </div>
+
+        <div id="asistenciaInputContainer" style="display: none; flex-direction: column; gap: 8px; align-items: center;">
+          <span style="font-size: 0.75rem; color: #cbd5e1;" id="asistenciaTargetLabel">Dado seleccionado</span>
+          <input type="number" id="asistenciaValueInput" min="1" max="6" value="6" style="width: 60px; text-align: center; font-size: 1.2rem; font-weight: 700; border-radius: 4px; border: 1px solid #38bdf8; background: #0f172a; color: white; outline: none;">
+          <button class="roll-btn" style="background: #22c55e;" onclick="confirmAsistencia()">Confirmar Asistencia</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PESTAÑA 3: TIRAR 1d4 -->
+    <div class="dice-tab-content" id="diceTab2">
+      <div class="dice-container">
+        <div class="d4" id="d4Single" onclick="rollSingleD4()" title="Clic para tirar">-</div>
+      </div>
+      <button class="roll-btn" onclick="rollSingleD4()">🎲 Tirar 1d4</button>
+      <div>
+        <div class="dice-result-title" id="singleD4Result" style="color: #38bdf8;">Resultado: -</div>
+      </div>
+    </div>
+
+    <!-- PESTAÑA 4: TIRADAS DE DAÑO -->
+    <div class="dice-tab-content" id="diceTab3">
+      <div id="damageMaxIndicator" style="font-size: 0.75rem; font-weight: 600; color: #38bdf8;">MAX: -</div>
+      <div id="damageDiceContainer" class="dice-container"></div>
+      
+      <!-- Botones de Acción Iniciales -->
+      <div class="roll-btn-container" id="damageActionBtns">
+        <button class="roll-btn" style="background: #ef4444;" onclick="rollDamage(false)">Daño desafortunado</button>
+        <button class="roll-btn" style="background: #f59e0b;" onclick="rollDamage(true)">Daño afortunado</button>
+      </div>
+
+      <!-- Botón Nueva Tirada (Sustituto) -->
+      <div class="roll-btn-container" id="damageNewRollBtnContainer" style="display: none;">
+        <button class="roll-btn" style="background: #0284c7;" onclick="resetDamageRoll()">🔄 Nueva tirada</button>
+      </div>
+
+      <div>
+        <div class="dice-result-title" id="damageResultTitle" style="color: #94a3b8;">Daño: -</div>
+        <div class="dice-sub-status" id="damageSubStatus" style="color: #cbd5e1;"></div>
+      </div>
+    </div>
+
+    <!-- PESTAÑA 5: TIRADAS DE CURACIÓN -->
+    <div class="dice-tab-content" id="diceTab4">
+      <div id="healingMaxIndicator" style="font-size: 0.75rem; font-weight: 600; color: #38bdf8;">MAX: -</div>
+      <div id="healingDiceContainer" class="dice-container"></div>
+      
+      <!-- Botones de Acción Iniciales -->
+      <div class="roll-btn-container" id="healingActionBtns">
+        <button class="roll-btn" style="background: #0d9488;" onclick="rollHealing(false)">Recuperación</button>
+        <button class="roll-btn" style="background: #2563eb;" onclick="rollHealing(true)">Descanso</button>
+      </div>
+
+      <!-- Botón Nueva Tirada (Sustituto) -->
+      <div class="roll-btn-container" id="healingNewRollBtnContainer" style="display: none;">
+        <button class="roll-btn" style="background: #0284c7;" onclick="resetHealingRoll()">🔄 Nueva tirada</button>
+      </div>
+
+      <div>
+        <div class="dice-result-title" id="healingResultTitle" style="color: #94a3b8;">Curación: -</div>
+        <div class="dice-sub-status" id="healingSubStatus" style="color: #cbd5e1;"></div>
+        <div class="dice-extra-info" id="healingExtraInfo" style="color: #cbd5e1;"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MODAL FLOTANTE DE CONFIRMACIÓN -->
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal-box">
+      <h3 id="modalTitle">¿Eliminar elemento?</h3>
+      <p id="modalDesc">Esta acción eliminará el ítem seleccionado.</p>
+      <div class="modal-buttons">
+        <button class="btn-modal-cancel" onclick="closeModal()">Cancelar</button>
+        <button class="btn-modal-confirm" id="modalConfirmBtn">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="floatingToolbar">
+    <button onmousedown="toggleStrike(event)"><s>S</s> Tachar / Limpiar</button>
+  </div>
+
+  <div id="toastMsg" class="toast-msg"></div>
+
+  <!-- BARRA LATERAL DE GESTIÓN -->
+  <div class="sidebar">
+    <h2>🎮 ELENCO</h2>
+    
+    <label class="btn-side">
+      📂 Subir JSON (PJ / PNJ)
+      <input type="file" id="uploadJson" accept=".json" multiple style="display:none;" onchange="importCharacters(event)">
+    </label>
+
+    <div style="font-size: 0.7rem; color: #94a3b8; text-align: center; margin-top: 5px;">LISTA DE PERSONAJES:</div>
+    <div class="pj-list" id="pjList"></div>
+
+    <h2 style="margin-top: 10px;">🗺️ MAPAS</h2>
+    <label class="btn-side" style="background: #0284c7;">
+      📂 Subir Mapa JSON
+      <input type="file" id="uploadMapJson" accept=".json" multiple style="display:none;" onchange="importMaps(event)">
+    </label>
+
+    <div style="font-size: 0.7rem; color: #94a3b8; text-align: center; margin-top: 5px;">LISTA DE MAPAS:</div>
+    <div class="map-list" id="mapList"></div>
+  </div>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="main-content">
+    
+    <!-- BARRA SUPERIOR GM -->
+    <div class="gm-topbar">
+      <h1>Herramientas del Director</h1>
+      <div class="gm-buttons">
+        <button class="btn-drive" onclick="saveToGoogleDrive()">☁️ Guardar en Drive</button>
+        <button class="btn-drive" onclick="loadFromGoogleDrive()">📥 Cargar de Drive</button>
+        <button onclick="exportAllMasterData()">💾 Guardar Todo</button>
+        <label class="btn-top">
+          📂 Cargar Todo
+          <input type="file" id="importMasterJson" accept=".json" style="display:none;" onchange="importAllMasterData(event)">
+        </label>
+        <button onclick="window.print()">🖨️ Imprimir Todo</button>
+        <button onclick="exportActiveJson()" id="btnExportJson" style="display:none;">💾 Guardar Ficha Activa</button>
+      </div>
+    </div>
+
+    <!-- PANEL DE ESCENA (AMENAZA Y ETIQUETAS) -->
+    <div class="scene-panel">
+      
+      <!-- AMENAZA -->
+      <div class="scene-box">
+        <div class="scene-title">
+          <span>⚡ AMENAZA DE ESCENA</span>
+          <span style="font-size: 0.65rem; color: var(--text-muted);">Tantas marcas como jugadores = +1 unidad</span>
+        </div>
+        <div class="amenaza-container">
+          <div class="amenaza-checks">
+            <div class="checkbox-square" onclick="toggleAmenazaMark(1)" id="amenaza_mark_1"></div>
+            <div class="checkbox-square" onclick="toggleAmenazaMark(2)" id="amenaza_mark_2"></div>
+            <div class="checkbox-square" onclick="toggleAmenazaMark(3)" id="amenaza_mark_3"></div>
+            <div class="checkbox-square" onclick="toggleAmenazaMark(4)" id="amenaza_mark_4"></div>
+            <div class="checkbox-square" onclick="toggleAmenazaMark(5)" id="amenaza_mark_5"></div>
+          </div>
+          <div class="amenaza-unit-box">
+            <label>UNIDADES:</label>
+            <input type="text" id="amenaza_unidades" value="0" oninput="saveSceneData()">
+          </div>
+        </div>
+      </div>
+
+      <!-- ETIQUETAS DE ESCENA -->
+      <div class="scene-box">
+        <div class="scene-title">ETIQUETAS DE ESCENA</div>
+        <div class="scene-tags-grid">
+          <div class="editable tag-input" contenteditable="true" id="escena_tag_1" oninput="saveSceneData()" placeholder="Etiqueta..."></div>
+          <div class="editable tag-input" contenteditable="true" id="escena_tag_2" oninput="saveSceneData()" placeholder="Etiqueta..."></div>
+          <div class="editable tag-input" contenteditable="true" id="escena_tag_3" oninput="saveSceneData()" placeholder="Etiqueta..."></div>
+          <div class="editable tag-input" contenteditable="true" id="escena_tag_4" oninput="saveSceneData()" placeholder="Etiqueta..."></div>
+          <div class="editable tag-input" contenteditable="true" id="escena_tag_5" oninput="saveSceneData()" placeholder="Etiqueta..."></div>
+          <div class="editable tag-input" contenteditable="true" id="escena_tag_6" oninput="saveSceneData()" placeholder="Etiqueta..."></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- NOTAS DEL DIRECTOR -->
+    <div class="scene-panel" style="padding: 15px;">
+      <div class="scene-box" style="width: 100%;">
+        <div class="scene-title">NOTAS DEL DIRECTOR:</div>
+        <div class="editable" contenteditable="true" id="gm_notas_generales" oninput="saveSceneData()" placeholder="Anotaciones de campaña, tramas, PNJS ocultos, pistas..." style="min-height: 80px;"></div>
+      </div>
+    </div>
+
+    <!-- ÁREA DE VISUALIZACIÓN VACÍA O ACTIVA -->
+    <div id="emptyNotice" class="empty-notice">
+      <h3>Selecciona un personaje o mapa de la barra lateral</h3>
+      <p style="font-size: 0.8rem; margin-top: 8px;">Sube los archivos JSON de tus fichas o mapas tácticos para visualizarlos aquí.</p>
+    </div>
+
+    <!-- CONTENEDOR DE FICHA DE PERSONAJE -->
+    <div class="sheet-container" id="sheetArea" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #f8fafc; padding: 8px 12px; border-radius: 4px;">
+        <span style="font-weight: 700; font-size: 0.85rem; color: var(--accent-color);" id="activePjIndicator">FICHA ACTIVA</span>
+        <button onclick="window.print()" style="padding: 4px 10px; font-size: 0.75rem; background: var(--accent-color); color: white; border: none; border-radius: 3px; cursor: pointer;">🖨️ Imprimir Ficha</button>
+      </div>
+      <div id="sheetDynamicContent"></div>
+    </div>
+
+    <!-- CONTENEDOR DE VISOR DE MAPA -->
+    <div class="map-viewer-container" id="mapViewerArea" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 8px 12px; border-radius: 4px;">
+        <span style="font-weight: 700; font-size: 0.85rem; color: var(--accent-color);" id="activeMapIndicator">MAPA ACTIVO</span>
+        <button onclick="printActiveMap()" style="padding: 4px 10px; font-size: 0.75rem; background: var(--accent-color); color: white; border: none; border-radius: 3px; cursor: pointer;">🖨️ Imprimir Mapa</button>
+      </div>
+      <div class="map-canvas-wrapper">
+        <canvas id="viewerCanvas" width="640" height="400"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let characters = {};
+    let activeId = null;
+
+    let maps = {};
+    let activeMapId = null;
+
+    let sceneData = {
+      amenaza_marks: [false, false, false, false, false],
+      amenaza_unidades: "0",
+      escena_tags: ["", "", "", "", "", ""],
+      gm_notas_generales: ""
+    };
+
+    // Variables de dados y snapshots para congelar tiradas activas
+    let d4Values = [null, null];
+    let currentRetoSum = 0;
+    let lastWhiteVal = null;
+    let lastBlackVal = null;
+    let isBlackWhite = false;
+    let selectedAsistenciaTarget = null;
+    let healthLevel = 0;
+    let lastDamageResults = null;
+    let lastHealingResults = null;
+    let snapshotDamageHealth = null;
+    let snapshotHealingHealth = null;
+
+    // --- CONFIGURACIÓN Y ESTADO DE GOOGLE DRIVE (TMS PBTA / DIRECTOR) ---
+    const DRIVE_CONFIG = {
+      clientId: '3720906139-udra1unbra3vjpuogv200hgipur8dcrv.apps.googleusercontent.com',
+      rootFolderId: '',
+      rootFolderName: 'TMS PBTA',
+      subFolderName: 'DIRECTOR',
+      scope: 'https://www.googleapis.com/auth/drive.file'
+    };
+
+    const DRIVE_META_STORAGE_KEY = 'pbta_director_drive_link_v1';
+
+    let driveAccessToken = null;
+    let driveTokenExpiresAt = 0;
+    let tokenClient = null;
+    let pendingAuthResolver = null;
+    let pendingAuthRejecter = null;
+
+    let cachedRootFolderId = DRIVE_CONFIG.rootFolderId || null;
+    let cachedDirectorFolderId = null;
+
+    function showToast(message) {
+      const toast = document.getElementById('toastMsg');
+      if (!toast) return;
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3600);
+    }
+
+    function buildMasterPackage() {
+      autoSaveActive();
+      saveSceneData();
+      return {
+        sceneData: sceneData,
+        characters: characters,
+        maps: maps,
+        activeId: activeId,
+        activeMapId: activeMapId
+      };
+    }
+
+    function applyMasterPackage(pkg) {
+      if (!pkg || !pkg.sceneData || !pkg.characters || !pkg.maps) {
+        throw new Error('El archivo JSON no corresponde a una copia de seguridad del Panel de Director.');
+      }
+
+      sceneData = pkg.sceneData;
+      characters = pkg.characters;
+      maps = pkg.maps;
+      activeId = pkg.activeId || null;
+      activeMapId = pkg.activeMapId || null;
+
+      saveSceneData();
+      saveCharactersStorage();
+      saveMapsStorage();
+      saveActiveStateSelection();
+
+      renderAmenazaMarks();
+      document.getElementById('amenaza_unidades').value = sceneData.amenaza_unidades || "0";
+      document.getElementById('gm_notas_generales').innerHTML = sceneData.gm_notas_generales || "";
+      sceneData.escena_tags.forEach((val, i) => {
+        const tagEl = document.getElementById(`escena_tag_${i+1}`);
+        if (tagEl) tagEl.innerHTML = val;
+      });
+
+      renderPjList();
+      renderMapList();
+
+      if (activeId && characters[activeId]) {
+        selectCharacter(activeId);
+      } else if (activeMapId && maps[activeMapId]) {
+        selectMap(activeMapId);
+      } else {
+        document.getElementById('sheetArea').style.display = 'none';
+        document.getElementById('mapViewerArea').style.display = 'none';
+        document.getElementById('emptyNotice').style.display = 'block';
+      }
+    }
+
+    // --- LÓGICA WIDGET DE DADOS Y ARRASTRE ---
+    function toggleDiceWidget() {
+      const launcher = document.getElementById('floatingDiceLauncher');
+      if (launcher.dataset.moved === "true") {
+        launcher.dataset.moved = "false";
+        return;
+      }
+      const modal = document.getElementById('diceWidgetModal');
+      if (modal.dataset.moved === "true") {
+        modal.dataset.moved = "false";
+        return;
+      }
+      const willOpen = modal.style.display !== 'flex';
+      modal.style.display = willOpen ? 'flex' : 'none';
+      if (willOpen) {
+        updateDamageDiceDisplay();
+        updateHealingDiceDisplay();
+      }
+    }
+
+    function closeDiceWidget(event) {
+      if (event) event.stopPropagation();
+      const modal = document.getElementById('diceWidgetModal');
+      modal.style.display = 'none';
+      modal.dataset.moved = "false";
+    }
+
+    function switchDiceTab(tabIndex) {
+      closeAsistenciaSubModal();
+      const tabs = document.querySelectorAll('.dice-tab');
+      const contents = document.querySelectorAll('.dice-tab-content');
+      tabs.forEach((t, i) => {
+        if(i === tabIndex) t.classList.add('active');
+        else t.classList.remove('active');
+      });
+      contents.forEach((c, i) => {
+        if(i === tabIndex) c.classList.add('active');
+        else c.classList.remove('active');
+      });
+
+      if (tabIndex === 3) updateDamageDiceDisplay();
+      if (tabIndex === 4) updateHealingDiceDisplay();
+    }
+
+    // Pestaña 1: Interferencias (2d4)
+    function rollInterferences() {
+      d4Values[0] = Math.floor(Math.random() * 4) + 1;
+      d4Values[1] = Math.floor(Math.random() * 4) + 1;
+      updateD4Display();
+    }
+
+    function modifyD4(index, amount) {
+      if (d4Values[index] === null) d4Values[index] = 1;
+      d4Values[index] += amount;
+      updateD4Display();
+    }
+
+    function updateD4Display() {
+      document.getElementById('d4First').innerText = d4Values[0] !== null ? d4Values[0] : '-';
+      document.getElementById('d4Second').innerText = d4Values[1] !== null ? d4Values[1] : '-';
+      if (d4Values[0] !== null && d4Values[1] !== null) {
+        document.getElementById('interferResult').innerText = `Individuales: [${d4Values[0]}] y [${d4Values[1]}]`;
+      } else {
+        document.getElementById('interferResult').innerText = `Individuales: [-] y [-]`;
+      }
+    }
+
+    // Pestaña 2: Tirada de reto
+    function rollRetoDice() {
+      lastWhiteVal = Math.floor(Math.random() * 6) + 1;
+      lastBlackVal = Math.floor(Math.random() * 6) + 1;
+      isBlackWhite = false;
+
+      const blackDiceEl = document.getElementById('diceBlack');
+      blackDiceEl.className = "d6 d6-black";
+
+      document.getElementById('diceWhite').innerText = lastWhiteVal;
+      blackDiceEl.innerText = lastBlackVal;
+
+      currentRetoSum = lastWhiteVal + lastBlackVal;
+      evaluateRetoResult();
+    }
+
+    function modifyRetoSum(amount) {
+      if (lastWhiteVal === null || lastBlackVal === null) return;
+      currentRetoSum += amount;
+      evaluateRetoResult();
+    }
+
+    // Control de Sub-ventana de Asistencia
+    function openAsistenciaSubModal() {
+      selectedAsistenciaTarget = null;
+      document.getElementById('asistenciaDiceChoice').style.display = 'flex';
+      document.getElementById('asistenciaInputContainer').style.display = 'none';
+      document.getElementById('asistenciaPromptText').innerText = "ELIGE EL DADO A SUSTITUIR:";
+      document.getElementById('asistenciaSubModal').style.display = 'flex';
+    }
+
+    function closeAsistenciaSubModal() {
+      document.getElementById('asistenciaSubModal').style.display = 'none';
+    }
+
+    function selectAsistenciaTarget(target) {
+      selectedAsistenciaTarget = target;
+      document.getElementById('asistenciaDiceChoice').style.display = 'none';
+      document.getElementById('asistenciaInputContainer').style.display = 'flex';
+      document.getElementById('asistenciaPromptText').innerText = "INTRODUCE VALOR DE ASISTENCIA:";
+      document.getElementById('asistenciaTargetLabel').innerText = target === 'white' ? "Dado Blanco seleccionado" : "Dado Negro seleccionado";
+      document.getElementById('asistenciaValueInput').value = "6";
+      document.getElementById('asistenciaValueInput').focus();
+    }
+
+    function confirmAsistencia() {
+      const val = parseInt(document.getElementById('asistenciaValueInput').value);
+      if (isNaN(val) || val < 1 || val > 6) {
+        alert("Introduce un valor válido del 1 al 6.");
+        return;
+      }
+
+      if (selectedAsistenciaTarget === 'white') {
+        lastWhiteVal = val;
+        document.getElementById('diceWhite').innerText = lastWhiteVal;
+      } else if (selectedAsistenciaTarget === 'black') {
+        lastBlackVal = val;
+        isBlackWhite = true;
+        const blackDiceEl = document.getElementById('diceBlack');
+        blackDiceEl.className = "d6 d6-white";
+        blackDiceEl.innerText = lastBlackVal;
+      }
+
+      currentRetoSum = lastWhiteVal + lastBlackVal;
+      evaluateRetoResult();
+      closeAsistenciaSubModal();
+    }
+
+    function evaluateRetoResult() {
+      const titleEl = document.getElementById('retoResultTitle');
+      const subEl = document.getElementById('retoSubStatus');
+      const extraEl = document.getElementById('retoExtraInfo');
+
+      if (currentRetoSum >= 7) {
+        titleEl.innerText = "ÉXITO (" + currentRetoSum + ")";
+        titleEl.style.color = "#22c55e";
+        
+        if (currentRetoSum >= 10) {
+          extraEl.innerText = "+1 etiqueta o +1 frag. XP";
+          extraEl.style.color = "#22c55e";
+        } else {
+          extraEl.innerText = "";
+        }
+      } else {
+        titleEl.innerText = "FRACASO (" + currentRetoSum + ")";
+        titleEl.style.color = "#ef4444";
+
+        if (currentRetoSum <= 3) {
+          extraEl.innerText = "+1 marca de Amenaza";
+          extraEl.style.color = "#ef4444";
+        } else {
+          extraEl.innerText = "";
+        }
+      }
+
+      if (isBlackWhite) {
+        subEl.innerText = "AFORTUNADO (Asistencia)";
+        subEl.style.color = "#38bdf8";
+      } else if (lastBlackVal > lastWhiteVal) {
+        subEl.innerText = "DESAFORTUNADO";
+        subEl.style.color = "#f87171";
+      } else if (lastWhiteVal > lastBlackVal) {
+        subEl.innerText = "AFORTUNADO";
+        subEl.style.color = "#38bdf8";
+      } else {
+        subEl.innerText = "NEUTRO (Empates)";
+        subEl.style.color = "#94a3b8";
+      }
+    }
+
+    // Pestaña 3: Tirar 1d4
+    function rollSingleD4() {
+      const val = Math.floor(Math.random() * 4) + 1;
+      document.getElementById('d4Single').innerText = val;
+      document.getElementById('singleD4Result').innerText = "Resultado: " + val;
+    }
+
+    // --- LÓGICA DE DAÑO Y CURACIÓN CON SNAPSHOTS ---
+    function getActiveMaxWellness() {
+      const maxElPJ = document.getElementById('max_bienestar');
+      const maxElPNJ = document.getElementById('pnj_max_bienestar');
+      const el = maxElPJ || maxElPNJ;
+      if (!el) return null;
+      const val = parseInt(el.textContent.trim());
+      return isNaN(val) ? null : val;
+    }
+
+    function toggleHeartActive(index) {
+      const maxVal = getActiveMaxWellness();
+      if (maxVal === null || maxVal <= 0 || index > maxVal) return;
+
+      if (healthLevel === index) {
+        healthLevel = index - 1;
+      } else {
+        healthLevel = index;
+      }
+      updateHeartsDisplayActive();
+    }
+
+    function updateDamageDiceDisplay() {
+      renderDamageDice();
+    }
+
+    function renderDamageDice() {
+      const container = document.getElementById('damageDiceContainer');
+      const maxInd = document.getElementById('damageMaxIndicator');
+      const maxVal = getActiveMaxWellness();
+      
+      if (maxInd) maxInd.innerText = `MAX: ${maxVal !== null ? maxVal : '-'}`;
+      if (!container) return;
+
+      container.innerHTML = '';
+      if (maxVal === null || maxVal <= 0) {
+        container.innerHTML = '<div style="font-family: \'Cinzel\', serif; font-weight: 700; font-size: 0.8rem; color: var(--text-muted);">Selecciona o indica MAX en la ficha activa</div>';
+        return;
+      }
+
+      const effectiveHealth = (snapshotDamageHealth !== null) ? snapshotDamageHealth : healthLevel;
+
+      if (effectiveHealth <= 0) {
+        container.innerHTML = '<div style="font-family: \'Cinzel\', serif; font-weight: 700; font-size: 1.2rem; color: var(--danger);">K.O.</div>';
+        return;
+      }
+
+      for (let i = 0; i < effectiveHealth; i++) {
+        const d = document.createElement('div');
+        const res = lastDamageResults && lastDamageResults[i];
+        d.className = 'd6 ' + (res ? (res.isHit ? 'd6-black' : 'd6-white') : 'd6-white');
+        d.style.width = '36px';
+        d.style.height = '36px';
+        d.style.fontSize = '1.2rem';
+        d.innerText = res ? res.val : '-';
+        container.appendChild(d);
+      }
+    }
+
+    function resetDamageRoll() {
+      lastDamageResults = null;
+      snapshotDamageHealth = null;
+      document.getElementById('damageResultTitle').innerText = "Daño: -";
+      document.getElementById('damageResultTitle').style.color = "#94a3b8";
+      document.getElementById('damageSubStatus').innerText = "";
+      document.getElementById('damageActionBtns').style.display = 'flex';
+      document.getElementById('damageNewRollBtnContainer').style.display = 'none';
+      updateDamageDiceDisplay();
+    }
+
+    function rollDamage(isLucky) {
+      const maxVal = getActiveMaxWellness();
+      const titleEl = document.getElementById('damageResultTitle');
+      const subEl = document.getElementById('damageSubStatus');
+
+      if (maxVal === null || maxVal <= 0) {
+        titleEl.innerText = "Falta MAX";
+        subEl.innerText = "Indica un máximo de salud en la ficha activa";
+        return;
+      }
+
+      if (healthLevel <= 0) {
+        titleEl.innerText = "K.O.";
+        subEl.innerText = "";
+        return;
+      }
+
+      if (snapshotDamageHealth === null) {
+        snapshotDamageHealth = healthLevel;
+      }
+
+      let damageCount = 0;
+      lastDamageResults = [];
+
+      for (let i = 0; i < snapshotDamageHealth; i++) {
+        const val = Math.floor(Math.random() * 6) + 1;
+        const isHit = isLucky ? (val === 6) : (val >= 5);
+        if (isHit) damageCount++;
+        lastDamageResults.push({ val, isHit });
+      }
+
+      renderDamageDice();
+
+      titleEl.innerText = `Daño: ${damageCount}`;
+      titleEl.style.color = damageCount > 0 ? '#ef4444' : '#22c55e';
+
+      if (damageCount === 0) {
+        subEl.innerText = "Ganas una etiqueta de estado perjudicial";
+        subEl.style.color = "#f59e0b";
+      } else {
+        subEl.innerText = "";
+      }
+
+      if (damageCount > 0) {
+        healthLevel = Math.max(0, healthLevel - damageCount);
+        updateHeartsDisplayActive(true); 
+      }
+
+      document.getElementById('damageActionBtns').style.display = 'none';
+      document.getElementById('damageNewRollBtnContainer').style.display = 'flex';
+    }
+
+    function updateHealingDiceDisplay() {
+      renderHealingDice();
+    }
+
+    function renderHealingDice() {
+      const container = document.getElementById('healingDiceContainer');
+      const titleEl = document.getElementById('healingResultTitle');
+      const subEl = document.getElementById('healingSubStatus');
+      const extraEl = document.getElementById('healingExtraInfo');
+      const maxInd = document.getElementById('healingMaxIndicator');
+      const maxVal = getActiveMaxWellness();
+
+      if (maxInd) maxInd.innerText = `MAX: ${maxVal !== null ? maxVal : '-'}`;
+      if (!container) return;
+
+      container.innerHTML = '';
+
+      if (maxVal === null || healthLevel > maxVal) {
+        titleEl.innerText = "Curación: -";
+        subEl.innerText = "";
+        extraEl.innerText = "";
+        container.innerHTML = '<div style="font-family: \'Cinzel\', serif; font-weight: 700; font-size: 0.85rem; color: var(--danger);">Error en salud máxima</div>';
+        return;
+      }
+
+      const effectiveHealth = (snapshotHealingHealth !== null) ? snapshotHealingHealth : healthLevel;
+      const diff = maxVal - effectiveHealth;
+      
+      if (diff <= 0) {
+        titleEl.innerText = "Curación: -";
+        subEl.innerText = "";
+        extraEl.innerText = "";
+        container.innerHTML = '<div style="font-size: 0.85rem; color: var(--text-muted);">Salud al máximo</div>';
+        return;
+      }
+
+      for (let i = 0; i < diff; i++) {
+        const d = document.createElement('div');
+        d.className = 'd6';
+        const res = lastHealingResults && lastHealingResults[i];
+        if (res) {
+          const isSuccess = res.isSuccess;
+          d.style.background = isSuccess ? '#22c55e' : '#dc2626';
+          d.style.color = 'white';
+          d.style.border = '1px solid ' + (isSuccess ? '#16a34a' : '#b91c1c');
+          d.innerText = res.val;
+        } else {
+          d.style.background = '#dc2626';
+          d.style.color = 'white';
+          d.style.border = '1px solid #b91c1c';
+          d.innerText = '-';
+        }
+        d.style.width = '36px';
+        d.style.height = '36px';
+        d.style.fontSize = '1.2rem';
+        container.appendChild(d);
+      }
+    }
+
+    function resetHealingRoll() {
+      lastHealingResults = null;
+      snapshotHealingHealth = null;
+      document.getElementById('healingResultTitle').innerText = "Curación: -";
+      document.getElementById('healingResultTitle').style.color = "#94a3b8";
+      document.getElementById('healingSubStatus').innerText = "";
+      document.getElementById('healingExtraInfo').innerText = "";
+      document.getElementById('healingActionBtns').style.display = 'flex';
+      document.getElementById('healingNewRollBtnContainer').style.display = 'none';
+      updateHealingDiceDisplay();
+    }
+
+    function rollHealing(isRest) {
+      const maxVal = getActiveMaxWellness();
+      const titleEl = document.getElementById('healingResultTitle');
+      const subEl = document.getElementById('healingSubStatus');
+      const extraEl = document.getElementById('healingExtraInfo');
+
+      if (maxVal === null || healthLevel > maxVal) {
+        titleEl.innerText = "Error";
+        subEl.innerText = "Error en salud máxima";
+        extraEl.innerText = "";
+        return;
+      }
+
+      if (snapshotHealingHealth === null) {
+        snapshotHealingHealth = healthLevel;
+      }
+
+      const diff = maxVal - snapshotHealingHealth;
+      if (diff <= 0) {
+        titleEl.innerText = "Salud al máximo";
+        subEl.innerText = "";
+        extraEl.innerText = "";
+        return;
+      }
+
+      let recovered = 0;
+      const threshold = isRest ? 4 : 5;
+      lastHealingResults = [];
+
+      for (let i = 0; i < diff; i++) {
+        const val = Math.floor(Math.random() * 6) + 1;
+        const isSuccess = val >= threshold;
+        if (isSuccess) recovered++;
+        lastHealingResults.push({ val, isSuccess });
+      }
+
+      renderHealingDice();
+
+      titleEl.innerText = `+ ${recovered} de Bienestar`;
+      titleEl.style.color = recovered > 0 ? '#22c55e' : '#f59e0b';
+
+      if (recovered === 0) {
+        subEl.innerText = "Ganas una etiqueta de estado beneficiosa";
+        subEl.style.color = "#38bdf8";
+      } else {
+        subEl.innerText = "";
+      }
+
+      if (isRest) {
+        extraEl.innerText = "Recuerda recuperar todas tus etiquetas y eliminar una etiqueta de estado al descansar. El Director pierde 1 Amenaza";
+        extraEl.style.color = "#cbd5e1";
+      } else {
+        extraEl.innerText = "";
+      }
+
+      if (recovered > 0) {
+        healthLevel = Math.min(maxVal, healthLevel + recovered);
+        updateHeartsDisplayActive(true);
+      }
+
+      document.getElementById('healingActionBtns').style.display = 'none';
+      document.getElementById('healingNewRollBtnContainer').style.display = 'flex';
+    }
+
+    function updateHeartsDisplayActive(skipSnapshotReset = false) {
+      const maxVal = getActiveMaxWellness();
+      const heartsRow = document.getElementById('heartsRow') || document.getElementById('pnjHeartsRow');
+      const msgEl = document.getElementById('bienestarMsg') || document.getElementById('pnjBienestarMsg');
+      
+      if (!heartsRow) return;
+
+      if (maxVal === null || maxVal <= 0) {
+        if (msgEl) msgEl.style.display = 'block';
+        heartsRow.innerHTML = '';
+        healthLevel = 0;
+        resetDamageRoll();
+        resetHealingRoll();
+        autoSaveActive();
+        return;
+      }
+
+      if (msgEl) msgEl.style.display = 'none';
+      if (healthLevel > maxVal) healthLevel = maxVal;
+
+      heartsRow.innerHTML = '';
+      for (let i = 1; i <= Math.min(maxVal, 15); i++) {
+        const btn = document.createElement('button');
+        btn.className = 'heart-btn' + (i <= healthLevel ? ' active' : '');
+        btn.innerHTML = '♥';
+        btn.onclick = () => {
+          snapshotDamageHealth = null;
+          snapshotHealingHealth = null;
+          toggleHeartActive(i);
+        };
+        heartsRow.appendChild(btn);
+      }
+      
+      if (!skipSnapshotReset) {
+        snapshotDamageHealth = null;
+        snapshotHealingHealth = null;
+      }
+
+      updateDamageDiceDisplay();
+      updateHealingDiceDisplay();
+      autoSaveActive();
+    }
+
+    function makeDraggable(el, handleEl) {
+      let isPointerDown = false;
+      let isDragging = false;
+      let startX = 0, startY = 0;
+      let initialX = 0, initialY = 0;
+
+      function onStart(clientX, clientY, target) {
+        if (target && target.classList.contains('dice-modal-close')) return;
+        isPointerDown = true;
+        isDragging = false;
+        initialX = clientX;
+        initialY = clientY;
+        startX = clientX - el.getBoundingClientRect().left;
+        startY = clientY - el.getBoundingClientRect().top;
+      }
+
+      function onMove(clientX, clientY) {
+        if (!isPointerDown) return;
+        
+        const dx = Math.abs(clientX - initialX);
+        const dy = Math.abs(clientY - initialY);
+
+        if (!isDragging && (dx > 6 || dy > 6)) {
+          isDragging = true;
+          el.style.bottom = 'auto';
+          el.style.right = 'auto';
+          el.dataset.moved = "true";
+        }
+
+        if (isDragging) {
+          el.style.left = (clientX - startX) + 'px';
+          el.style.top = (clientY - startY) + 'px';
+        }
+      }
+
+      function onEnd() {
+        isPointerDown = false;
+        setTimeout(() => { isDragging = false; }, 50);
+      }
+
+      handleEl.addEventListener('mousedown', (e) => {
+        onStart(e.clientX, e.clientY, e.target);
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        onMove(e.clientX, e.clientY);
+      });
+
+      document.addEventListener('mouseup', () => {
+        onEnd();
+      });
+
+      handleEl.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          onStart(e.touches[0].clientX, e.touches[0].clientY, e.target);
+        }
+      }, { passive: true });
+
+      document.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 1) {
+          onMove(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+
+      document.addEventListener('touchend', () => {
+        onEnd();
+      });
+    }
+
+    function getStorage() {
+      try {
+        if (window.parent && window.parent.localStorage) {
+          return window.parent.localStorage;
+        }
+      } catch(e) {}
+      return window.localStorage;
+    }
+
+    // --- MODAL FLOTANTE DE CONFIRMACIÓN ---
+    function openConfirmModal(title, desc, onConfirmCallback) {
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalDesc').innerText = desc;
+      const confirmBtn = document.getElementById('modalConfirmBtn');
+      confirmBtn.innerText = "Eliminar";
+      
+      const newBtn = confirmBtn.cloneNode(true);
+      confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+
+      newBtn.onclick = function() {
+        onConfirmCallback();
+        closeModal();
+      };
+
+      document.getElementById('confirmModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('confirmModal').style.display = 'none';
+    }
+
+    document.addEventListener('selectionchange', () => {
+      const selection = window.getSelection();
+      const toolbar = document.getElementById('floatingToolbar');
+
+      if (!selection.isCollapsed && selection.toString().trim().length > 0) {
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+
+        toolbar.style.display = 'flex';
+        toolbar.style.top = `${rect.top + window.scrollY - 38}px`;
+        toolbar.style.left = `${rect.left + window.scrollX + (rect.width / 2) - 50}px`;
+      } else {
+        setTimeout(() => {
+          if (window.getSelection().isCollapsed) toolbar.style.display = 'none';
+        }, 150);
+      }
+    });
+
+    function toggleStrike(e) {
+      if (e) e.preventDefault();
+      document.execCommand('strikethrough', false, null);
+      autoSaveActive();
+    }
+
+    function toggleAmenazaMark(index) {
+      sceneData.amenaza_marks[index - 1] = !sceneData.amenaza_marks[index - 1];
+      
+      const allChecked = sceneData.amenaza_marks.every(m => m === true);
+      if (allChecked) {
+        sceneData.amenaza_marks = [false, false, false, false, false];
+        let currentUnits = parseInt(document.getElementById('amenaza_unidades').value) || 0;
+        currentUnits += 1;
+        sceneData.amenaza_unidades = currentUnits.toString();
+        document.getElementById('amenaza_unidades').value = sceneData.amenaza_unidades;
+      }
+
+      renderAmenazaMarks();
+      saveSceneData();
+    }
+
+    function renderAmenazaMarks() {
+      sceneData.amenaza_marks.forEach((checked, i) => {
+        const el = document.getElementById(`amenaza_mark_${i+1}`);
+        if (el) {
+          if (checked) el.classList.add('checked');
+          else el.classList.remove('checked');
+        }
+      });
+    }
+
+    function saveSceneData() {
+      sceneData.amenaza_unidades = document.getElementById('amenaza_unidades').value;
+      sceneData.gm_notas_generales = document.getElementById('gm_notas_generales').innerHTML;
+      for (let i = 1; i <= 6; i++) {
+        const tagEl = document.getElementById(`escena_tag_${i}`);
+        if (tagEl) sceneData.escena_tags[i-1] = tagEl.innerHTML;
+      }
+      try {
+        getStorage().setItem('pbta_gm_scene_data_v2', JSON.stringify(sceneData));
+      } catch(e) {}
+    }
+
+    function loadSceneData() {
+      const saved = getStorage().getItem('pbta_gm_scene_data_v2');
+      if (saved) {
+        try {
+          sceneData = JSON.parse(saved);
+          renderAmenazaMarks();
+          document.getElementById('amenaza_unidades').value = sceneData.amenaza_unidades || "0";
+          document.getElementById('gm_notas_generales').innerHTML = sceneData.gm_notas_generales || "";
+          sceneData.escena_tags.forEach((val, i) => {
+            const tagEl = document.getElementById(`escena_tag_${i+1}`);
+            if (tagEl) tagEl.innerHTML = val;
+          });
+        } catch (e) {}
+      }
+    }
+
+    // --- GESTIÓN DE MAPAS ---
+    function importMaps(event) {
+      const files = event.target.files;
+      if (!files.length) return;
+
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const parsed = JSON.parse(e.target.result);
+            if (parsed.mapData && parsed.textLabels) {
+              const id = 'map_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
+              let mapName = file.name.replace(/\.[^/.]+$/, "");
+              
+              maps[id] = {
+                name: mapName,
+                mapData: parsed.mapData,
+                textLabels: parsed.textLabels
+              };
+
+              saveMapsStorage();
+              renderMapList();
+              
+              if (!activeMapId && !activeId) {
+                selectMap(id);
+              }
+            } else {
+              alert(`El archivo ${file.name} no tiene el formato de mapa válido.`);
+            }
+          } catch (err) {
+            alert(`Error al leer el archivo de mapa ${file.name}`);
+          }
+        };
+        reader.readAsText(file);
+      });
+      event.target.value = '';
+    }
+
+    function renderMapList() {
+      const listEl = document.getElementById('mapList');
+      listEl.innerHTML = '';
+
+      const mapIds = Object.keys(maps);
+      if (mapIds.length === 0) {
+        listEl.innerHTML = '<div style="font-size:0.75rem; color:#64748b; text-align:center; padding: 6px;">No hay mapas cargados</div>';
+        return;
+      }
+
+      mapIds.forEach(id => {
+        const m = maps[id];
+        const item = document.createElement('div');
+        item.className = 'map-item' + (activeMapId === id ? ' active' : '');
+        item.onclick = (e) => {
+          if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+            selectMap(id);
+          }
+        };
+
+        item.innerHTML = `
+          <div class="map-info-side">
+            <input type="text" class="map-name-input" value="${m.name}" oninput="updateMapName('${id}', this.value)">
+            <span class="pj-type">Mapa Táctico</span>
+          </div>
+          <div class="pj-actions">
+            <button class="btn-del-pj" onclick="deleteMap('${id}', event)" title="Borrar mapa">×</button>
+          </div>
+        `;
+        listEl.appendChild(item);
+      });
+    }
+
+    function updateMapName(id, newName) {
+      if (maps[id]) {
+        maps[id].name = newName;
+        saveMapsStorage();
+        if (activeMapId === id) {
+          document.getElementById('activeMapIndicator').innerText = "MAPA ACTIVO: " + newName.toUpperCase();
+        }
+      }
+    }
+
+    function deleteMap(id, event) {
+      event.stopPropagation();
+      openConfirmModal('¿Eliminar mapa?', '¿Estás seguro de que deseas eliminar este mapa táctico de la lista?', () => {
+        delete maps[id];
+        saveMapsStorage();
+        renderMapList();
+        if (activeMapId === id) {
+          activeMapId = null;
+          document.getElementById('mapViewerArea').style.display = 'none';
+          checkEmptyState();
+        }
+      });
+    }
+
+    function selectMap(id) {
+      activeId = null;
+      document.querySelectorAll('.pj-item').forEach(el => el.classList.remove('active'));
+      document.getElementById('sheetArea').style.display = 'none';
+      document.getElementById('btnExportJson').style.display = 'none';
+
+      activeMapId = id;
+      saveActiveStateSelection();
+      renderMapList();
+
+      document.getElementById('emptyNotice').style.display = 'none';
+      document.getElementById('mapViewerArea').style.display = 'flex';
+      document.getElementById('activeMapIndicator').innerText = "MAPA ACTIVO: " + maps[id].name.toUpperCase();
+
+      drawViewerMap(maps[id]);
+    }
+
+    function drawViewerMap(mapObj) {
+      const canvas = document.getElementById('viewerCanvas');
+      const ctx = canvas.getContext('2d');
+      const cols = 40;
+      const rows = 25;
+      const tileSize = 16;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const terrainColors = {
+        0: '#0f172a',
+        1: '#334155',
+        2: '#0284c7',
+        3: '#dc2626',
+        4: '#d97706',
+        5: '#10b981',
+        6: '#facc15',
+        7: '#ef4444'
+      };
+
+      const mapData = mapObj.mapData;
+      if (mapData) {
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            if (mapData[r] && mapData[r][c] !== undefined) {
+              let cell = mapData[r][c];
+              ctx.fillStyle = terrainColors[cell] || terrainColors[0];
+              
+              if (cell === 6 || cell === 7) {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(c * tileSize, r * tileSize, tileSize - 1, tileSize - 1);
+                
+                ctx.beginPath();
+                ctx.arc(c * tileSize + tileSize/2, r * tileSize + tileSize/2, tileSize/2 - 2, 0, Math.PI * 2);
+                ctx.fillStyle = terrainColors[cell];
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+              } else if (cell === 3 || cell === 4 || cell === 5) {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(c * tileSize, r * tileSize, tileSize - 1, tileSize - 1);
+                ctx.fillStyle = terrainColors[cell];
+                ctx.fillRect(c * tileSize + 2, r * tileSize + 2, tileSize - 5, tileSize - 5);
+              } else {
+                ctx.fillRect(c * tileSize, r * tileSize, tileSize - 1, tileSize - 1);
+              }
+            }
+          }
+        }
+      }
+
+      if (mapObj.textLabels) {
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        mapObj.textLabels.forEach(label => {
+          let px = label.c * tileSize + tileSize / 2;
+          let py = label.r * tileSize + tileSize / 2;
+
+          let textWidth = ctx.measureText(label.text).width;
+          ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+          ctx.fillRect(px - textWidth/2 - 4, py - 8, textWidth + 8, 16);
+          ctx.strokeStyle = '#38bdf8';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(px - textWidth/2 - 4, py - 8, textWidth + 8, 16);
+
+          ctx.fillStyle = '#f8fafc';
+          ctx.fillText(label.text, px, py + 4);
+        });
+      }
+    }
+
+    function printActiveMap() {
+      if (!activeMapId || !maps[activeMapId]) return;
+      const canvas = document.getElementById('viewerCanvas');
+      const dataUrl = canvas.toDataURL();
+      const mapName = maps[activeMapId].name;
+
+      const printHtml = `
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+          <meta charset="UTF-8">
+          <title>${mapName}</title>
+          <style>
+            body { font-family: sans-serif; text-align: center; padding: 20px; background: white; color: #0f172a; }
+            h2 { font-family: serif; margin-bottom: 20px; }
+            img { max-width: 100%; border: 2px solid #334155; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+          </style>
+        </head>
+        <body>
+          <h2>🗺️ ${mapName.toUpperCase()}</h2>
+          <img src="${dataUrl}">
+          <script>
+            window.onload = function() { window.print(); window.close(); }
+          <\/script>
+        </body>
+        </html>
+      `;
+      const printWin = window.open('', '_blank');
+      if (printWin) {
+        printWin.document.write(printHtml);
+        printWin.document.close();
+      } else {
+        window.print();
+      }
+    }
+
+    function saveMapsStorage() {
+      try {
+        getStorage().setItem('pbta_gm_maps_data_v2', JSON.stringify(maps));
+      } catch(e) {}
+    }
+
+    function loadMapsStorage() {
+      const saved = getStorage().getItem('pbta_gm_maps_data_v2');
+      if (saved) {
+        try {
+          maps = JSON.parse(saved);
+          renderMapList();
+        } catch (e) {}
+      }
+    }
+
+    function checkEmptyState() {
+      if (!activeId && !activeMapId) {
+        document.getElementById('emptyNotice').style.display = 'block';
+      }
+    }
+
+    // --- GESTIÓN DE PERSONAJES ---
+    function importCharacters(event) {
+      const files = event.target.files;
+      if (!files.length) return;
+
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const data = JSON.parse(e.target.result);
+            const id = 'char_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
+            
+            let name = "Personaje sin nombre";
+            let type = "PJ";
+            
+            if (data['nombre']) {
+              const tmp = document.createElement('div');
+              tmp.innerHTML = data['nombre'];
+              name = tmp.textContent || tmp.innerText || name;
+              type = "PJ";
+            } else if (data['pnj_nombre']) {
+              const tmp = document.createElement('div');
+              tmp.innerHTML = data['pnj_nombre'];
+              name = tmp.textContent || tmp.innerText || name;
+              type = "PNJ";
+            }
+
+            characters[id] = { name, type, data };
+            saveCharactersStorage();
+            renderPjList();
+            
+            if (!activeId && !activeMapId) selectCharacter(id);
+          } catch (err) {
+            alert(`Error al leer el archivo ${file.name}`);
+          }
+        };
+        reader.readAsText(file);
+      });
+      event.target.value = '';
+    }
+
+    function renderPjList() {
+      const listEl = document.getElementById('pjList');
+      listEl.innerHTML = '';
+
+      const charIds = Object.keys(characters);
+      if (charIds.length === 0) {
+        listEl.innerHTML = '<div style="font-size:0.75rem; color:#64748b; text-align:center; padding: 6px;">No hay personajes cargados</div>';
+        return;
+      }
+
+      charIds.forEach(id => {
+        const char = characters[id];
+        const item = document.createElement('div');
+        item.className = 'pj-item' + (activeId === id ? ' active' : '');
+        item.onclick = (e) => {
+          if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+            selectCharacter(id);
+          }
+        };
+
+        item.innerHTML = `
+          <div class="pj-info">
+            <input type="text" class="pj-name-input" value="${char.name}" oninput="updateCharName('${id}', this.value)">
+            <span class="pj-type">${char.type}</span>
+          </div>
+          <div class="pj-actions">
+            <button class="btn-del-pj" onclick="deleteCharacter('${id}', event)" title="Borrar">×</button>
+          </div>
+        `;
+        listEl.appendChild(item);
+      });
+    }
+
+    function updateCharName(id, newName) {
+      if (characters[id]) {
+        characters[id].name = newName;
+        saveCharactersStorage();
+        if (activeId === id) {
+          document.getElementById('activePjIndicator').innerText = "FICHA ACTIVA: " + newName.toUpperCase();
+        }
+      }
+    }
+
+    function deleteCharacter(id, event) {
+      event.stopPropagation();
+      openConfirmModal('¿Eliminar personaje?', '¿Estás seguro de que deseas eliminar este personaje del elenco?', () => {
+        delete characters[id];
+        saveCharactersStorage();
+        renderPjList();
+        if (activeId === id) {
+          activeId = null;
+          document.getElementById('sheetArea').style.display = 'none';
+          document.getElementById('btnExportJson').style.display = 'none';
+          checkEmptyState();
+        }
+      });
+    }
+
+    function selectCharacter(id) {
+      activeMapId = null;
+      document.querySelectorAll('.map-item').forEach(el => el.classList.remove('active'));
+      document.getElementById('mapViewerArea').style.display = 'none';
+
+      activeId = id;
+      saveActiveStateSelection();
+      renderPjList();
+
+      const char = characters[id];
+      document.getElementById('emptyNotice').style.display = 'none';
+      document.getElementById('sheetArea').style.display = 'block';
+      document.getElementById('btnExportJson').style.display = 'inline-block';
+      document.getElementById('activePjIndicator').innerText = "FICHA ACTIVA: " + char.name.toUpperCase();
+
+      const dynamicContainer = document.getElementById('sheetDynamicContent');
+      
+      if (char.type === "PJ") {
+        dynamicContainer.innerHTML = getPjTemplate() + getPjTemplateCol2();
+      } else {
+        dynamicContainer.innerHTML = getPnjTemplate();
+      }
+
+      const sheetData = char.data;
+      Object.keys(sheetData).forEach(key => {
+        const el = document.getElementById(key);
+        if (el) {
+          if (el.classList.contains('editable')) {
+            el.innerHTML = sheetData[key];
+          } else if (el.classList.contains('checkbox-square') || el.classList.contains('exp-check')) {
+            if (sheetData[key].checked !== undefined) {
+              if (sheetData[key].checked) el.classList.add('checked');
+              else el.classList.remove('checked');
+              if (sheetData[key].dashed) el.classList.add('dashed');
+              else el.classList.remove('dashed');
+            } else if (sheetData[key] === true) {
+              el.classList.add('checked');
+            }
+          }
+        }
+      });
+
+      if (sheetData.healthLevel !== undefined) {
+        healthLevel = sheetData.healthLevel;
+      }
+
+      if (sheetData.portraitSrc) {
+        const img = document.getElementById('portraitImg');
+        if (img) {
+          img.src = sheetData.portraitSrc;
+          img.style.display = 'block';
+          const ph = document.getElementById('portraitPlaceholder');
+          if (ph) ph.style.display = 'none';
+        }
+      }
+
+      lastDamageResults = null;
+      lastHealingResults = null;
+      snapshotDamageHealth = null;
+      snapshotHealingHealth = null;
+      updateHeartsDisplayActive();
+
+      const maxEl = document.getElementById('max_bienestar') || document.getElementById('pnj_max_bienestar');
+      if (maxEl) {
+        const handleMaxChange = () => {
+          snapshotDamageHealth = null;
+          snapshotHealingHealth = null;
+          autoSaveActive();
+          updateHeartsDisplayActive();
+        };
+        maxEl.addEventListener('input', handleMaxChange);
+        maxEl.addEventListener('keyup', handleMaxChange);
+        maxEl.addEventListener('blur', handleMaxChange);
+      }
+    }
+
+    function autoSaveActive() {
+      if (!activeId || !characters[activeId]) return;
+      const data = {};
+      const editables = document.querySelectorAll('#sheetDynamicContent .editable');
+      editables.forEach(el => {
+        if (el.id) data[el.id] = el.innerHTML;
+      });
+
+      const checks = document.querySelectorAll('#sheetDynamicContent .checkbox-square, #sheetDynamicContent .exp-check');
+      checks.forEach(check => {
+        if (check.id) {
+          data[check.id] = {
+            checked: check.classList.contains('checked'),
+            dashed: check.classList.contains('dashed')
+          };
+        }
+      });
+
+      data['healthLevel'] = healthLevel;
+
+      const portraitImg = document.getElementById('portraitImg');
+      if (portraitImg && portraitImg.src && portraitImg.style.display !== 'none') {
+        data['portraitSrc'] = portraitImg.src;
+      }
+
+      characters[activeId].data = data;
+      saveCharactersStorage();
+    }
+
+    function exportActiveJson() {
+      if (!activeId || !characters[activeId]) return;
+      autoSaveActive();
+      const char = characters[activeId];
+      const blob = new Blob([JSON.stringify(char.data)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ficha_${char.name.toLowerCase().replace(/\s+/g, '_')}.json`;
+      a.click();
+    }
+
+    function saveCharactersStorage() {
+      try {
+        getStorage().setItem('pbta_gm_characters_data_v2', JSON.stringify(characters));
+      } catch(e) {}
+    }
+
+    function loadCharactersStorage() {
+      const saved = getStorage().getItem('pbta_gm_characters_data_v2');
+      if (saved) {
+        try {
+          characters = JSON.parse(saved);
+          renderPjList();
+        } catch (e) {}
+      }
+    }
+
+    function saveActiveStateSelection() {
+      try {
+        getStorage().setItem('pbta_gm_active_state', JSON.stringify({ activeId, activeMapId }));
+      } catch(e) {}
+    }
+
+    function loadActiveStateSelection() {
+      const saved = getStorage().getItem('pbta_gm_active_state');
+      if (saved) {
+        try {
+          const state = JSON.parse(saved);
+          if (state.activeId && characters[state.activeId]) {
+            selectCharacter(state.activeId);
+          } else if (state.activeMapId && maps[state.activeMapId]) {
+            selectMap(state.activeMapId);
+          } else {
+            checkEmptyState();
+          }
+        } catch(e) { checkEmptyState(); }
+      } else {
+        checkEmptyState();
+      }
+    }
+
+    function exportAllMasterData() {
+      const masterPackage = buildMasterPackage();
+      const blob = new Blob([JSON.stringify(masterPackage, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `panel_director_pbta_${Date.now()}.json`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function importAllMasterData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const pkg = JSON.parse(e.target.result);
+          applyMasterPackage(pkg);
+          alert('¡Panel de Director cargado correctamente!');
+        } catch (err) {
+          alert(err.message || 'Error al leer el archivo JSON.');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    // --- INTEGRACIÓN GOOGLE DRIVE (TMS PBTA / DIRECTOR) ---
+    function loadGoogleIdentityScript() {
+      return new Promise((resolve, reject) => {
+        if (window.google && window.google.accounts && window.google.accounts.oauth2) {
+          resolve();
+          return;
+        }
+        const existing = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
+        if (existing) {
+          existing.addEventListener('load', () => resolve());
+          existing.addEventListener('error', () => reject(new Error('No se pudo cargar Google Identity Services.')));
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://accounts.google.com/gsi/client';
+        script.async = true;
+        script.defer = true;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('No se pudo cargar Google Identity Services.'));
+        document.head.appendChild(script);
+      });
+    }
+
+    async function getDriveAccessToken(promptMode = 'consent') {
+      if (!DRIVE_CONFIG.clientId) {
+        throw new Error('Falta configurar DRIVE_CONFIG.clientId con tu Web Client ID de Google Cloud.');
+      }
+      if (driveAccessToken && Date.now() < driveTokenExpiresAt - 15000) {
+        return driveAccessToken;
+      }
+
+      await loadGoogleIdentityScript();
+
+      return new Promise((resolve, reject) => {
+        pendingAuthResolver = resolve;
+        pendingAuthRejecter = reject;
+
+        tokenClient = window.google.accounts.oauth2.initTokenClient({
+          client_id: DRIVE_CONFIG.clientId,
+          scope: DRIVE_CONFIG.scope,
+          callback: (tokenResponse) => {
+            if (tokenResponse && tokenResponse.error) {
+              const err = new Error(tokenResponse.error_description || tokenResponse.error);
+              if (pendingAuthRejecter) pendingAuthRejecter(err);
+              pendingAuthResolver = null;
+              pendingAuthRejecter = null;
+              return;
+            }
+            if (tokenResponse && tokenResponse.access_token) {
+              driveAccessToken = tokenResponse.access_token;
+              const expiresInSec = Number(tokenResponse.expires_in || 3600);
+              driveTokenExpiresAt = Date.now() + expiresInSec * 1000;
+              if (pendingAuthResolver) pendingAuthResolver(driveAccessToken);
+              pendingAuthResolver = null;
+              pendingAuthRejecter = null;
+            }
+          },
+          error_callback: (err) => {
+            if (pendingAuthRejecter) {
+              pendingAuthRejecter(new Error((err && err.message) || 'Error de autenticación en Google.'));
+            }
+            pendingAuthResolver = null;
+            pendingAuthRejecter = null;
+          }
+        });
+
+        tokenClient.requestAccessToken({ prompt: promptMode });
+      });
+    }
+
+    async function driveApiFetch(url, options = {}) {
+      const token = await getDriveAccessToken('');
+      const headers = Object.assign({}, options.headers || {}, {
+        'Authorization': `Bearer ${token}`
+      });
+      const response = await fetch(url, Object.assign({}, options, { headers }));
+      if (response.status === 401) {
+        driveAccessToken = null;
+        driveTokenExpiresAt = 0;
+        const freshToken = await getDriveAccessToken('consent');
+        headers['Authorization'] = `Bearer ${freshToken}`;
+        const retryResponse = await fetch(url, Object.assign({}, options, { headers }));
+        if (!retryResponse.ok) {
+          throw new Error(`Error de Google Drive (${retryResponse.status})`);
+        }
+        return retryResponse;
+      }
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Error de Google Drive (${response.status}): ${text}`);
+      }
+      return response;
+    }
+
+    function escapeDriveQueryValue(val) {
+      return String(val).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    }
+
+    async function findOrCreateFolder(folderName, parentId = null) {
+      const qParts = [
+        `mimeType = 'application/vnd.google-apps.folder'`,
+        `name = '${escapeDriveQueryValue(folderName)}'`,
+        `trashed = false`
+      ];
+      if (parentId) {
+        qParts.push(`'${escapeDriveQueryValue(parentId)}' in parents`);
+      }
+
+      const query = encodeURIComponent(qParts.join(' and '));
+      const searchResp = await driveApiFetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)&pageSize=10`);
+      const searchJson = await searchResp.json();
+
+      if (searchJson.files && searchJson.files.length > 0) {
+        return searchJson.files[0].id;
+      }
+
+      const metadata = {
+        name: folderName,
+        mimeType: 'application/vnd.google-apps.folder'
+      };
+      if (parentId) {
+        metadata.parents = [parentId];
+      }
+
+      const createResp = await driveApiFetch('https://www.googleapis.com/drive/v3/files?fields=id,name', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(metadata)
+      });
+      const createdJson = await createResp.json();
+      return createdJson.id;
+    }
+
+    async function ensureDirectorFolderId() {
+      if (cachedDirectorFolderId) return cachedDirectorFolderId;
+
+      if (!cachedRootFolderId) {
+        cachedRootFolderId = await findOrCreateFolder(DRIVE_CONFIG.rootFolderName, null);
+      }
+      cachedDirectorFolderId = await findOrCreateFolder(DRIVE_CONFIG.subFolderName, cachedRootFolderId);
+      return cachedDirectorFolderId;
+    }
+
+    function readDriveLinkMeta() {
+      try {
+        return JSON.parse(getStorage().getItem(DRIVE_META_STORAGE_KEY) || '{}');
+      } catch (_) {
+        return {};
+      }
+    }
+
+    function writeDriveLinkMeta(meta) {
+      try {
+        getStorage().setItem(DRIVE_META_STORAGE_KEY, JSON.stringify(meta));
+      } catch (_) {}
+    }
+
+    async function saveToGoogleDrive() {
+      try {
+        showToast('Conectando con Google Drive...');
+        const folderId = await ensureDirectorFolderId();
+        const fileName = 'panel_director_pbta.json';
+        const payloadString = JSON.stringify(buildMasterPackage(), null, 2);
+        const meta = readDriveLinkMeta();
+
+        let targetFileId = meta[fileName] || null;
+
+        if (!targetFileId) {
+          const q = encodeURIComponent(
+            `name = '${escapeDriveQueryValue(fileName)}' and '${escapeDriveQueryValue(folderId)}' in parents and trashed = false`
+          );
+          const listResp = await driveApiFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)&pageSize=1`);
+          const listJson = await listResp.json();
+          if (listJson.files && listJson.files.length > 0) {
+            targetFileId = listJson.files[0].id;
+          }
+        }
+
+        const boundary = '-------tms_pbta_boundary_' + Date.now();
+        const delimiter = `\r\n--${boundary}\r\n`;
+        const closeDelimiter = `\r\n--${boundary}--`;
+
+        if (targetFileId) {
+          const updateMetadata = { name: fileName, mimeType: 'application/json' };
+          const body =
+            delimiter +
+            'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+            JSON.stringify(updateMetadata) +
+            delimiter +
+            'Content-Type: application/json\r\n\r\n' +
+            payloadString +
+            closeDelimiter;
+
+          const updResp = await driveApiFetch(
+            `https://www.googleapis.com/upload/drive/v3/files/${encodeURIComponent(targetFileId)}?uploadType=multipart&fields=id,name`,
+            {
+              method: 'PATCH',
+              headers: { 'Content-Type': `multipart/related; boundary="${boundary}"` },
+              body
+            }
+          );
+          const updJson = await updResp.json();
+          meta[fileName] = updJson.id;
+          writeDriveLinkMeta(meta);
+          showToast(`Actualizado en Drive (${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}/${fileName}).`);
+        } else {
+          const createMetadata = {
+            name: fileName,
+            mimeType: 'application/json',
+            parents: [folderId]
+          };
+          const body =
+            delimiter +
+            'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+            JSON.stringify(createMetadata) +
+            delimiter +
+            'Content-Type: application/json\r\n\r\n' +
+            payloadString +
+            closeDelimiter;
+
+          const crtResp = await driveApiFetch(
+            'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name',
+            {
+              method: 'POST',
+              headers: { 'Content-Type': `multipart/related; boundary="${boundary}"` },
+              body
+            }
+          );
+          const crtJson = await crtResp.json();
+          meta[fileName] = crtJson.id;
+          writeDriveLinkMeta(meta);
+          showToast(`Guardado en Drive (${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}/${fileName}).`);
+        }
+      } catch (err) {
+        console.error(err);
+        showToast(`No se pudo guardar en Drive: ${err.message}`);
+      }
+    }
+
+    async function loadFromGoogleDrive() {
+      try {
+        showToast('Buscando respaldos del Director en Drive...');
+        const folderId = await ensureDirectorFolderId();
+        const q = encodeURIComponent(
+          `'${escapeDriveQueryValue(folderId)}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`
+        );
+        const listResp = await driveApiFetch(
+          `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime)&orderBy=modifiedTime desc&pageSize=30`
+        );
+        const listJson = await listResp.json();
+        const files = listJson.files || [];
+
+        if (files.length === 0) {
+          showToast(`No hay archivos en ${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}.`);
+          return;
+        }
+
+        const opciones = files
+          .map((f, idx) => `${idx + 1}. ${f.name}`)
+          .join('\n');
+        const selection = prompt(
+          `Selecciona el número del respaldo del Director a cargar desde ${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}:\n\n${opciones}`,
+          '1'
+        );
+        if (!selection) return;
+
+        const chosenIndex = parseInt(selection.trim(), 10) - 1;
+        if (isNaN(chosenIndex) || chosenIndex < 0 || chosenIndex >= files.length) {
+          showToast('Selección no válida.');
+          return;
+        }
+
+        const chosenFile = files[chosenIndex];
+        const fileResp = await driveApiFetch(
+          `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(chosenFile.id)}?alt=media`
+        );
+        const rawText = await fileResp.text();
+        const parsedPkg = JSON.parse(rawText);
+        applyMasterPackage(parsedPkg);
+
+        const meta = readDriveLinkMeta();
+        meta[chosenFile.name] = chosenFile.id;
+        writeDriveLinkMeta(meta);
+
+        showToast(`Cargado "${chosenFile.name}" desde Google Drive.`);
+      } catch (err) {
+        console.error(err);
+        showToast(`No se pudo cargar desde Drive: ${err.message}`);
+      }
+    }
+
+    function toggleCheck(el) {
+      if (el.classList.contains('dashed')) {
+        el.classList.remove('dashed');
+      }
+      el.classList.toggle('checked');
+      autoSaveActive();
+    }
+
+    function loadPortrait(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.getElementById('portraitImg');
+          img.src = e.target.result;
+          img.style.display = 'block';
+          document.getElementById('portraitPlaceholder').style.display = 'none';
+          autoSaveActive();
+        }
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // --- PLANTILLAS HTML ---
+    function getPjTemplate() {
+      return `
+        <div class="header-row" style="margin-bottom: 15px;">
+          <div class="header-item" style="flex: 2;"><label>NOMBRE:</label><div class="editable" contenteditable="true" id="nombre" oninput="autoSaveActive()"></div></div>
+          <div class="header-item" style="flex: 1;"><label>PRONOMBRE:</label><div class="editable" contenteditable="true" id="pronombre" oninput="autoSaveActive()"></div></div>
+        </div>
+        <div class="sheet-grid">
+          <div class="col">
+            <div class="box"><div class="box-title">CONCEPTO:</div><div class="editable" contenteditable="true" id="concepto" oninput="autoSaveActive()" style="min-height: 45px;"></div></div>
+            <div class="portrait-grid">
+              <div class="col">
+                <div class="box"><div class="box-title">ORIGEN:</div><div class="editable" contenteditable="true" id="origen" oninput="autoSaveActive()"></div></div>
+                <div class="box"><div class="box-title">CIRCUNSTANCIAS:</div><div class="editable" contenteditable="true" id="circunstancias" oninput="autoSaveActive()" style="min-height: 50px;"></div></div>
+                <div class="box"><div class="box-title">META: <span class="box-subtitle">+1 fragmento XP</span></div><div class="editable" contenteditable="true" id="meta" oninput="autoSaveActive()"></div></div>
+              </div>
+              <div class="box portrait-area" onclick="document.getElementById('portraitInput').click()">
+                <input type="file" id="portraitInput" accept="image/*" style="display:none;" onchange="loadPortrait(event)">
+                <div id="portraitPlaceholder" class="portrait-placeholder">📷<br>RETRATO</div>
+                <img id="portraitImg" src="" style="display:none;">
+              </div>
+            </div>
+            <div class="box"><div class="box-title">ETIQUETAS PERSONALES:</div>
+              <div class="tags-grid">
+                ${[1,2,3,4,5,6,7,8,9].map(i => `<div class="editable tag-input" contenteditable="true" id="tag_p_${i}" oninput="autoSaveActive()"></div>`).join('')}
+              </div>
+            </div>
+            <div class="box"><div class="box-title">ETIQUETAS DE ESTADO:</div>
+              <div class="tags-grid">
+                ${[1,2,3,4,5,6].map(i => `<div class="editable tag-input" contenteditable="true" id="tag_e_${i}" oninput="autoSaveActive()"></div>`).join('')}
+              </div>
+            </div>
+            <div class="box" style="background:#fafafa;"><div class="box-title">FLUJO:</div><div class="editable" contenteditable="true" id="flujo" oninput="autoSaveActive()" style="min-height: 40px;"></div></div>
+            <div class="stats-row">
+              <div class="stat-box"><div class="stat-title">RENDIMIENTO</div><div class="editable" contenteditable="true" id="stat_rendimiento" oninput="autoSaveActive()" style="text-align:center;"></div></div>
+              <div class="stat-box"><div class="stat-title">INTELECTO</div><div class="editable" contenteditable="true" id="stat_intelecto" oninput="autoSaveActive()" style="text-align:center;"></div></div>
+              <div class="stat-box"><div class="stat-title">VÍNCULO</div><div class="editable" contenteditable="true" id="stat_vinculo" oninput="autoSaveActive()" style="text-align:center;"></div></div>
+            </div>
+            <div class="box"><div class="box-title" style="justify-content:center;">BIENESTAR</div>
+              <div class="bienestar-container">
+                <div class="bienestar-top-row">
+                  <div class="hearts-row" id="heartsRow"></div>
+                  <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                    <span style="font-size: 0.6rem; font-family: 'Cinzel', serif; font-weight: 700; color: var(--accent-color);">MÁX</span>
+                    <div class="editable" contenteditable="true" id="max_bienestar" style="width: 28px; height: 26px; border: 1.5px solid var(--accent-color); border-radius: 3px; text-align: center; font-size: 0.9rem; font-weight: 700; line-height: 22px; padding: 0;"></div>
+                  </div>
+                </div>
+                <div id="bienestarMsg" style="font-size: 0.72rem; color: var(--danger); font-weight: 600; text-align: center; display: none;">Señala una salud máxima antes de repartir corazones</div>
+              </div>
+            </div>
+            <div class="flex-row-boxes">
+              <div class="box"><div class="box-title">EXPERIENCIA</div>
+                <div class="exp-boxes">
+                  ${[1,2,3,4,5].map(i => `<div class="exp-check" onclick="toggleCheck(this)" id="exp_${i}"></div>`).join('')}
+                  <div class="exp-check dashed" onclick="toggleCheck(this)" id="exp_6"></div>
+                  <div class="exp-check dashed" onclick="toggleCheck(this)" id="exp_7"></div>
+                  <div class="editable" contenteditable="true" id="exp_level" oninput="autoSaveActive()" style="width: 26px; height: 20px; border: 1.5px solid var(--accent-color); border-radius: 2px; text-align: center; font-size: 0.8rem; font-weight: 700; line-height: 18px; padding: 0;"></div>
+                </div>
+              </div>
+              <div class="box"><div class="box-title">RIQUEZA:</div>
+                <div class="exp-boxes" style="margin-top:4px;">
+                  ${[1,2,3,4,5].map(i => `<div class="exp-check" onclick="toggleCheck(this)" id="riq_${i}"></div>`).join('')}
+                </div>
+              </div>
+              <div class="box"><div class="box-title">DEFENSA:</div>
+                <div class="exp-boxes" style="margin-top:4px;">
+                  ${[1,2,3,4,5].map(i => `<div class="exp-check" onclick="toggleCheck(this)" id="def_${i}"></div>`).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+      `;
+    }
+
+    function getPjTemplateCol2() {
+      return `
+            <div class="box"><div class="box-title">EQUIPAMIENTO</div>
+              <div class="table-container"><table class="table-custom">
+                <thead><tr><th class="check-cell">X</th><th>NOMBRE</th><th style="width:35px;">PD</th><th>ETIQUETAS</th><th style="width:35px;">BD</th></tr></thead>
+                <tbody>
+                  ${[1,2,3,4,5,6].map(i => `
+                    <tr><td class="check-cell"><div class="checkbox-square" onclick="toggleCheck(this)" id="eq_x_${i}"></div></td>
+                    <td><div class="editable" contenteditable="true" id="eq_nom_${i}" oninput="autoSaveActive()"></div></td>
+                    <td><div class="editable" contenteditable="true" id="eq_pd_${i}" oninput="autoSaveActive()"></div></td>
+                    <td><div class="editable" contenteditable="true" id="eq_etq_${i}" oninput="autoSaveActive()"></div></td>
+                    <td><div class="editable" contenteditable="true" id="eq_bd_${i}" oninput="autoSaveActive()"></div></td></tr>
+                  `).join('')}
+                </tbody>
+              </table></div>
+            </div>
+            <div class="box"><div class="box-title">INVENTARIO</div><div class="editable" contenteditable="true" id="inventario" oninput="autoSaveActive()" style="min-height:70px;"></div></div>
+            <div class="box"><div class="box-title">ASISTENCIAS</div>
+              <div class="table-container"><table class="table-custom">
+                <thead><tr><th class="check-cell">X</th><th>DESCRIPCIÓN</th><th style="width:30px;"></th></tr></thead>
+                <tbody>
+                  ${[1,2,3,4,5,6].map(i => `
+                    <tr><td class="check-cell"><div class="checkbox-square" onclick="toggleCheck(this)" id="as_x_${i}"></div></td>
+                    <td><div class="editable" contenteditable="true" id="as_desc_${i}" oninput="autoSaveActive()"></div></td>
+                    <td><div class="editable" contenteditable="true" id="as_val_${i}" oninput="autoSaveActive()"></div></td></tr>
+                  `).join('')}
+                </tbody>
+              </table></div>
+            </div>
+            <div class="box"><div class="box-title">RELACIONES</div>
+              <div class="table-container"><table class="table-custom">
+                <thead><tr><th style="width:35%;">ALIADO</th><th>EXPECTATIVA</th></tr></thead>
+                <tbody>
+                  ${[1,2,3,4,5].map(i => `
+                    <tr><td><div class="editable" contenteditable="true" id="rel_ali_${i}" oninput="autoSaveActive()"></div></td>
+                    <td><div class="editable" contenteditable="true" id="rel_exp_${i}" oninput="autoSaveActive()"></div></td></tr>
+                  `).join('')}
+                </tbody>
+              </table></div>
+            </div>
+            <div class="box"><div class="box-title">HABILIDADES ESPECIALES</div>
+              <div class="table-container"><table class="table-custom">
+                <thead><tr><th style="width:35%;">NOMBRE</th><th>DESCRIPCIÓN</th></tr></thead>
+                <tbody>
+                  ${[1,2,3,4,5,6].map(i => `
+                    <tr><td><div class="editable" contenteditable="true" id="hab_nom_${i}" oninput="autoSaveActive()"></div></td>
+                    <td><div class="editable" contenteditable="true" id="hab_desc_${i}" oninput="autoSaveActive()"></div></td></tr>
+                  `).join('')}
+                </tbody>
+              </table></div>
+            </div>
+            <div class="box"><div class="box-title">HABILIDADES TEMPORALES</div>
+              <div class="table-container"><table class="table-custom">
+                <thead><tr><th style="width:35%;">NOMBRE Y ORIGEN</th><th>DESCRIPCIÓN</th></tr></thead>
+                <tbody>
+                  ${[1,2,3,4].map(i => `
+                    <tr><td><div class="editable" contenteditable="true" id="hab_t_nom_${i}" oninput="autoSaveActive()"></div></td>
+                    <td><div class="editable" contenteditable="true" id="hab_t_desc_${i}" oninput="autoSaveActive()"></div></td></tr>
+                  `).join('')}
+                </tbody>
+              </table></div>
+            </div>
+          </div>
+        </div>
+        <div class="box" style="margin-top: 15px;"><div class="box-title">NOTAS DEL JUGADOR:</div><div class="editable" contenteditable="true" id="notas_adicionales" oninput="autoSaveActive()" style="min-height:80px;"></div></div>
+      `;
+    }
+
+    function getPnjTemplate() {
+      return `
+        <div class="header-row" style="margin-bottom: 15px;">
+          <div class="header-item" style="flex: 2;"><label>NOMBRE DEL PNJ:</label><div class="editable" contenteditable="true" id="pnj_nombre" oninput="autoSaveActive()"></div></div>
+          <div class="header-item" style="flex: 1;"><label>CATEGORÍA:</label><div class="editable" contenteditable="true" id="pnj_categoria" oninput="autoSaveActive()"></div></div>
+        </div>
+        <div class="sheet-grid">
+          <div class="col">
+            <div class="portrait-grid">
+              <div class="col">
+                <div class="box"><div class="box-title">CONCEPTO:</div><div class="editable" contenteditable="true" id="pnj_concepto" oninput="autoSaveActive()" style="min-height: 90px;"></div></div>
+              </div>
+              <div class="box portrait-area" onclick="document.getElementById('portraitInput').click()">
+                <input type="file" id="portraitInput" accept="image/*" style="display:none;" onchange="loadPortrait(event)">
+                <div id="portraitPlaceholder" class="portrait-placeholder">📷<br>RETRATO PNJ</div>
+                <img id="portraitImg" src="" style="display:none;">
+              </div>
+            </div>
+            <div class="box"><div class="box-title">ETIQUETAS:</div>
+              <div class="tags-grid">${[1,2,3,4,5,6].map(i => `<div class="editable tag-input" contenteditable="true" id="pnj_tag_${i}" oninput="autoSaveActive()"></div>`).join('')}</div>
+            </div>
+            <div class="box"><div class="box-title">ETIQUETAS DE ESTADO:</div>
+              <div class="tags-grid">${[1,2,3,4,5,6].map(i => `<div class="editable tag-input" contenteditable="true" id="pnj_tag_e_${i}" oninput="autoSaveActive()"></div>`).join('')}</div>
+            </div>
+            <div class="stats-row">
+              <div class="stat-box"><div class="stat-title">RENDIMIENTO</div><div class="editable" contenteditable="true" id="pnj_stat_rendimiento" oninput="autoSaveActive()" style="text-align:center;"></div></div>
+              <div class="stat-box"><div class="stat-title">INTELECTO</div><div class="editable" contenteditable="true" id="pnj_stat_intelecto" oninput="autoSaveActive()" style="text-align:center;"></div></div>
+              <div class="stat-box"><div class="stat-title">VÍNCULO</div><div class="editable" contenteditable="true" id="pnj_stat_vinculo" oninput="autoSaveActive()" style="text-align:center;"></div></div>
+            </div>
+            <div class="box"><div class="box-title" style="justify-content:center;">BIENESTAR</div>
+              <div class="bienestar-container">
+                <div class="bienestar-top-row">
+                  <div class="hearts-row" id="pnjHeartsRow"></div>
+                  <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                    <span style="font-size: 0.6rem; font-family: 'Cinzel', serif; font-weight: 700; color: var(--accent-color);">MÁX</span>
+                    <div class="editable" contenteditable="true" id="pnj_max_bienestar" style="width: 28px; height: 26px; border: 1.5px solid var(--accent-color); border-radius: 3px; text-align: center; font-size: 0.9rem; font-weight: 700; line-height: 22px; padding: 0;"></div>
+                  </div>
+                </div>
+                <div id="pnjBienestarMsg" style="font-size: 0.72rem; color: var(--danger); font-weight: 600; text-align: center; display: none;">Señala una salud máxima antes de repartir corazones</div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="box"><div class="box-title">HABILIDADES ESPECIALES</div>
+              <div class="table-container"><table class="table-custom">
+                <thead><tr><th style="width:35%;">NOMBRE</th><th>DESCRIPCIÓN</th></tr></thead>
+                <tbody>${[1,2,3].map(i => `<tr><td><div class="editable" contenteditable="true" id="pnj_hab_nom_${i}" oninput="autoSaveActive()"></div></td><td><div class="editable" contenteditable="true" id="pnj_hab_desc_${i}" oninput="autoSaveActive()"></div></td></tr>`).join('')}</tbody>
+              </table></div>
+            </div>
+            <div class="box"><div class="box-title">HABILIDADES TEMPORALES</div>
+              <div class="table-container"><table class="table-custom">
+                <thead><tr><th style="width:35%;">NOMBRE Y ORIGEN</th><th>DESCRIPCIÓN</th></tr></thead>
+                <tbody>${[1,2,3].map(i => `<tr><td><div class="editable" contenteditable="true" id="pnj_hab_t_nom_${i}" oninput="autoSaveActive()"></div></td><td><div class="editable" contenteditable="true" id="pnj_hab_t_desc_${i}" oninput="autoSaveActive()"></div></td></tr>`).join('')}</tbody>
+              </table></div>
+            </div>
+            <div class="box"><div class="box-title">EQUIPAMIENTO</div>
+              <div class="table-container"><table class="table-custom">
+                <thead><tr><th>NOMBRE</th><th style="width:35px;">PD</th><th>ETIQUETAS</th><th style="width:35px;">BD</th></tr></thead>
+                <tbody>${[1,2,3,4].map(i => `<tr><td><div class="editable" contenteditable="true" id="pnj_eq_nom_${i}" oninput="autoSaveActive()"></div></td><td><div class="editable" contenteditable="true" id="pnj_eq_pd_${i}" oninput="autoSaveActive()"></div></td><td><div class="editable" contenteditable="true" id="pnj_eq_etq_${i}" oninput="autoSaveActive()"></div></td><td><div class="editable" contenteditable="true" id="pnj_eq_bd_${i}" oninput="autoSaveActive()"></div></td></tr>`).join('')}</tbody>
+              </table></div>
+            </div>
+            <div class="box"><div class="box-title">INVENTARIO</div><div class="editable" contenteditable="true" id="pnj_inventario" oninput="autoSaveActive()" style="min-height:80px;"></div></div>
+          </div>
+        </div>
+        <div class="box" style="margin-top: 15px;"><div class="box-title">NOTAS DEL PNJ:</div><div class="editable" contenteditable="true" id="pnj_notas" oninput="autoSaveActive()" style="min-height:90px;"></div></div>
+      `;
+    }
+
+    window.onload = function() {
+      loadSceneData();
+      loadCharactersStorage();
+      loadMapsStorage();
+      loadActiveStateSelection();
+
+      // Inicializar elementos arrastrables
+      const launcher = document.getElementById('floatingDiceLauncher');
+      const modalBox = document.getElementById('diceWidgetModal');
+      const modalHeader = document.getElementById('diceModalHeader');
+
+      makeDraggable(launcher, launcher);
+      makeDraggable(modalBox, modalHeader);
+
+      launcher.addEventListener('click', toggleDiceWidget);
+    };
+  </script>
+</body>
+</html>

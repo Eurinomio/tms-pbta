@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crónicas de la Campaña - PbtA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #ffffff;
+      --border-color: #cbd5e1;
+      --accent-color: #1e293b;
+      --accent-active: #0f172a;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --danger: #e11d48;
+      --radius: 6px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding: 15px;
+      display: flex;
+      gap: 15px;
+      min-height: 100vh;
+      align-items: flex-start;
+    }
+
+    /* BARRA LATERAL DE CRÓNICAS */
+    .sidebar {
+      width: 280px;
+      background: #1e293b;
+      color: white;
+      border-radius: var(--radius);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 15px;
+      max-height: calc(100vh - 30px);
+    }
+
+    .sidebar h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      text-align: center;
+      color: #38bdf8;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 10px;
+    }
+
+    .btn-side {
+      background: #0284c7;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: center;
+      display: block;
+      width: 100%;
+      transition: background 0.2s;
+    }
+    .btn-side:hover { background: #0369a1; }
+
+    .sidebar-actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .btn-side-small {
+      background: #334155;
+      color: white;
+      border: none;
+      padding: 8px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.75rem;
+      cursor: pointer;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: background 0.2s;
+    }
+    .btn-side-small:hover { background: #475569; }
+
+    .btn-side-drive {
+      background: #0f766e;
+    }
+    .btn-side-drive:hover {
+      background: #115e59;
+    }
+
+    .cronica-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow-y: auto;
+      max-height: calc(100vh - 275px);
+      padding-right: 4px;
+    }
+
+    .cronica-item {
+      background: #334155;
+      padding: 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+      gap: 6px;
+    }
+    .cronica-item:hover { background: #475569; }
+    .cronica-item.active { border-color: #38bdf8; background: #0f172a; }
+
+    .cronica-info {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      overflow: hidden;
+    }
+
+    .cronica-title-text {
+      color: white;
+      font-weight: 600;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .cronica-lock-status {
+      font-size: 0.65rem;
+      color: #94a3b8;
+    }
+
+    .btn-del-cronica {
+      background: none;
+      border: none;
+      color: #f87171;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    .btn-del-cronica:hover { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
+    /* ÁREA PRINCIPAL */
+    .main-content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-width: 1100px;
+    }
+
+    .empty-notice {
+      background: #ffffff;
+      padding: 60px;
+      border-radius: var(--radius);
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      color: var(--text-muted);
+    }
+
+    /* CONTENEDOR DEL EDITOR Y TÍTULO */
+    .editor-container {
+      display: none;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+      padding: 25px;
+      border: 1px solid var(--border-color);
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .editor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--accent-color);
+      padding-bottom: 10px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .editor-title-input {
+      font-family: 'Cinzel', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--accent-color);
+      border: none;
+      outline: none;
+      background: transparent;
+      flex-grow: 1;
+      min-width: 200px;
+    }
+
+    .editor-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .editor-actions button, .editor-actions label.btn-upload {
+      background: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.2s;
+    }
+    .editor-actions button:hover, .editor-actions label.btn-upload:hover {
+      background: var(--accent-active);
+    }
+
+    .editor-actions button.btn-drive {
+      background: #0f766e;
+    }
+    .editor-actions button.btn-drive:hover {
+      background: #115e59;
+    }
+
+    /* BARRA DE HERRAMIENTAS DE TEXTO */
+    .toolbar {
+      display: flex;
+      gap: 6px;
+      background: #f8fafc;
+      padding: 6px 10px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .toolbar button, .toolbar select {
+      background: #ffffff;
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .toolbar button:hover, .toolbar select:hover { background: #f1f5f9; }
+
+    /* LAYOUT DE ESCRITURA + ÍNDICE LATERAL */
+    .editor-layout {
+      display: grid;
+      grid-template-columns: 1fr 240px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .editor-layout { grid-template-columns: 1fr; }
+      body { flex-direction: column; }
+      .sidebar { width: 100%; position: static; max-height: none; }
+    }
+
+    .text-editor {
+      min-height: 500px;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 15px;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      background: #fff;
+    }
+    .text-editor h1 { font-family: 'Cinzel', serif; font-size: 1.5rem; margin-top: 15px; margin-bottom: 8px; color: var(--accent-color); }
+    .text-editor h2 { font-family: 'Cinzel', serif; font-size: 1.2rem; margin-top: 12px; margin-bottom: 6px; color: var(--accent-color); }
+    .text-editor h3 { font-family: 'Cinzel', serif; font-size: 1.0rem; margin-top: 10px; margin-bottom: 4px; color: var(--accent-color); }
+    .text-editor p { margin-bottom: 10px; }
+
+    /* ÍNDICE AUTOMÁTICO LATERAL */
+    .toc-sidebar {
+      background: #f8fafc;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 12px;
+      position: sticky;
+      top: 15px;
+    }
+
+    .toc-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent-color);
+      margin-bottom: 8px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    .toc-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .toc-item a {
+      font-size: 0.8rem;
+      color: #0284c7;
+      text-decoration: none;
+      display: block;
+      padding: 2px 4px;
+      border-radius: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .toc-item a:hover { background: #e0f2fe; text-decoration: underline; }
+    .toc-item.level-2 a { padding-left: 12px; font-size: 0.75rem; color: #475569; }
+    .toc-item.level-3 a { padding-left: 20px; font-size: 0.7rem; color: #64748b; }
+
+    /* MODALES INTERNOS PERSONALIZADOS */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+    .modal-box {
+      background: #1e293b;
+      color: white;
+      padding: 25px;
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      border: 1px solid #334155;
+    }
+    .modal-box h3 {
+      font-family: 'Cinzel', serif;
+      color: #38bdf8;
+      font-size: 1.1rem;
+    }
+    .modal-box input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: white;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .modal-box input:focus { border-color: #38bdf8; }
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .modal-buttons button {
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-cancel { background: #475569; color: white; }
+    .btn-cancel:hover { background: #64748b; }
+    .btn-confirm { background: #0284c7; color: white; }
+    .btn-confirm:hover { background: #0369a1; }
+    .btn-danger { background: #e11d48 !important; color: white; }
+    .btn-danger:hover { background: #be123c !important; }
+
+    .toast-msg {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      background: #1e293b;
+      color: #f8fafc;
+      border: 1px solid #38bdf8;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
+      z-index: 3000;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.2s ease;
+      pointer-events: none;
+      max-width: 360px;
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media print {
+      body { background: white; padding: 0; display: block; }
+      .sidebar, .toolbar, .toc-sidebar, .toast-msg { display: none !important; }
+      .editor-container { box-shadow: none; border: none; padding: 0; width: 100%; display: flex !important; }
+      .editor-layout { display: block; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- VENTANA MODAL PARA NUEVA CRÓNICA -->
+  <div class="modal-overlay" id="modalNewCronica">
+    <div class="modal-box">
+      <h3>Crear Nueva Crónica</h3>
+      <div>
+        <label style="font-size:0.75rem; color:#94a3b8; display:block; margin-bottom:4px;">TÍTULO DE LA CRÓNICA:</label>
+        <input type="text" id="inputNewTitle" placeholder="Ej. Sesión 1: El despertar...">
+      </div>
+      <div>
+        <label style="font-size:0.75rem; color:#94a3b8; display:block; margin-bottom:4px;">CONTRASEÑA (Opcional):</label>
+        <input type="password" id="inputNewPass" placeholder="Déjalo en blanco si es pública">
+      </div>
+      <div class="modal-buttons">
+        <button class="btn-cancel" onclick="closeModal('modalNewCronica')">Cancelar</button>
+        <button class="btn-confirm" onclick="confirmNewCronica()">Crear</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VENTANA MODAL PARA CONTRASEÑA DE ACCESO -->
+  <div class="modal-overlay" id="modalPassword">
+    <div class="modal-box">
+      <h3>Crónica Protegida 🔒</h3>
+      <p style="font-size: 0.85rem; color: #cbd5e1;" id="modalPassPromptText">Introduce la contraseña para acceder:</p>
+      <input type="password" id="inputAccessPass" placeholder="Contraseña...">
+      <div class="modal-buttons">
+        <button class="btn-cancel" onclick="closeModal('modalPassword')">Cancelar</button>
+        <button class="btn-confirm" onclick="confirmPassword()">Acceder</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VENTANA MODAL DE CONFIRMACIÓN DE BORRADO -->
+  <div class="modal-overlay" id="modalDeleteCronica">
+    <div class="modal-box">
+      <h3>⚠️ Confirmar Borrado</h3>
+      <p style="font-size: 0.85rem; color: #cbd5e1;" id="deleteModalText">¿Estás seguro de que deseas eliminar esta crónica permanentemente?</p>
+      <div class="modal-buttons">
+        <button class="btn-cancel" onclick="closeModal('modalDeleteCronica')">Cancelar</button>
+        <button class="btn-confirm btn-danger" onclick="executeDeleteCronica()">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BARRA LATERAL DE CRÓNICAS -->
+  <div class="sidebar">
+    <h2>📜 CRÓNICAS</h2>
+    <button class="btn-side" onclick="openNewCronicaModal()">＋ Nueva Crónica</button>
+    
+    <div class="sidebar-actions-grid">
+      <button class="btn-side-small" onclick="exportAllCronicasJson()">💾 Guardar Todas</button>
+      <label class="btn-side-small" style="cursor:pointer;">
+        📂 Cargar Todas
+        <input type="file" id="importAllCronicasFile" accept=".json" style="display:none;" onchange="importAllCronicasJson(event)">
+      </label>
+      <button class="btn-side-small btn-side-drive" onclick="saveListToGoogleDrive()">☁️ Lista a Drive</button>
+      <button class="btn-side-small btn-side-drive" onclick="loadListFromGoogleDrive()">📥 Lista de Drive</button>
+    </div>
+
+    <div style="font-size: 0.7rem; color: #94a3b8; text-align: center; margin-top: 2px;">LISTA DE SESIONES:</div>
+    <div class="cronica-list" id="cronicaList"></div>
+  </div>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="main-content">
+    
+    <div id="emptyNotice" class="empty-notice">
+      <h3>Selecciona una crónica de la lista o crea una nueva</h3>
+      <p style="font-size: 0.8rem; margin-top: 8px;">Las crónicas protegidas con contraseña solicitarán la clave para poder ser leídas.</p>
+    </div>
+
+    <!-- CONTENEDOR DE EDICIÓN -->
+    <div class="editor-container" id="editorContainer">
+      <div class="editor-header">
+        <input type="text" class="editor-title-input" id="cronicaTitle" placeholder="Título de la Crónica..." oninput="updateActiveTitle()">
+        
+        <div class="editor-actions">
+          <button class="btn-drive" onclick="saveCronicaToGoogleDrive()">☁️ Guardar en Drive</button>
+          <button class="btn-drive" onclick="loadCronicaFromGoogleDrive()">📥 Cargar de Drive</button>
+          <button onclick="exportCronicaJson()">💾 Guardar JSON</button>
+          <label class="btn-upload">
+            📂 Cargar JSON
+            <input type="file" id="importCronicaFile" accept=".json" style="display:none;" onchange="importCronicaJson(event)">
+          </label>
+          <button onclick="printCronica()">🖨️ Imprimir</button>
+        </div>
+      </div>
+
+      <!-- BARRA DE HERRAMIENTAS -->
+      <div class="toolbar">
+        <select onchange="formatDoc('formatBlock', this.value); this.selectedIndex=0;">
+          <option value="" disabled selected>Estilo de Texto</option>
+          <option value="p">Párrafo normal</option>
+          <option value="h1">Título 1 (H1)</option>
+          <option value="h2">Título 2 (H2)</option>
+          <option value="h3">Título 3 (H3)</option>
+        </select>
+        <button onclick="formatDoc('bold')"><b>B</b></button>
+        <button onclick="formatDoc('italic')"><i>I</i></button>
+        <button onclick="formatDoc('underline')"><u>S</u></button>
+        <button onclick="formatDoc('strikeThrough')"><s>Tachado</s></button>
+        <button onclick="formatDoc('insertUnorderedList')">• Lista</button>
+        <button onclick="formatDoc('removeFormat')">Limpiar formato</button>
+      </div>
+
+      <!-- EDITOR Y TOC -->
+      <div class="editor-layout">
+        <div class="text-editor" contenteditable="true" id="cronicaBody" oninput="handleEditorInput()"></div>
+        
+        <div class="toc-sidebar">
+          <div class="toc-title">Índice</div>
+          <ul class="toc-list" id="tocList"></ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="toastMsg" class="toast-msg"></div>
+
+  <script>
+    let cronicas = {};
+    let activeId = null;
+    let pendingOpenId = null;
+    let pendingDeleteId = null;
+    let saveTimeout = null;
+
+    // --- CONFIGURACIÓN Y ESTADO DE GOOGLE DRIVE (TMS PBTA / CRONICAS & LISTA CRONICAS) ---
+    const DRIVE_CONFIG = {
+      clientId: '3720906139-udra1unbra3vjpuogv200hgipur8dcrv.apps.googleusercontent.com',
+      rootFolderId: '',
+      rootFolderName: 'TMS PBTA',
+      cronicasFolderName: 'CRONICAS',
+      listaFolderName: 'LISTA CRONICAS',
+      scope: 'https://www.googleapis.com/auth/drive.file'
+    };
+
+    const CRONICA_DRIVE_META_KEY = 'pbta_cronica_drive_link_v1';
+    const LISTA_DRIVE_META_KEY = 'pbta_lista_cronicas_drive_link_v1';
+
+    let driveAccessToken = null;
+    let driveTokenExpiresAt = 0;
+    let tokenClient = null;
+    let pendingAuthResolver = null;
+    let pendingAuthRejecter = null;
+
+    let cachedRootFolderId = DRIVE_CONFIG.rootFolderId || null;
+    let cachedCronicasFolderId = null;
+    let cachedListaFolderId = null;
+
+    function showToast(message) {
+      const toast = document.getElementById('toastMsg');
+      if (!toast) return;
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3600);
+    }
+
+    function saveStorage() {
+      localStorage.setItem('pbta_cronicas_data', JSON.stringify(cronicas));
+    }
+
+    function loadStorage() {
+      const saved = localStorage.getItem('pbta_cronicas_data');
+      if (saved) {
+        try { cronicas = JSON.parse(saved); } catch (e) { cronicas = {}; }
+      }
+      renderList();
+    }
+
+    function openNewCronicaModal() {
+      document.getElementById('inputNewTitle').value = '';
+      document.getElementById('inputNewPass').value = '';
+      document.getElementById('modalNewCronica').style.display = 'flex';
+      document.getElementById('inputNewTitle').focus();
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+
+    function confirmNewCronica() {
+      const title = document.getElementById('inputNewTitle').value;
+      if (!title || title.trim() === '') {
+        alert('Debes introducir un título.');
+        return;
+      }
+      const password = document.getElementById('inputNewPass').value;
+
+      const id = 'cronica_' + Date.now();
+      cronicas[id] = {
+        title: title.trim(),
+        password: password ? password.trim() : '',
+        content: '<p>Comienza a redactar tu crónica aquí...</p>'
+      };
+
+      saveStorage();
+      renderList();
+      closeModal('modalNewCronica');
+      selectCronica(id);
+    }
+
+    function renderList() {
+      const listEl = document.getElementById('cronicaList');
+      listEl.innerHTML = '';
+      const keys = Object.keys(cronicas);
+
+      if (keys.length === 0) {
+        listEl.innerHTML = '<div style="font-size:0.75rem; color:#64748b; text-align:center; padding:10px;">No hay crónicas</div>';
+        return;
+      }
+
+      keys.forEach(id => {
+        const itemData = cronicas[id];
+        const isLocked = itemData.password && itemData.password.length > 0;
+        
+        const item = document.createElement('div');
+        item.className = 'cronica-item' + (id === activeId ? ' active' : '');
+        item.onclick = () => requestOpenCronica(id);
+
+        item.innerHTML = `
+          <div class="cronica-info">
+            <span class="cronica-title-text">${itemData.title}</span>
+            <span class="cronica-lock-status">${isLocked ? '🔒 Protegida' : '🔓 Pública'}</span>
+          </div>
+          <button class="btn-del-cronica" title="Eliminar">✕</button>
+        `;
+
+        const delBtn = item.querySelector('.btn-del-cronica');
+        delBtn.onclick = (e) => {
+          e.stopPropagation();
+          requestDeleteCronica(id);
+        };
+
+        listEl.appendChild(item);
+      });
+    }
+
+    function requestOpenCronica(id) {
+      const itemData = cronicas[id];
+      if (!itemData) return;
+
+      if (itemData.password && itemData.password.length > 0) {
+        pendingOpenId = id;
+        document.getElementById('modalPassPromptText').innerText = `La crónica "${itemData.title}" está protegida.\nIntroduce la contraseña de acceso:`;
+        document.getElementById('inputAccessPass').value = '';
+        document.getElementById('modalPassword').style.display = 'flex';
+        document.getElementById('inputAccessPass').focus();
+      } else {
+        selectCronica(id);
+      }
+    }
+
+    function confirmPassword() {
+      if (!pendingOpenId || !cronicas[pendingOpenId]) return;
+      const pass = document.getElementById('inputAccessPass').value;
+
+      if (pass === cronicas[pendingOpenId].password) {
+        closeModal('modalPassword');
+        selectCronica(pendingOpenId);
+        pendingOpenId = null;
+      } else {
+        alert('Contraseña incorrecta.');
+      }
+    }
+
+    function selectCronica(id) {
+      activeId = id;
+      renderList();
+
+      const itemData = cronicas[id];
+      document.getElementById('emptyNotice').style.display = 'none';
+      document.getElementById('editorContainer').style.display = 'flex';
+
+      document.getElementById('cronicaTitle').value = itemData.title;
+      document.getElementById('cronicaBody').innerHTML = itemData.content || '';
+      generateTOC();
+    }
+
+    function requestDeleteCronica(id) {
+      pendingDeleteId = id;
+      const title = cronicas[id] ? cronicas[id].title : 'esta crónica';
+      document.getElementById('deleteModalText').innerText = `¿Estás seguro de que deseas eliminar "${title}" permanentemente?`;
+      document.getElementById('modalDeleteCronica').style.display = 'flex';
+    }
+
+    function executeDeleteCronica() {
+      if (!pendingDeleteId || !cronicas[pendingDeleteId]) return;
+      
+      delete cronicas[pendingDeleteId];
+      if (activeId === pendingDeleteId) {
+        activeId = null;
+        document.getElementById('editorContainer').style.display = 'none';
+        document.getElementById('emptyNotice').style.display = 'block';
+      }
+      
+      saveStorage();
+      renderList();
+      closeModal('modalDeleteCronica');
+      pendingDeleteId = null;
+    }
+
+    function updateActiveTitle() {
+      if (!activeId || !cronicas[activeId]) return;
+      const newTitle = document.getElementById('cronicaTitle').value;
+      cronicas[activeId].title = newTitle;
+      saveStorage();
+      renderList();
+    }
+
+    function formatDoc(cmd, value = null) {
+      document.execCommand(cmd, false, value);
+      document.getElementById('cronicaBody').focus();
+      triggerAutoSave();
+    }
+
+    function handleEditorInput() {
+      triggerAutoSave();
+      generateTOC();
+    }
+
+    function flushActiveCronicaChanges() {
+      if (!activeId || !cronicas[activeId]) return;
+      cronicas[activeId].title = document.getElementById('cronicaTitle').value;
+      cronicas[activeId].content = document.getElementById('cronicaBody').innerHTML;
+      saveStorage();
+    }
+
+    function triggerAutoSave() {
+      if (!activeId || !cronicas[activeId]) return;
+      if (saveTimeout) clearTimeout(saveTimeout);
+      
+      saveTimeout = setTimeout(() => {
+        flushActiveCronicaChanges();
+      }, 500);
+    }
+
+    function generateTOC() {
+      const editor = document.getElementById('cronicaBody');
+      const tocList = document.getElementById('tocList');
+      tocList.innerHTML = '';
+
+      const headers = editor.querySelectorAll('h1, h2, h3');
+      if (headers.length === 0) {
+        tocList.innerHTML = '<li style="font-size:0.75rem; color:#94a3b8; font-style:italic; padding:2px;">Sin títulos marcados</li>';
+        return;
+      }
+
+      headers.forEach((header, index) => {
+        if (!header.id) {
+          header.id = 'toc_header_' + index;
+        }
+
+        const text = header.textContent || header.innerText;
+        if (!text.trim()) return;
+
+        const li = document.createElement('li');
+        const tagName = header.tagName.toLowerCase();
+        
+        if (tagName === 'h2') li.className = 'toc-item level-2';
+        else if (tagName === 'h3') li.className = 'toc-item level-3';
+        else li.className = 'toc-item level-1';
+
+        const a = document.createElement('a');
+        a.href = '#' + header.id;
+        a.textContent = text;
+        a.onclick = (e) => {
+          e.preventDefault();
+          header.scrollIntoView({ behavior: 'smooth' });
+        };
+
+        li.appendChild(a);
+        tocList.appendChild(li);
+      });
+    }
+
+    function getSanitizedCronicaFilename(titleStr) {
+      const base = (titleStr || 'cronica').trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_-]/g, '') || 'cronica';
+      return `cronica_${base}.json`;
+    }
+
+    /* EXPORTAR CRÓNICA ACTIVA A JSON */
+    function exportCronicaJson() {
+      if (!activeId || !cronicas[activeId]) return;
+      flushActiveCronicaChanges();
+      const cronicaData = cronicas[activeId];
+      const blob = new Blob([JSON.stringify(cronicaData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = getSanitizedCronicaFilename(cronicaData.title);
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function addImportedCronicaToList(data) {
+      if (!data || !data.title || data.content === undefined) {
+        throw new Error('El archivo JSON no tiene el formato correcto de crónica.');
+      }
+      const id = 'cronica_' + Date.now() + '_' + Math.random().toString(36).substring(2, 5);
+      cronicas[id] = {
+        title: data.title,
+        password: data.password || '',
+        content: data.content
+      };
+      saveStorage();
+      renderList();
+      selectCronica(id);
+      return id;
+    }
+
+    /* IMPORTAR CRÓNICA DESDE JSON */
+    function importCronicaJson(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          addImportedCronicaToList(data);
+          alert('¡Crónica cargada e incorporada a la lista con éxito!');
+        } catch (err) {
+          alert(err.message || 'Error al leer el archivo JSON.');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    /* --- GUARDAR Y CARGAR TODAS LAS CRÓNICAS (LISTA COMPLETA) --- */
+    function exportAllCronicasJson() {
+      flushActiveCronicaChanges();
+      const blob = new Blob([JSON.stringify(cronicas, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `todas_las_cronicas_pbta_${Date.now()}.json`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function applyImportedCronicasList(data) {
+      if (typeof data !== 'object' || data === null || Array.isArray(data)) {
+        throw new Error('El archivo JSON no tiene un formato válido de lista de crónicas.');
+      }
+
+      cronicas = data;
+      saveStorage();
+      renderList();
+
+      if (activeId && !cronicas[activeId]) {
+        activeId = null;
+        document.getElementById('editorContainer').style.display = 'none';
+        document.getElementById('emptyNotice').style.display = 'block';
+      } else if (activeId && cronicas[activeId]) {
+        selectCronica(activeId);
+      }
+    }
+
+    function importAllCronicasJson(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          applyImportedCronicasList(data);
+          alert('¡Todas las crónicas se han cargado correctamente!');
+        } catch (err) {
+          alert(err.message || 'Error al leer el archivo JSON general.');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    // --- INTEGRACIÓN GOOGLE DRIVE (TMS PBTA / CRONICAS y TMS PBTA / LISTA CRONICAS) ---
+    function loadGoogleIdentityScript() {
+      return new Promise((resolve, reject) => {
+        if (window.google && window.google.accounts && window.google.accounts.oauth2) {
+          resolve();
+          return;
+        }
+        const existing = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
+        if (existing) {
+          existing.addEventListener('load', () => resolve());
+          existing.addEventListener('error', () => reject(new Error('No se pudo cargar Google Identity Services.')));
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://accounts.google.com/gsi/client';
+        script.async = true;
+        script.defer = true;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('No se pudo cargar Google Identity Services.'));
+        document.head.appendChild(script);
+      });
+    }
+
+    async function getDriveAccessToken(promptMode = 'consent') {
+      if (!DRIVE_CONFIG.clientId) {
+        throw new Error('Falta configurar DRIVE_CONFIG.clientId con tu Web Client ID de Google Cloud.');
+      }
+      if (driveAccessToken && Date.now() < driveTokenExpiresAt - 15000) {
+        return driveAccessToken;
+      }
+
+      await loadGoogleIdentityScript();
+
+      return new Promise((resolve, reject) => {
+        pendingAuthResolver = resolve;
+        pendingAuthRejecter = reject;
+
+        tokenClient = window.google.accounts.oauth2.initTokenClient({
+          client_id: DRIVE_CONFIG.clientId,
+          scope: DRIVE_CONFIG.scope,
+          callback: (tokenResponse) => {
+            if (tokenResponse && tokenResponse.error) {
+              const err = new Error(tokenResponse.error_description || tokenResponse.error);
+              if (pendingAuthRejecter) pendingAuthRejecter(err);
+              pendingAuthResolver = null;
+              pendingAuthRejecter = null;
+              return;
+            }
+            if (tokenResponse && tokenResponse.access_token) {
+              driveAccessToken = tokenResponse.access_token;
+              const expiresInSec = Number(tokenResponse.expires_in || 3600);
+              driveTokenExpiresAt = Date.now() + expiresInSec * 1000;
+              if (pendingAuthResolver) pendingAuthResolver(driveAccessToken);
+              pendingAuthResolver = null;
+              pendingAuthRejecter = null;
+            }
+          },
+          error_callback: (err) => {
+            if (pendingAuthRejecter) {
+              pendingAuthRejecter(new Error((err && err.message) || 'Error de autenticación en Google.'));
+            }
+            pendingAuthResolver = null;
+            pendingAuthRejecter = null;
+          }
+        });
+
+        tokenClient.requestAccessToken({ prompt: promptMode });
+      });
+    }
+
+    async function driveApiFetch(url, options = {}) {
+      const token = await getDriveAccessToken('');
+      const headers = Object.assign({}, options.headers || {}, {
+        'Authorization': `Bearer ${token}`
+      });
+      const response = await fetch(url, Object.assign({}, options, { headers }));
+      if (response.status === 401) {
+        driveAccessToken = null;
+        driveTokenExpiresAt = 0;
+        const freshToken = await getDriveAccessToken('consent');
+        headers['Authorization'] = `Bearer ${freshToken}`;
+        const retryResponse = await fetch(url, Object.assign({}, options, { headers }));
+        if (!retryResponse.ok) {
+          throw new Error(`Error de Google Drive (${retryResponse.status})`);
+        }
+        return retryResponse;
+      }
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Error de Google Drive (${response.status}): ${text}`);
+      }
+      return response;
+    }
+
+    function escapeDriveQueryValue(val) {
+      return String(val).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    }
+
+    async function findOrCreateFolder(folderName, parentId = null) {
+      const qParts = [
+        `mimeType = 'application/vnd.google-apps.folder'`,
+        `name = '${escapeDriveQueryValue(folderName)}'`,
+        `trashed = false`
+      ];
+      if (parentId) {
+        qParts.push(`'${escapeDriveQueryValue(parentId)}' in parents`);
+      }
+
+      const query = encodeURIComponent(qParts.join(' and '));
+      const searchResp = await driveApiFetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)&pageSize=10`);
+      const searchJson = await searchResp.json();
+
+      if (searchJson.files && searchJson.files.length > 0) {
+        return searchJson.files[0].id;
+      }
+
+      const metadata = {
+        name: folderName,
+        mimeType: 'application/vnd.google-apps.folder'
+      };
+      if (parentId) {
+        metadata.parents = [parentId];
+      }
+
+      const createResp = await driveApiFetch('https://www.googleapis.com/drive/v3/files?fields=id,name', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(metadata)
+      });
+      const createdJson = await createResp.json();
+      return createdJson.id;
+    }
+
+    async function ensureRootFolderId() {
+      if (!cachedRootFolderId) {
+        cachedRootFolderId = await findOrCreateFolder(DRIVE_CONFIG.rootFolderName, null);
+      }
+      return cachedRootFolderId;
+    }
+
+    async function ensureCronicasFolderId() {
+      if (cachedCronicasFolderId) return cachedCronicasFolderId;
+      const rootId = await ensureRootFolderId();
+      cachedCronicasFolderId = await findOrCreateFolder(DRIVE_CONFIG.cronicasFolderName, rootId);
+      return cachedCronicasFolderId;
+    }
+
+    async function ensureListaFolderId() {
+      if (cachedListaFolderId) return cachedListaFolderId;
+      const rootId = await ensureRootFolderId();
+      cachedListaFolderId = await findOrCreateFolder(DRIVE_CONFIG.listaFolderName, rootId);
+      return cachedListaFolderId;
+    }
+
+    function readDriveMeta(storageKey) {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey) || '{}');
+      } catch (_) {
+        return {};
+      }
+    }
+
+    function writeDriveMeta(storageKey, meta) {
+      localStorage.setItem(storageKey, JSON.stringify(meta));
+    }
+
+    async function upsertJsonInDriveFolder(folderId, folderLabel, fileName, payloadString, metaStorageKey) {
+      const meta = readDriveMeta(metaStorageKey);
+      let targetFileId = meta[fileName] || null;
+
+      if (!targetFileId) {
+        const q = encodeURIComponent(
+          `name = '${escapeDriveQueryValue(fileName)}' and '${escapeDriveQueryValue(folderId)}' in parents and trashed = false`
+        );
+        const listResp = await driveApiFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)&pageSize=1`);
+        const listJson = await listResp.json();
+        if (listJson.files && listJson.files.length > 0) {
+          targetFileId = listJson.files[0].id;
+        }
+      }
+
+      const boundary = '-------tms_pbta_boundary_' + Date.now();
+      const delimiter = `\r\n--${boundary}\r\n`;
+      const closeDelimiter = `\r\n--${boundary}--`;
+
+      if (targetFileId) {
+        const updateMetadata = { name: fileName, mimeType: 'application/json' };
+        const body =
+          delimiter +
+          'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+          JSON.stringify(updateMetadata) +
+          delimiter +
+          'Content-Type: application/json\r\n\r\n' +
+          payloadString +
+          closeDelimiter;
+
+        const updResp = await driveApiFetch(
+          `https://www.googleapis.com/upload/drive/v3/files/${encodeURIComponent(targetFileId)}?uploadType=multipart&fields=id,name`,
+          {
+            method: 'PATCH',
+            headers: { 'Content-Type': `multipart/related; boundary="${boundary}"` },
+            body
+          }
+        );
+        const updJson = await updResp.json();
+        meta[fileName] = updJson.id;
+        writeDriveMeta(metaStorageKey, meta);
+        showToast(`Actualizado en Drive (${DRIVE_CONFIG.rootFolderName}/${folderLabel}/${fileName}).`);
+      } else {
+        const createMetadata = {
+          name: fileName,
+          mimeType: 'application/json',
+          parents: [folderId]
+        };
+        const body =
+          delimiter +
+          'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+          JSON.stringify(createMetadata) +
+          delimiter +
+          'Content-Type: application/json\r\n\r\n' +
+          payloadString +
+          closeDelimiter;
+
+        const crtResp = await driveApiFetch(
+          'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': `multipart/related; boundary="${boundary}"` },
+            body
+          }
+        );
+        const crtJson = await crtResp.json();
+        meta[fileName] = crtJson.id;
+        writeDriveMeta(metaStorageKey, meta);
+        showToast(`Guardado en Drive (${DRIVE_CONFIG.rootFolderName}/${folderLabel}/${fileName}).`);
+      }
+    }
+
+    async function pickAndDownloadJsonFromFolder(folderId, folderLabel, promptHeader, metaStorageKey) {
+      const q = encodeURIComponent(
+        `'${escapeDriveQueryValue(folderId)}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`
+      );
+      const listResp = await driveApiFetch(
+        `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime)&orderBy=modifiedTime desc&pageSize=30`
+      );
+      const listJson = await listResp.json();
+      const files = listJson.files || [];
+
+      if (files.length === 0) {
+        showToast(`No hay archivos en ${DRIVE_CONFIG.rootFolderName}/${folderLabel}.`);
+        return null;
+      }
+
+      const opciones = files
+        .map((f, idx) => `${idx + 1}. ${f.name}`)
+        .join('\n');
+      const selection = prompt(
+        `${promptHeader} en ${DRIVE_CONFIG.rootFolderName}/${folderLabel}:\n\n${opciones}`,
+        '1'
+      );
+      if (!selection) return null;
+
+      const chosenIndex = parseInt(selection.trim(), 10) - 1;
+      if (isNaN(chosenIndex) || chosenIndex < 0 || chosenIndex >= files.length) {
+        showToast('Selección no válida.');
+        return null;
+      }
+
+      const chosenFile = files[chosenIndex];
+      const fileResp = await driveApiFetch(
+        `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(chosenFile.id)}?alt=media`
+      );
+      const rawText = await fileResp.text();
+      const parsed = JSON.parse(rawText);
+
+      const meta = readDriveMeta(metaStorageKey);
+      meta[chosenFile.name] = chosenFile.id;
+      writeDriveMeta(metaStorageKey, meta);
+
+      return { file: chosenFile, data: parsed };
+    }
+
+    // Crónica individual -> subcarpeta CRONICAS
+    async function saveCronicaToGoogleDrive() {
+      try {
+        if (!activeId || !cronicas[activeId]) {
+          showToast('Selecciona o crea una crónica primero.');
+          return;
+        }
+        flushActiveCronicaChanges();
+        showToast('Guardando crónica en Google Drive...');
+        const folderId = await ensureCronicasFolderId();
+        const cronicaData = cronicas[activeId];
+        const fileName = getSanitizedCronicaFilename(cronicaData.title);
+        await upsertJsonInDriveFolder(
+          folderId,
+          DRIVE_CONFIG.cronicasFolderName,
+          fileName,
+          JSON.stringify(cronicaData, null, 2),
+          CRONICA_DRIVE_META_KEY
+        );
+      } catch (err) {
+        console.error(err);
+        showToast(`No se pudo guardar la crónica en Drive: ${err.message}`);
+      }
+    }
+
+    async function loadCronicaFromGoogleDrive() {
+      try {
+        showToast('Buscando crónicas en Drive...');
+        const folderId = await ensureCronicasFolderId();
+        const result = await pickAndDownloadJsonFromFolder(
+          folderId,
+          DRIVE_CONFIG.cronicasFolderName,
+          'Selecciona el número de la crónica a cargar',
+          CRONICA_DRIVE_META_KEY
+        );
+        if (!result) return;
+
+        addImportedCronicaToList(result.data);
+        showToast(`Cargada "${result.file.name}" desde ${DRIVE_CONFIG.cronicasFolderName}.`);
+      } catch (err) {
+        console.error(err);
+        showToast(`No se pudo cargar la crónica desde Drive: ${err.message}`);
+      }
+    }
+
+    // Lista entera -> subcarpeta LISTA CRONICAS
+    async function saveListToGoogleDrive() {
+      try {
+        flushActiveCronicaChanges();
+        showToast('Guardando lista completa en Google Drive...');
+        const folderId = await ensureListaFolderId();
+        const fileName = 'todas_las_cronicas_pbta.json';
+        await upsertJsonInDriveFolder(
+          folderId,
+          DRIVE_CONFIG.listaFolderName,
+          fileName,
+          JSON.stringify(cronicas, null, 2),
+          LISTA_DRIVE_META_KEY
+        );
+      } catch (err) {
+        console.error(err);
+        showToast(`No se pudo guardar la lista en Drive: ${err.message}`);
+      }
+    }
+
+    async function loadListFromGoogleDrive() {
+      try {
+        showToast('Buscando listas de crónicas en Drive...');
+        const folderId = await ensureListaFolderId();
+        const result = await pickAndDownloadJsonFromFolder(
+          folderId,
+          DRIVE_CONFIG.listaFolderName,
+          'Selecciona el número de la lista de crónicas a cargar',
+          LISTA_DRIVE_META_KEY
+        );
+        if (!result) return;
+
+        applyImportedCronicasList(result.data);
+        showToast(`Cargada lista "${result.file.name}" desde ${DRIVE_CONFIG.listaFolderName}.`);
+      } catch (err) {
+        console.error(err);
+        showToast(`No se pudo cargar la lista desde Drive: ${err.message}`);
+      }
+    }
+
+    /* FUNCIÓN DE IMPRESIÓN COMPATIBLE CON IFRAMES Y OPERA GX */
+    function printCronica() {
+      const title = document.getElementById('cronicaTitle').value || 'Crónica';
+      const bodyHtml = document.getElementById('cronicaBody').innerHTML;
+
+      const printHtml = `
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+          <meta charset="UTF-8">
+          <title>${title}</title>
+          <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+          <style>
+            body { font-family: 'Inter', sans-serif; padding: 40px; color: #0f172a; line-height: 1.6; }
+            h1.doc-title { font-family: 'Cinzel', serif; font-size: 2rem; color: #1e293b; border-bottom: 2px solid #1e293b; padding-bottom: 8px; margin-bottom: 25px; }
+            h1 { font-family: 'Cinzel', serif; font-size: 1.5rem; margin-top: 20px; color: #1e293b; }
+            h2 { font-family: 'Cinzel', serif; font-size: 1.2rem; margin-top: 15px; color: #1e293b; }
+            h3 { font-family: 'Cinzel', serif; font-size: 1rem; margin-top: 10px; color: #1e293b; }
+            p { margin-bottom: 12px; }
+            strike, s { text-decoration: line-through; color: #64748b; }
+          </style>
+        </head>
+        <body>
+          <h1 class="doc-title">${title}</h1>
+          <div>${bodyHtml}</div>
+        </body>
+        </html>
+      `;
+
+      try {
+        const printWindow = window.open('', '_blank');
+        if (printWindow) {
+          printWindow.document.write(printHtml);
+          printWindow.document.close();
+          printWindow.focus();
+          setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+          }, 300);
+        } else {
+          window.print();
+        }
+      } catch (e) {
+        window.print();
+      }
+    }
+
+    window.onload = function() {
+      loadStorage();
+    };
+  </script>
+</body>
+</html>

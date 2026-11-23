@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ficha de PNJ - PbtA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #f1f5f9;
+      --card-bg: #ffffff;
+      --border-color: #cbd5e1;
+      --accent-color: #1e293b;
+      --accent-light: #f8fafc;
+      --accent-active: #0f172a;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --danger: #e11d48;
+      --radius: 6px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding: 15px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .action-bar {
+      width: 100%;
+      max-width: 1000px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      padding: 12px 20px;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button, label.btn {
+      background: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    button:hover, label.btn:hover {
+      background: var(--accent-active);
+      transform: translateY(-1px);
+    }
+
+    button.btn-drive {
+      background: #0f766e;
+    }
+
+    button.btn-drive:hover {
+      background: #115e59;
+    }
+
+    button.btn-reset {
+      background: #ef4444;
+    }
+
+    button.btn-reset:hover {
+      background: #dc2626;
+    }
+
+    .sheet-container {
+      width: 100%;
+      max-width: 1000px;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      border: 1px solid var(--border-color);
+      position: relative;
+    }
+
+    .sheet-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 850px) {
+      .sheet-grid {
+        grid-template-columns: 1fr;
+      }
+      .sheet-container {
+        padding: 15px;
+      }
+    }
+
+    .col {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .box {
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 8px 12px;
+      position: relative;
+    }
+
+    .box-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--accent-color);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .concept-title-left {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .help-btn {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      padding: 0;
+      font-size: 0.75rem;
+      font-weight: 700;
+      line-height: 1;
+      background: #e2e8f0;
+      color: var(--accent-color);
+      border: 1px solid var(--border-color);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .help-btn:hover {
+      background: #cbd5e1;
+      color: var(--accent-active);
+      transform: none;
+    }
+
+    .gemini-btn {
+      margin-top: 8px;
+      width: 100%;
+      justify-content: center;
+      background: #334155;
+      color: #ffffff;
+      font-size: 0.78rem;
+      padding: 6px 10px;
+    }
+
+    .gemini-btn:hover {
+      background: var(--accent-active);
+    }
+
+    .editable {
+      width: 100%;
+      min-height: 24px;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      background: transparent;
+      word-break: break-word;
+      padding: 2px 4px;
+      border-radius: 3px;
+      border: 1px transparent solid;
+    }
+
+    .editable:focus {
+      background: #f8fafc;
+      border-color: var(--border-color);
+    }
+
+    .editable:empty:before {
+      content: attr(placeholder);
+      color: #a0aec0;
+      pointer-events: none;
+      display: block;
+    }
+
+    .editable strike, .editable s, .editable [style*="strike"] {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .header-row {
+      display: flex;
+      gap: 15px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .header-item {
+      flex: 1;
+      min-width: 180px;
+      border-bottom: 2px solid var(--accent-color);
+      padding-bottom: 2px;
+    }
+
+    .header-item label {
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--accent-color);
+      display: block;
+    }
+
+    .portrait-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 500px) {
+      .portrait-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .portrait-area {
+      height: 140px;
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      background: var(--accent-light);
+      cursor: pointer;
+    }
+
+    .portrait-area img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .portrait-placeholder {
+      font-family: 'Cinzel', serif;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      text-align: center;
+      padding: 10px;
+    }
+
+    .tags-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    @media (max-width: 480px) {
+      .tags-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .tag-input {
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 4px 6px;
+      font-size: 0.82rem;
+      background: #fafafa;
+      text-align: center;
+      min-height: 28px;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .stat-box {
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 6px;
+      text-align: center;
+    }
+
+    .stat-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--accent-color);
+    }
+
+    .bienestar-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 0;
+    }
+
+    .bienestar-top-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      width: 100%;
+    }
+
+    .hearts-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .heart-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #cbd5e1;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+      transition: color 0.15s;
+    }
+
+    .heart-btn.active {
+      color: var(--danger);
+    }
+
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .table-custom {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      min-width: 320px;
+    }
+
+    .table-custom th {
+      font-family: 'Cinzel', serif;
+      text-align: left;
+      font-size: 0.7rem;
+      padding: 4px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--accent-color);
+    }
+
+    .table-custom td {
+      padding: 3px 2px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    #floatingToolbar {
+      position: absolute;
+      display: none;
+      background: #0f172a;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 1000;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #floatingToolbar button {
+      background: #334155;
+      color: white;
+      border: none;
+      padding: 3px 8px;
+      font-size: 0.75rem;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    #floatingToolbar button:hover {
+      background: #475569;
+    }
+
+    /* Ventana flotante de concepto aleatorio */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      width: 100%;
+      max-width: 480px;
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius);
+      box-shadow: 0 20px 35px -10px rgba(15, 23, 42, 0.3);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent-color);
+    }
+
+    .modal-close {
+      background: transparent;
+      color: var(--text-muted);
+      padding: 4px 8px;
+      font-size: 1rem;
+    }
+
+    .modal-close:hover {
+      background: #f1f5f9;
+      color: var(--text-main);
+      transform: none;
+    }
+
+    .random-concept-box {
+      background: var(--accent-light);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 14px;
+      font-size: 0.95rem;
+      line-height: 1.45;
+      color: var(--text-main);
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .toast-msg {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      z-index: 3000;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.2s ease;
+      pointer-events: none;
+      max-width: 360px;
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      .action-bar, #floatingToolbar, .gemini-btn, .help-btn, .modal-backdrop, .toast-msg {
+        display: none !important;
+      }
+      .sheet-container {
+        box-shadow: none;
+        border: none;
+        width: 100%;
+        max-width: 100%;
+        padding: 0;
+      }
+      .editable:focus {
+        background: transparent;
+        border-color: transparent;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="floatingToolbar">
+    <button onmousedown="toggleStrike(event)"><s>S</s> Tachar / Limpiar</button>
+  </div>
+
+  <div class="action-bar">
+    <div style="font-family: 'Cinzel', serif; font-weight: 700; color: var(--accent-color);">PBTA - FICHA DE PNJ</div>
+    <div class="btn-group">
+      <button class="btn-drive" onclick="saveToGoogleDrive()">☁️ Guardar en Drive</button>
+      <button class="btn-drive" onclick="loadFromGoogleDrive()">📥 Cargar de Drive</button>
+      <button onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+      <button onclick="exportData()">💾 Guardar JSON</button>
+      <label class="btn">
+        📂 Cargar JSON
+        <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importData(event)">
+      </label>
+    </div>
+  </div>
+
+  <div class="sheet-container">
+    
+    <div class="header-row" style="margin-bottom: 15px;">
+      <div class="header-item" style="flex: 2;">
+        <label>NOMBRE DEL PNJ:</label>
+        <div class="editable" contenteditable="true" id="pnj_nombre" placeholder="Nombre de PNJ, Criatura, Facción..."></div>
+      </div>
+      <div class="header-item" style="flex: 1;">
+        <label>CATEGORÍA:</label>
+        <div class="editable" contenteditable="true" id="pnj_categoria" placeholder="Aliado, Enemigo, Jefe, Neutral..."></div>
+      </div>
+    </div>
+
+    <div class="sheet-grid">
+      
+      <!-- COLUMNA IZQUIERDA -->
+      <div class="col">
+        
+        <div class="portrait-grid">
+          <div class="col">
+            <div class="box">
+              <div class="box-title">
+                <span class="concept-title-left">
+                  CONCEPTO:
+                  <button type="button" class="help-btn" onclick="openConceptModal()" title="Generar concepto aleatorio para PNJ" aria-label="Generar concepto aleatorio para PNJ">?</button>
+                </span>
+              </div>
+              <div class="editable" contenteditable="true" id="pnj_concepto" placeholder="Rol, actitud, descripción rápida..." style="min-height: 90px;"></div>
+              <button type="button" class="gemini-btn" onclick="openGeminiWithConcept('pnj_concepto', 'pnj_nombre', 'pnj_categoria')">✨ Generar imagen en Gemini</button>
+            </div>
+          </div>
+
+          <div class="box portrait-area" onclick="document.getElementById('portraitInput').click()">
+            <input type="file" id="portraitInput" accept="image/*" style="display:none;" onchange="loadPortrait(event)">
+            <div id="portraitPlaceholder" class="portrait-placeholder">
+              📷<br>Haz clic para añadir<br>RETRATO PNJ
+            </div>
+            <img id="portraitImg" src="" style="display:none;">
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-title">ETIQUETAS:</div>
+          <div class="tags-grid">
+            <div class="editable tag-input" contenteditable="true" id="pnj_tag_1"></div>
+            <div class="editable tag-input" contenteditable="true" id="pnj_tag_2"></div>
+            <div class="editable tag-input" contenteditable="true" id="pnj_tag_3"></div>
+            <div class="editable tag-input" contenteditable="true" id="pnj_tag_4"></div>
+            <div class="editable tag-input" contenteditable="true" id="pnj_tag_5"></div>
+            <div class="editable tag-input" contenteditable="true" id="pnj_tag_6"></div>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-title">ETIQUETAS DE ESTADO:</div>
+          <div class="tags-grid">
+            <div class="editable tag-input" contenteditable="true" id="pnj_tag_e_1"></div>
+            <div class="editable tag-input" contenteditable="true" id="pnj_tag_e_2"></div>
+            <div class="editable tag-input" contenteditable="true" id="pnj_tag_e_3"></div>
+            <div class="editable tag-input" contenteditable="true" id="pnj_tag_e_4"></div>
+            <div class="editable tag-input" contenteditable="true" id="pnj_tag_e_5"></div>
+            <div class="editable tag-input" contenteditable="true" id="pnj_tag_e_6"></div>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="stat-title">RENDIMIENTO</div>
+            <div class="editable" contenteditable="true" id="pnj_stat_rendimiento" style="text-align: center;"></div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-title">INTELECTO</div>
+            <div class="editable" contenteditable="true" id="pnj_stat_intelecto" style="text-align: center;"></div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-title">VÍNCULO</div>
+            <div class="editable" contenteditable="true" id="pnj_stat_vinculo" style="text-align: center;"></div>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-title" style="justify-content: center;">BIENESTAR</div>
+          <div class="bienestar-container">
+            <div class="bienestar-top-row">
+              <div class="hearts-row" id="pnjHeartsRow"></div>
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                <span style="font-size: 0.6rem; font-family: 'Cinzel', serif; font-weight: 700; color: var(--accent-color);">MÁX</span>
+                <div class="editable" contenteditable="true" id="pnj_max_bienestar" style="width: 28px; height: 26px; border: 1.5px solid var(--accent-color); border-radius: 3px; text-align: center; font-size: 0.9rem; font-weight: 700; line-height: 22px; padding: 0;"></div>
+              </div>
+            </div>
+            <div id="pnjBienestarMsg" style="font-size: 0.72rem; color: var(--danger); font-weight: 600; text-align: center; display: none;">Señala una salud máxima antes de repartir corazones</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- COLUMNA DERECHA -->
+      <div class="col">
+        
+        <div class="box">
+          <div class="box-title">HABILIDADES ESPECIALES</div>
+          <div class="table-container">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th style="width: 35%;">NOMBRE</th>
+                  <th>DESCRIPCIÓN</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><div class="editable" contenteditable="true" id="pnj_hab_nom_1"></div></td><td><div class="editable" contenteditable="true" id="pnj_hab_desc_1"></div></td></tr>
+                <tr><td><div class="editable" contenteditable="true" id="pnj_hab_nom_2"></div></td><td><div class="editable" contenteditable="true" id="pnj_hab_desc_2"></div></td></tr>
+                <tr><td><div class="editable" contenteditable="true" id="pnj_hab_nom_3"></div></td><td><div class="editable" contenteditable="true" id="pnj_hab_desc_3"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-title">HABILIDADES TEMPORALES</div>
+          <div class="table-container">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th style="width: 35%;">NOMBRE Y ORIGEN</th>
+                  <th>DESCRIPCIÓN</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><div class="editable" contenteditable="true" id="pnj_hab_t_nom_1"></div></td><td><div class="editable" contenteditable="true" id="pnj_hab_t_desc_1"></div></td></tr>
+                <tr><td><div class="editable" contenteditable="true" id="pnj_hab_t_nom_2"></div></td><td><div class="editable" contenteditable="true" id="pnj_hab_t_desc_2"></div></td></tr>
+                <tr><td><div class="editable" contenteditable="true" id="pnj_hab_t_nom_3"></div></td><td><div class="editable" contenteditable="true" id="pnj_hab_t_desc_3"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-title">EQUIPAMIENTO</div>
+          <div class="table-container">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th>NOMBRE</th>
+                  <th style="width: 35px;">PD</th>
+                  <th>ETIQUETAS</th>
+                  <th style="width: 35px;">BD</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="editable" contenteditable="true" id="pnj_eq_nom_1"></div></td>
+                  <td><div class="editable" contenteditable="true" id="pnj_eq_pd_1"></div></td>
+                  <td><div class="editable" contenteditable="true" id="pnj_eq_etq_1"></div></td>
+                  <td><div class="editable" contenteditable="true" id="pnj_eq_bd_1"></div></td>
+                </tr>
+                <tr>
+                  <td><div class="editable" contenteditable="true" id="pnj_eq_nom_2"></div></td>
+                  <td><div class="editable" contenteditable="true" id="pnj_eq_pd_2"></div></td>
+                  <td><div class="editable" contenteditable="true" id="pnj_eq_etq_2"></div></td>
+                  <td><div class="editable" contenteditable="true" id="pnj_eq_bd_2"></div></td>
+                </tr>
+                <tr>
+                  <td><div class="editable" contenteditable="true" id="pnj_eq_nom_3"></div></td>
+                  <td><div class="editable" contenteditable="true" id="pnj_eq_pd_3"></div></td>
+                  <td><div class="editable" contenteditable="true" id="pnj_eq_etq_3"></div></td>
+                  <td><div class="editable" contenteditable="true" id="pnj_eq_bd_3"></div></td>
+                </tr>
+                <tr>
+                  <td><div class="editable" contenteditable="true" id="pnj_eq_nom_4"></div></td>
+                  <td><div class="editable" contenteditable="true" id="pnj_eq_pd_4"></div></td>
+                  <td><div class="editable" contenteditable="true" id="pnj_eq_etq_4"></div></td>
+                  <td><div class="editable" contenteditable="true" id="pnj_eq_bd_4"></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-title">INVENTARIO</div>
+          <div class="editable" contenteditable="true" id="pnj_inventario" placeholder="Objetos portados, recompensas, botín..." style="min-height: 80px;"></div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- NOTAS DE PNJ (ANCHO COMPLETO) -->
+    <div class="box" style="margin-top: 20px;">
+      <div class="box-title">NOTAS DEL PNJ:</div>
+      <div class="editable" contenteditable="true" id="pnj_notas" placeholder="Instintos, alianzas, debilidades, notas de encuentros..." style="min-height: 90px;"></div>
+    </div>
+
+  </div>
+
+  <!-- MODAL CONCEPTO ALEATORIO PNJ -->
+  <div id="conceptModal" class="modal-backdrop" onclick="handleModalBackdropClick(event)">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="conceptModalTitle">
+      <div class="modal-header">
+        <div id="conceptModalTitle" class="modal-title">CONCEPTO ALEATORIO DE PNJ</div>
+        <button type="button" class="modal-close" onclick="closeConceptModal()" aria-label="Cerrar">✕</button>
+      </div>
+      <div id="randomConceptText" class="random-concept-box"></div>
+      <div class="modal-actions">
+        <button type="button" onclick="pickRandomConcept()">🎲 Otro concepto</button>
+        <button type="button" class="btn-drive" onclick="applyRandomConcept()">✓ Usar concepto</button>
+        <button type="button" class="gemini-btn" style="margin-top: 0; width: auto;" onclick="generateImageFromModalConcept()">✨ Generar imagen en Gemini</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastMsg" class="toast-msg"></div>
+
+  <script>
+    let healthLevel = 0;
+
+    // --- CONFIGURACIÓN Y ESTADO DE GOOGLE DRIVE (TMS PBTA / PNJ) ---
+    const DRIVE_CONFIG = {
+      clientId: '3720906139-udra1unbra3vjpuogv200hgipur8dcrv.apps.googleusercontent.com',
+      rootFolderId: '',
+      rootFolderName: 'TMS PBTA',
+      subFolderName: 'PNJ',
+      scope: 'https://www.googleapis.com/auth/drive.file'
+    };
+
+    const DRIVE_META_STORAGE_KEY = 'pbta_pnj_drive_link_v1';
+
+    let driveAccessToken = null;
+    let driveTokenExpiresAt = 0;
+    let tokenClient = null;
+    let pendingAuthResolver = null;
+    let pendingAuthRejecter = null;
+
+    let cachedRootFolderId = DRIVE_CONFIG.rootFolderId || null;
+    let cachedPnjFolderId = null;
+
+    const PNJ_RANDOM_CONCEPTS = [
+      'Archivero ciego que intercambia secretos de la ciudad a cambio de recuerdos olvidados.',
+      'Capitán de guardia cansado de las intrigas nobles, leal solo a los barrios bajos.',
+      'Herborista errante que cultiva plantas que reaccionan a la mentira y al miedo.',
+      'Mercader de reliquias rotas cuya sonrisa nunca llega a los ojos.',
+      'Mensajero veloz con un brazo mecánico y una deuda que nadie sabe quién cobra.',
+      'Juez local incorruptible hasta que amenazan a su única hija.',
+      'Espectro atado a una posada que solo ayuda a quienes pagan con una historia real.',
+      'Ingeniero excéntrico obsesionado con encender un faro en mitad de tierra firme.',
+      'Espía infiltrado en una facción rival que empieza a simpatizar con los PJ.',
+      'Guardián de un paso fronterizo que cobra peaje en favores futuros.',
+      'Bardo cínico que convierte los rumores de taberna en presión política.',
+      'Cazador de bestias retirado que conoce las rutas seguras cuando cae la noche.'
+    ];
+
+    let currentRandomConcept = '';
+
+    function showToast(message) {
+      const toast = document.getElementById('toastMsg');
+      if (!toast) return;
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3600);
+    }
+
+    function getPlainTextById(id) {
+      const el = document.getElementById(id);
+      if (!el) return '';
+      return (el.innerText || el.textContent || '').trim();
+    }
+
+    // --- CONCEPTO ALEATORIO Y GENERACIÓN DE IMAGEN EN GEMINI ---
+    function openConceptModal() {
+      pickRandomConcept();
+      document.getElementById('conceptModal').classList.add('open');
+    }
+
+    function closeConceptModal() {
+      document.getElementById('conceptModal').classList.remove('open');
+    }
+
+    function handleModalBackdropClick(event) {
+      if (event.target && event.target.id === 'conceptModal') {
+        closeConceptModal();
+      }
+    }
+
+    function pickRandomConcept() {
+      const pool = PNJ_RANDOM_CONCEPTS.filter(c => c !== currentRandomConcept);
+      const list = pool.length > 0 ? pool : PNJ_RANDOM_CONCEPTS;
+      currentRandomConcept = list[Math.floor(Math.random() * list.length)];
+      document.getElementById('randomConceptText').textContent = currentRandomConcept;
+    }
+
+    function applyRandomConcept() {
+      if (!currentRandomConcept) pickRandomConcept();
+      const conceptoEl = document.getElementById('pnj_concepto');
+      if (conceptoEl) {
+        conceptoEl.textContent = currentRandomConcept;
+        autoSave();
+      }
+      closeConceptModal();
+      showToast('Concepto aplicado a la ficha de PNJ.');
+    }
+
+    function buildGeminiPrompt(conceptText, nameText, categoryText) {
+      const parts = [
+        'Retrato de personaje de rol (PNJ) para juego PbtA, ilustración detallada y expresiva, estilo fantasía/aventura moderna limpia, encuadre de busto o medio cuerpo.'
+      ];
+      if (nameText) parts.push(`Nombre: ${nameText}.`);
+      if (categoryText) parts.push(`Categoría: ${categoryText}.`);
+      parts.push(`Concepto: ${conceptText}.`);
+      return parts.join(' ');
+    }
+
+    async function openGeminiWithConcept(conceptId, nameId, categoryId) {
+      const conceptText = getPlainTextById(conceptId);
+      if (!conceptText) {
+        showToast('Escribe primero un concepto o usa el botón "?" para generar uno.');
+        openConceptModal();
+        return;
+      }
+
+      const prompt = buildGeminiPrompt(
+        conceptText,
+        nameId ? getPlainTextById(nameId) : '',
+        categoryId ? getPlainTextById(categoryId) : ''
+      );
+
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(prompt);
+          showToast('Prompt copiado al portapapeles. Abriendo Gemini...');
+        } else {
+          showToast('Abriendo Gemini...');
+        }
+      } catch (_) {
+        showToast('Abriendo Gemini...');
+      }
+
+      window.open('https://gemini.google.com/app', '_blank', 'noopener,noreferrer');
+    }
+
+    function generateImageFromModalConcept() {
+      if (!currentRandomConcept) pickRandomConcept();
+      const conceptoEl = document.getElementById('pnj_concepto');
+      if (conceptoEl) {
+        conceptoEl.textContent = currentRandomConcept;
+        autoSave();
+      }
+      closeConceptModal();
+      openGeminiWithConcept('pnj_concepto', 'pnj_nombre', 'pnj_categoria');
+    }
+
+    // --- TACHADO FLOTANTE AL SELECCIONAR TEXTO ---
+    document.addEventListener('selectionchange', () => {
+      const selection = window.getSelection();
+      const toolbar = document.getElementById('floatingToolbar');
+
+      if (!selection.isCollapsed && selection.toString().trim().length > 0) {
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+
+        toolbar.style.display = 'flex';
+        toolbar.style.top = `${rect.top + window.scrollY - 38}px`;
+        toolbar.style.left = `${rect.left + window.scrollX + (rect.width / 2) - 50}px`;
+      } else {
+        setTimeout(() => {
+          if (window.getSelection().isCollapsed) {
+            toolbar.style.display = 'none';
+          }
+        }, 150);
+      }
+    });
+
+    function toggleStrike(e) {
+      if (e) e.preventDefault();
+      document.execCommand('strikethrough', false, null);
+      autoSave();
+    }
+
+    function updateHeartsDisplay() {
+      const maxEl = document.getElementById('pnj_max_bienestar');
+      const msgEl = document.getElementById('pnjBienestarMsg');
+      const heartsRow = document.getElementById('pnjHeartsRow');
+      if (!maxEl || !heartsRow || !msgEl) return;
+
+      const maxText = maxEl.textContent.trim();
+      const maxVal = parseInt(maxText);
+
+      if (maxText === '' || isNaN(maxVal) || maxVal <= 0) {
+        msgEl.style.display = 'block';
+        heartsRow.innerHTML = '';
+        healthLevel = 0;
+        autoSave();
+        return;
+      }
+
+      msgEl.style.display = 'none';
+
+      if (healthLevel > maxVal) {
+        healthLevel = maxVal;
+      }
+
+      heartsRow.innerHTML = '';
+      for (let i = 1; i <= Math.min(maxVal, 15); i++) {
+        const btn = document.createElement('button');
+        btn.className = 'heart-btn' + (i <= healthLevel ? ' active' : '');
+        btn.innerHTML = '♥';
+        btn.onclick = () => toggleHeart(i);
+        heartsRow.appendChild(btn);
+      }
+      autoSave();
+    }
+
+    function setHealthLevel(val) {
+      const maxEl = document.getElementById('pnj_max_bienestar');
+      const maxVal = parseInt(maxEl ? maxEl.textContent.trim() : '');
+      if (isNaN(maxVal) || maxVal <= 0) return;
+
+      healthLevel = Math.max(0, Math.min(maxVal, val));
+      updateHeartsDisplay();
+    }
+
+    function toggleHeart(index) {
+      const maxEl = document.getElementById('pnj_max_bienestar');
+      const maxVal = parseInt(maxEl ? maxEl.textContent.trim() : '');
+      if (isNaN(maxVal) || maxVal <= 0) return;
+
+      if (index > maxVal) return;
+
+      if (healthLevel === index) {
+        setHealthLevel(index - 1);
+      } else {
+        setHealthLevel(index);
+      }
+    }
+
+    function loadPortrait(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.getElementById('portraitImg');
+          img.src = e.target.result;
+          img.style.display = 'block';
+          document.getElementById('portraitPlaceholder').style.display = 'none';
+          autoSave();
+        }
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function autoSave() {
+      const data = {};
+      const editables = document.querySelectorAll('.editable');
+      editables.forEach(el => {
+        if (el.id) data[el.id] = el.innerHTML;
+      });
+
+      data['healthLevel'] = healthLevel;
+
+      const portraitImg = document.getElementById('portraitImg');
+      if (portraitImg.src && portraitImg.style.display !== 'none') {
+        data['portraitSrc'] = portraitImg.src;
+      }
+
+      localStorage.setItem('pbta_pnj_sheet_data', JSON.stringify(data));
+    }
+
+    function loadAutoSave() {
+      const saved = localStorage.getItem('pbta_pnj_sheet_data');
+      if (!saved) return;
+      const data = JSON.parse(saved);
+
+      Object.keys(data).forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.classList.contains('editable')) {
+          el.innerHTML = data[id];
+        }
+      });
+
+      if (data.healthLevel !== undefined) {
+        healthLevel = data.healthLevel;
+      }
+
+      if (data.portraitSrc) {
+        const img = document.getElementById('portraitImg');
+        img.src = data.portraitSrc;
+        img.style.display = 'block';
+        document.getElementById('portraitPlaceholder').style.display = 'none';
+      }
+      
+      updateHeartsDisplay();
+    }
+
+    document.querySelectorAll('.editable').forEach(el => {
+      el.addEventListener('input', () => {
+        autoSave();
+        if (el.id === 'pnj_max_bienestar') updateHeartsDisplay();
+      });
+      el.addEventListener('keyup', () => {
+        autoSave();
+        if (el.id === 'pnj_max_bienestar') updateHeartsDisplay();
+      });
+      el.addEventListener('blur', () => {
+        autoSave();
+        if (el.id === 'pnj_max_bienestar') updateHeartsDisplay();
+      });
+    });
+
+    function getSanitizedPnjName() {
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = document.getElementById('pnj_nombre').innerHTML;
+      const nombreTexto = (tempDiv.textContent || tempDiv.innerText || 'pnj').trim();
+      return nombreTexto.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_-]/g, '') || 'pnj';
+    }
+
+    function exportData() {
+      autoSave();
+      const data = localStorage.getItem('pbta_pnj_sheet_data');
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `pnj_${getSanitizedPnjName()}.json`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        localStorage.setItem('pbta_pnj_sheet_data', e.target.result);
+        loadAutoSave();
+      };
+      reader.readAsText(file);
+    }
+
+    function resetForm() {
+      if (confirm('¿Estás seguro de que quieres borrar todos los datos de la ficha de PNJ?')) {
+        localStorage.removeItem('pbta_pnj_sheet_data');
+        location.reload();
+      }
+    }
+
+    // --- INTEGRACIÓN GOOGLE DRIVE (TMS PBTA / PNJ) ---
+    function loadGoogleIdentityScript() {
+      return new Promise((resolve, reject) => {
+        if (window.google && window.google.accounts && window.google.accounts.oauth2) {
+          resolve();
+          return;
+        }
+        const existing = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
+        if (existing) {
+          existing.addEventListener('load', () => resolve());
+          existing.addEventListener('error', () => reject(new Error('No se pudo cargar Google Identity Services.')));
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://accounts.google.com/gsi/client';
+        script.async = true;
+        script.defer = true;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('No se pudo cargar Google Identity Services.'));
+        document.head.appendChild(script);
+      });
+    }
+
+    async function getDriveAccessToken(promptMode = 'consent') {
+      if (!DRIVE_CONFIG.clientId) {
+        throw new Error('Falta configurar DRIVE_CONFIG.clientId con tu Web Client ID de Google Cloud.');
+      }
+      if (driveAccessToken && Date.now() < driveTokenExpiresAt - 15000) {
+        return driveAccessToken;
+      }
+
+      await loadGoogleIdentityScript();
+
+      return new Promise((resolve, reject) => {
+        pendingAuthResolver = resolve;
+        pendingAuthRejecter = reject;
+
+        tokenClient = window.google.accounts.oauth2.initTokenClient({
+          client_id: DRIVE_CONFIG.clientId,
+          scope: DRIVE_CONFIG.scope,
+          callback: (tokenResponse) => {
+            if (tokenResponse && tokenResponse.error) {
+              const err = new Error(tokenResponse.error_description || tokenResponse.error);
+              if (pendingAuthRejecter) pendingAuthRejecter(err);
+              pendingAuthResolver = null;
+              pendingAuthRejecter = null;
+              return;
+            }
+            if (tokenResponse && tokenResponse.access_token) {
+              driveAccessToken = tokenResponse.access_token;
+              const expiresInSec = Number(tokenResponse.expires_in || 3600);
+              driveTokenExpiresAt = Date.now() + expiresInSec * 1000;
+              if (pendingAuthResolver) pendingAuthResolver(driveAccessToken);
+              pendingAuthResolver = null;
+              pendingAuthRejecter = null;
+            }
+          },
+          error_callback: (err) => {
+            if (pendingAuthRejecter) {
+              pendingAuthRejecter(new Error((err && err.message) || 'Error de autenticación en Google.'));
+            }
+            pendingAuthResolver = null;
+            pendingAuthRejecter = null;
+          }
+        });
+
+        tokenClient.requestAccessToken({ prompt: promptMode });
+      });
+    }
+
+    async function driveApiFetch(url, options = {}) {
+      const token = await getDriveAccessToken('');
+      const headers = Object.assign({}, options.headers || {}, {
+        'Authorization': `Bearer ${token}`
+      });
+      const response = await fetch(url, Object.assign({}, options, { headers }));
+      if (response.status === 401) {
+        driveAccessToken = null;
+        driveTokenExpiresAt = 0;
+        const freshToken = await getDriveAccessToken('consent');
+        headers['Authorization'] = `Bearer ${freshToken}`;
+        const retryResponse = await fetch(url, Object.assign({}, options, { headers }));
+        if (!retryResponse.ok) {
+          throw new Error(`Error de Google Drive (${retryResponse.status})`);
+        }
+        return retryResponse;
+      }
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Error de Google Drive (${response.status}): ${text}`);
+      }
+      return response;
+    }
+
+    function escapeDriveQueryValue(val) {
+      return String(val).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    }
+
+    async function findOrCreateFolder(folderName, parentId = null) {
+      const qParts = [
+        `mimeType = 'application/vnd.google-apps.folder'`,
+        `name = '${escapeDriveQueryValue(folderName)}'`,
+        `trashed = false`
+      ];
+      if (parentId) {
+        qParts.push(`'${escapeDriveQueryValue(parentId)}' in parents`);
+      }
+
+      const query = encodeURIComponent(qParts.join(' and '));
+      const searchResp = await driveApiFetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)&pageSize=10`);
+      const searchJson = await searchResp.json();
+
+      if (searchJson.files && searchJson.files.length > 0) {
+        return searchJson.files[0].id;
+      }
+
+      const metadata = {
+        name: folderName,
+        mimeType: 'application/vnd.google-apps.folder'
+      };
+      if (parentId) {
+        metadata.parents = [parentId];
+      }
+
+      const createResp = await driveApiFetch('https://www.googleapis.com/drive/v3/files?fields=id,name', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(metadata)
+      });
+      const createdJson = await createResp.json();
+      return createdJson.id;
+    }
+
+    async function ensurePnjFolderId() {
+      if (cachedPnjFolderId) return cachedPnjFolderId;
+
+      if (!cachedRootFolderId) {
+        cachedRootFolderId = await findOrCreateFolder(DRIVE_CONFIG.rootFolderName, null);
+      }
+      cachedPnjFolderId = await findOrCreateFolder(DRIVE_CONFIG.subFolderName, cachedRootFolderId);
+      return cachedPnjFolderId;
+    }
+
+    function readDriveLinkMeta() {
+      try {
+        return JSON.parse(localStorage.getItem(DRIVE_META_STORAGE_KEY) || '{}');
+      } catch (_) {
+        return {};
+      }
+    }
+
+    function writeDriveLinkMeta(meta) {
+      localStorage.setItem(DRIVE_META_STORAGE_KEY, JSON.stringify(meta));
+    }
+
+    async function saveToGoogleDrive() {
+      try {
+        autoSave();
+        showToast('Conectando con Google Drive...');
+        const folderId = await ensurePnjFolderId();
+        const fileName = `pnj_${getSanitizedPnjName()}.json`;
+        const payloadString = localStorage.getItem('pbta_pnj_sheet_data') || '{}';
+        const meta = readDriveLinkMeta();
+
+        let targetFileId = meta[fileName] || null;
+
+        if (!targetFileId) {
+          const q = encodeURIComponent(
+            `name = '${escapeDriveQueryValue(fileName)}' and '${escapeDriveQueryValue(folderId)}' in parents and trashed = false`
+          );
+          const listResp = await driveApiFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)&pageSize=1`);
+          const listJson = await listResp.json();
+          if (listJson.files && listJson.files.length > 0) {
+            targetFileId = listJson.files[0].id;
+          }
+        }
+
+        const boundary = '-------tms_pbta_boundary_' + Date.now();
+        const delimiter = `\r\n--${boundary}\r\n`;
+        const closeDelimiter = `\r\n--${boundary}--`;
+
+        if (targetFileId) {
+          const updateMetadata = { name: fileName, mimeType: 'application/json' };
+          const body =
+            delimiter +
+            'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+            JSON.stringify(updateMetadata) +
+            delimiter +
+            'Content-Type: application/json\r\n\r\n' +
+            payloadString +
+            closeDelimiter;
+
+          const updResp = await driveApiFetch(
+            `https://www.googleapis.com/upload/drive/v3/files/${encodeURIComponent(targetFileId)}?uploadType=multipart&fields=id,name`,
+            {
+              method: 'PATCH',
+              headers: { 'Content-Type': `multipart/related; boundary="${boundary}"` },
+              body
+            }
+          );
+          const updJson = await updResp.json();
+          meta[fileName] = updJson.id;
+          writeDriveLinkMeta(meta);
+          showToast(`Actualizado en Drive (${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}/${fileName}).`);
+        } else {
+          const createMetadata = {
+            name: fileName,
+            mimeType: 'application/json',
+            parents: [folderId]
+          };
+          const body =
+            delimiter +
+            'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+            JSON.stringify(createMetadata) +
+            delimiter +
+            'Content-Type: application/json\r\n\r\n' +
+            payloadString +
+            closeDelimiter;
+
+          const crtResp = await driveApiFetch(
+            'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name',
+            {
+              method: 'POST',
+              headers: { 'Content-Type': `multipart/related; boundary="${boundary}"` },
+              body
+            }
+          );
+          const crtJson = await crtResp.json();
+          meta[fileName] = crtJson.id;
+          writeDriveLinkMeta(meta);
+          showToast(`Guardado en Drive (${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}/${fileName}).`);
+        }
+      } catch (err) {
+        console.error(err);
+        showToast(`No se pudo guardar en Drive: ${err.message}`);
+      }
+    }
+
+    async function loadFromGoogleDrive() {
+      try {
+        showToast('Buscando fichas de PNJ en Drive...');
+        const folderId = await ensurePnjFolderId();
+        const q = encodeURIComponent(
+          `'${escapeDriveQueryValue(folderId)}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`
+        );
+        const listResp = await driveApiFetch(
+          `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime)&orderBy=modifiedTime desc&pageSize=30`
+        );
+        const listJson = await listResp.json();
+        const files = listJson.files || [];
+
+        if (files.length === 0) {
+          showToast(`No hay archivos de PNJ en ${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}.`);
+          return;
+        }
+
+        const opciones = files
+          .map((f, idx) => `${idx + 1}. ${f.name}`)
+          .join('\n');
+        const selection = prompt(
+          `Selecciona el número de la ficha de PNJ a cargar desde ${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}:\n\n${opciones}`,
+          '1'
+        );
+        if (!selection) return;
+
+        const chosenIndex = parseInt(selection.trim(), 10) - 1;
+        if (isNaN(chosenIndex) || chosenIndex < 0 || chosenIndex >= files.length) {
+          showToast('Selección no válida.');
+          return;
+        }
+
+        const chosenFile = files[chosenIndex];
+        const fileResp = await driveApiFetch(
+          `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(chosenFile.id)}?alt=media`
+        );
+        const rawText = await fileResp.text();
+        JSON.parse(rawText);
+
+        localStorage.setItem('pbta_pnj_sheet_data', rawText);
+        loadAutoSave();
+
+        const meta = readDriveLinkMeta();
+        meta[chosenFile.name] = chosenFile.id;
+        writeDriveLinkMeta(meta);
+
+        showToast(`Cargado "${chosenFile.name}" desde Google Drive.`);
+      } catch (err) {
+        console.error(err);
+        showToast(`No se pudo cargar desde Drive: ${err.message}`);
+      }
+    }
+
+    window.onload = loadAutoSave;
+  </script>
+</body>
+</html>

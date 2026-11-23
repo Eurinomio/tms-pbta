@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manual de Reglas Oficial - PbtA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --border-color: #334155;
+      --accent-color: #0284c7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    /* DISEÑO GENERAL CON POSICIONAMIENTO FIJO PARA ORDENADOR */
+    .manual-layout {
+      display: flex;
+      max-width: 1200px;
+      margin: 0 auto;
+      gap: 20px;
+      position: relative;
+    }
+
+    /* BARRA LATERAL FIJA REAL (PC) */
+    aside {
+      width: 280px;
+      position: sticky;
+      top: 20px;
+      height: calc(100vh - 40px);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      z-index: 1000;
+    }
+
+    /* BOTÓN DE MENÚ MÓVIL (Oculto en PC) */
+    .mobile-toc-toggle {
+      display: none;
+      background: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 12px 15px;
+      border-radius: var(--radius);
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 10px;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      flex-shrink: 0;
+    }
+
+    /* ÍNDICE LATERAL */
+    .manual-toc {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 20px;
+      overflow-y: auto;
+      flex-grow: 1;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    .toc-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+    }
+
+    .toc-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .toc-link {
+      background: transparent;
+      border: none;
+      color: #cbd5e1;
+      text-align: left;
+      font-size: 0.8rem;
+      padding: 6px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      display: block;
+      width: 100%;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .toc-link:hover {
+      background: #334155;
+      color: #38bdf8;
+    }
+
+    /* CONTENEDOR DEL TEXTO DEL MANUAL */
+    .manual-content-container {
+      flex-grow: 1;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 35px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+      min-width: 0;
+    }
+
+    .manual-content-container h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.8rem;
+      color: #38bdf8;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .manual-content-container h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      color: #38bdf8;
+      margin-top: 35px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 6px;
+    }
+
+    .manual-content-container h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      color: #7dd3fc;
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+
+    .manual-content-container p {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #cbd5e1;
+      margin-bottom: 12px;
+    }
+
+    .manual-content-container ul, .manual-content-container ol {
+      margin-left: 20px;
+      margin-bottom: 12px;
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .manual-content-container li {
+      margin-bottom: 6px;
+    }
+
+    .example-box {
+      background: #0f172a;
+      border-left: 3px solid #0284c7;
+      padding: 12px 15px;
+      margin: 12px 0;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      font-size: 0.9rem;
+      color: #94a3b8;
+    }
+
+    /* ADAPTACIÓN RESPONSIVE PARA MÓVILES (Fijo arriba) */
+    @media (max-width: 900px) {
+      body { padding: 10px; }
+      .manual-layout { 
+        flex-direction: column;
+      }
+      aside {
+        position: sticky;
+        top: 10px;
+        width: 100%;
+        height: auto;
+        background: var(--bg-color);
+        padding-bottom: 10px;
+        z-index: 9999;
+      }
+      .mobile-toc-toggle {
+        display: flex;
+      }
+      .manual-toc {
+        max-height: 0;
+        overflow: hidden;
+        padding: 0 20px;
+        border: none;
+        transition: max-height 0.3s ease-out, padding 0.3s ease-out, border 0.3s ease-out;
+      }
+      .manual-toc.open {
+        max-height: 60vh;
+        overflow-y: auto;
+        padding: 20px;
+        border: 1px solid var(--border-color);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="manual-layout">
+    
+    <!-- BARRA LATERAL -->
+    <aside>
+      <button class="mobile-toc-toggle" onclick="toggleMobileToc()">
+        <span>☰ Índice de Reglas</span>
+        <span id="toggleIcon">▼</span>
+      </button>
+
+      <nav class="manual-toc" id="manualToc">
+        <div class="toc-title">Índice del Manual</div>
+        <ul class="toc-list">
+          <li><button class="toc-link" onclick="scrollToSection('acciones')">1. Acciones Rutinarias</button></li>
+          <li><button class="toc-link" onclick="scrollToSection('retos')">2. Retos y Tiradas</button></li>
+          <li><button class="toc-link" onclick="scrollToSection('interferencias')">3. Interferencias</button></li>
+          <li><button class="toc-link" onclick="scrollToSection('etiquetas')">4. Etiquetas</button></li>
+          <li><button class="toc-link" onclick="scrollToSection('sacrificios')">5. Sacrificios</button></li>
+          <li><button class="toc-link" onclick="scrollToSection('aspectos')">6. Aspectos</button></li>
+          <li><button class="toc-link" onclick="scrollToSection('habilidades')">7. Habilidades Especiales</button></li>
+          <li><button class="toc-link" onclick="scrollToSection('flujo')">8. Flujo</button></li>
+          <li><button class="toc-link" onclick="scrollToSection('bienestar')">9. Bienestar y Daño</button></li>
+          <li><button class="toc-link" onclick="scrollToSection('asistencias')">10. Asistencias</button></li>
+          <li><button class="toc-link" onclick="scrollToSection('relaciones')">11. Relaciones</button></li>
+          <li><button class="toc-link" onclick="scrollToSection('equipamiento')">12. Equipamiento</button></li>
+          <li><button class="toc-link" onclick="scrollToSection('inventario')">13. Inventario</button></li>
+          <li><button class="toc-link" onclick="scrollToSection('amenaza')">14. Amenaza</button></li>
+          <li><button class="toc-link" onclick="scrollToSection('riqueza')">15. Riqueza y Trueque</button></li>
+          <li><button class="toc-link" onclick="scrollToSection('peligro')">16. Situaciones de Peligro</button></li>
+          <li><button class="toc-link" onclick="scrollToSection('reacciones')">17. Reacciones</button></li>
+          <li><button class="toc-link" onclick="scrollToSection('crear-pj')">18. Crear PJ</button></li>
+          <li><button class="toc-link" onclick="scrollToSection('experiencia')">19. Experiencia</button></li>
+          <li><button class="toc-link" onclick="scrollToSection('crear-pnj')">20. Crear PNJ Principales</button></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- CONTENEDOR DEL TEXTO DEL MANUAL -->
+    <main class="manual-content-container">
+      <h1>TMS PBTA - Manual de Reglas</h1>
+
+      <section id="acciones">
+        <h2>1. Acciones Rutinarias</h2>
+        <p>No suponen un reto ni un riesgo. No se precisa tirar los dados, simplemente se narran generando complicaciones inmediatas y coherentes a lo narrado.</p>
+      </section>
+
+      <section id="retos">
+        <h2>2. Retos</h2>
+        <p>Hay acciones que suponen un reto, no todo el mundo tiene la capacidad de llevarlas a cabo, así que precisan de una tirada de dados.</p>
+        <p>Usa 2d6, un dado blanco, llamado dado de fortuna, y otro dado oscuro, llamado dado de infortunio. Suma sus resultados y añade un bonificador/penalizador de -1 a +4 según el Aspecto implicado en la tirada. Resta las Interferencias (ver: INTERFERENCIAS) al total.</p>
+        <ul>
+          <li><strong>Si sale 6 o menos:</strong> Fracasas y no consigues lo que quieres.</li>
+          <li><strong>7 a 12:</strong> Éxito. Consigues tu objetivo.</li>
+        </ul>
+        <p>Además, si el dado de fortuna es el más alto de los dos, se generan fracasos o éxitos afortunados que generan un golpe de suerte definido y descrito por el jugador (el Director ayudará a equilibrar la propuesta del jugador) que pueden traducirse en una etiqueta de estado beneficiosa. Un éxito afortunado de 10 o más se considera un Triunfo. Cuando se saca un Triunfo el jugador elige entre: 1 fragmento de experiencia o recuperar una etiqueta personal (ver: EXPERIENCIA).</p>
+        <p>Si, por el contrario, el dado de desgracia prevalece, esa acción, haya tenido éxito o no, puede generar una reacción perjudicial descrita por el Director o un efecto de estado que perjudique al jugador. Un fracaso desafortunado de 3 o menos, otorga una marca de amenaza al Director (Ver: AMENAZA).</p>
+        <p>Si ambos dados sacan el mismo número no habrá consecuencias afortunadas ni desafortunadas.</p>
+      </section>
+
+      <section id="interferencias">
+        <h2>3. Interferencias</h2>
+        <p>El director puede tirar 2d4 que representan una dificultad añadida según lo inviable del movimiento a ejecutar. El resultado de uno de estos dados se resta del total de tu tirada.</p>
+        <ul>
+          <li><strong>Dificultad estándar:</strong> Sin interferencias, una tirada normal.</li>
+          <li><strong>Dificultad difícil:</strong> Interferencia menor. El director tira 2d4, quédate con el resultado menor y réstalo al total de tu tirada.</li>
+          <li><strong>Dificultad imposible:</strong> Interferencia mayor. El director tira 2d4, quédate con el resultado mayor y réstalo al total de tu tirada.</li>
+        </ul>
+        <p>Las Interferencias pueden disminuir, aumentar o desaparecer agotando etiquetas.</p>
+      </section>
+
+      <section id="etiquetas">
+        <h2>4. Etiquetas</h2>
+        <p>Son frases o palabras que definen al personaje o el equipamiento que llevan y pueden ser agotadas (tachadas) por el jugador o por el Director de la partida para afectar a la dificultad de las tiradas o generar acontecimientos narrativos.</p>
+        <p>Cada vez que agotes una o más etiquetas para algo, el Director obtendrá una marca de amenaza. Cuando tenga tantas marcas como jugadores, conseguirá una Amenaza (Ver: Amenaza). El Director precisará gastar una Amenaza para poder agotar una o más etiquetas y así ponerles las cosas difíciles a los jugadores.</p>
+        <p>Casi todas las etiquetas agotadas se reinician al inicio de cada escena o ronda de combate, excepto que la etiqueta desaparezca por coherencia con la narrativa. Por ejemplo: Te desequipas o te arrebatan el arma a la que estaban vinculadas esas etiquetas, o te curas un efecto de estado haciendo que esa etiqueta de estado desaparezca, o pierdes una etiqueta personal debido a una profunda transformación de tu personaje.</p>
+        <p>Además, todas las etiquetas se reinician al llevar a cabo una escena de descanso que equivale a dormir 6 horas.</p>
+
+        <h3>Formas de uso de las etiquetas:</h3>
+        <p><strong>Para modificar las dificultades de las tiradas de retos:</strong> Las etiquetas agotadas por el jugador (personales, de estado, de su equipamiento o de otros objetos que porte), ya sean suyas, de un PNJ o de la propia escena, pueden reducir el grado de interferencia a favor de su personaje a cambio de ser marcadas e inutilizadas hasta la siguiente sesión de juego. De este modo, se transformará las interferencias mayores en interferencias menores, las menores en inexistentes, y las inexistentes generarán un bonificador +1 a la tirada por cada etiqueta extra consumida.</p>
+        <p>Por el contrario, las etiquetas de todo tipo agotadas por el Director (gastando 1 Amenaza) aumentan el grado de interferencia en su detrimento. Así, las tiradas sin Interferencias pasarán a tener Interferencias menores, las Interferencias menores se transformarán en Interferencias mayores y las mayores añadirán +1 al resultado del dado de interferencia por cada etiqueta extra consumida.</p>
+        
+        <div class="example-box">
+          <strong>Ejemplo:</strong> Vas a trepar por una pared de 20 metros de altura sin casi asideros. Es un reto difícil (con interferencia menor). Pero decides agotar tu etiqueta personal «Hombre lagarto» y la etiqueta de herramienta de tu piqueta llamada «Escalada fácil». Esto reduce en dos niveles la dificultad, pasando de ser una tirada difícil a una tirada estándar con +1 al dado. O quizás sea al contrario, quizás el Director use tus etiquetas de estado «Enfermo» y la etiqueta de tu vestimenta «Voluminosa» para transformar la tirada de escalada en un reto muy difícil +1 en el dado de Interferencia.
+        </div>
+
+        <p><strong>Para contrarrestar efectos de estado o consecuencias de las tiradas afortunadas o desafortunadas:</strong></p>
+        <div class="example-box">
+          <strong>Ejemplo:</strong> Si has llevado a cabo una tirada de reto para derribar a un enemigo y te ha salido desafortunada y vas a recibir la etiqueta «Contusionado», puedes agotar tu etiqueta personal «Duro como una piedra» para negarlo.<br>
+          <strong>Otro ejemplo:</strong> Gastando Amenaza, el Director evita que tu ataque afortunado de magia helada genere la etiqueta «Congelado» en tu enemigo, ¿cómo? pues agotando la etiqueta personal «Elemental de fuego» que este posee.
+        </div>
+
+        <p><strong>Para justificar los efectos de tiradas afortunadas o desafortunadas siempre que no estén agotadas:</strong></p>
+        <div class="example-box">
+          <strong>Ejemplo:</strong> Paras un golpe bloqueando con tu bastón electrificado. Si la tirada de defensa (ya sea exitosa o no) sale afortunada podrás usar esa etiqueta, siempre que no esté agotada, para infligir la etiqueta de estado «Aturdido» al contrincante como consecuencia de tu buena fortuna.
+        </div>
+
+        <p><strong>Para cambiar la narración:</strong> Las etiquetas también pueden ser activadas por el director o los jugadores para cambiar la narración en la dirección que beneficie o perjudique al jugador y que tenga relación con las etiquetas consumidas, aplicando una o más etiquetas para transformar la narrativa de una escena.</p>
+        <div class="example-box">
+          <strong>Ejemplo:</strong> Agotas tu etiqueta «Hijo de cortesano» y la etiqueta «Hombre de negocios» para decirle al Director que conoces personalmente a uno de los banqueros que asiste a la recepción del barón. Cuando hables con él, te saludará por tu nombre. O, por el contrario, el Director, gastando Amenaza, podría usar esas mismas etiquetas para que un grupo de rateros que hay en la taberna te tome como su próximo objetivo.
+        </div>
+
+        <p><strong>Para transformar tiradas estándar en acciones sin tirada:</strong> Además de lo anterior, las etiquetas funcionan como atajos narrativos a los retos de dificultad estándar que evitan la tirada de dados. Siempre que un personaje tenga tres o más etiquetas no agotadas que puedan ayudar a una acción de dificultad estándar, tendrán éxito de manera inmediata sin tirada de dados y sin connotaciones de fortuna o infortunio.</p>
+        <div class="example-box">
+          <strong>Ejemplo:</strong> Te encuentras con una vieja puerta de madera con cerradura oxidada que no te deja seguir avanzando, pero tienes sin agotar la etiqueta personal «Grandullón», la etiqueta «Bárbaro del norte» y la etiqueta de equipamiento «Aplastante» de tu maza, así que la tirada estándar para echar la vieja puerta abajo ya no es necesaria, ejecuta la acción sin más.
+        </div>
+
+        <p><strong>Para provocar daño extra o curación extra:</strong> Se puede gastar una etiqueta de estado o cualquier otra coherente para añadir un daño extra a un contrincante tras una tirada de daño, o recuperar un punto de bienestar extra tras una tirada de curación o descanso.</p>
+
+        <h3>Tipos de etiquetas:</h3>
+        <ul>
+          <li><strong>Etiquetas personales:</strong> Se configuran en la creación de personaje y solo se añaden más etiquetas personales por acontecimientos de la historia, también pueden perderse etiquetas personales por el mismo motivo. Aparte de reiniciarse igual que las demás etiquetas, se puede también recuperar alguna etiqueta personal cuando se activa el Flujo de un PJ, o cuando se sacan éxitos de resultado 10 o más. Las etiquetas personales de un personaje pueden desaparecer, transformarse o ganarse nuevas etiquetas según lo que ocurra en la historia.</li>
+          <li><strong>Etiquetas de equipamiento:</strong> Asociadas a un objeto equipable. Mientras el objeto siga equipado, la etiqueta perdurará. Los objetos pueden mejorarse y transformarse mediante procesos creativos o artesanales para añadirles etiquetas.</li>
+          <li><strong>Etiquetas de herramientas:</strong> Asociadas a objetos que se albergan en el inventario y se usan para facilitar tiradas. Son etiquetas permanentes y nunca se agotan, pero son muy específicas y usarlas sigue generando marcas de amenaza. Cada herramienta solo tiene una etiqueta asociada y solo se puede escoger una herramienta de todas las disponibles para influir en una acción o facilitar una tirada.</li>
+          <li><strong>Etiquetas de consumibles:</strong> Cuando estas etiquetas se agotan producen el efecto deseado a cambio de eliminar el objeto que las contiene. Estas etiquetas, por si solas, NO generan marcas de amenaza.</li>
+          <li><strong>Etiquetas de estado:</strong> Etiquetas que se anuncian a todos los jugadores cuando cualquier personaje adquiere un estado beneficioso o perjudicial. Cuando se agotan, se reinician en la siguiente escena narrativa o ronda de combate. Desaparecen cuando se lleva a cabo acciones narrativas que disipen el estado en cuestión o tras un tiempo determinado marcado por el Director.</li>
+          <li><strong>Etiquetas de Escena:</strong> Cuando comienza una escena, los personajes entran en un nuevo escenario o hay un cambio de la narrativa se generan etiquetas de escena que el director escribe en un papel para que todos puedan verlas. Estas etiquetas perduran hasta que cambia la escena o la localización. Si la etiqueta permanece y se gasta, se reiniciará al inicio de cada Escena o ronda de combate como todas las etiquetas.</li>
+        </ul>
+
+        <h3>Descubrir etiquetas</h3>
+        <p>El Director de juego solo puede usar etiquetas con amenaza, pero a cambio, tiene una ventaja. Tiene acceso a todas las etiquetas del juego, tanto de PNJ como de PJ. Mientras que las etiquetas de estado de los PNJ son públicas y todo el mundo debe poder saberlas, las personales y de equipamiento de los PNJ y contrincantes solo pueden ser reveladas a los jugadores mediante tiradas de análisis, observación, sentidos, psicología, deducción o similares. El Director revelará algo del PNJ o de su equipamiento (si se intenta analizar lo que dicho personaje lleva) y, si hay una etiqueta que tenga sentido con la naturaleza de la tirada, la anunciará en alto, diciendo, algo como: «Revelas la etiqueta: Ansioso».</p>
+        <div class="example-box">
+          <strong>Ejemplo:</strong> Alguien tira INT para analizar el arma del personaje, es un arma peculiar y la tirada no es fácil, pero el jugador gasta sus etiquetas «Armero» y «Observador» para reducir la dificultad de la tirada. Tiene éxito desafortunado. El Director declara: «Reconoces ese cuchillo como un cuchillo de manufactura antigua, propia de las tribus de cazadores chamanes del sur que suelen adulterarlos con sustancias. Revelas la etiqueta del cuchillo: Envenenado. Por desgracia (ya que has sacado tirada desafortunada), el portador del cuchillo se ha dado cuenta de cómo fijas tu vista en el arma y comienza a sospechar de tus intenciones. Adquiere la etiqueta de estado: Suspicaz» (etiqueta que el Director podrá usar más adelante en tu contra gastando amenaza, y que se seguirá reiniciando en cada escena hasta que hagas algo para que desaparezca, como, por ejemplo, ganarte la confianza del chamán).
+        </div>
+        <p>El Director también tendrá la obligación de revelar etiquetas siempre que las circunstancias o acciones de los personajes (PJ o PNJ) las hagan evidentes, o que la naturaleza de un objeto o una persona sea perfectamente visible.</p>
+        <div class="example-box">
+          <strong>Ejemplo:</strong> Una espada o arma de filo, siempre revelará la etiqueta Cortante, ya que es algo obvio.<br>
+          <strong>Otro ejemplo:</strong> El Director debe revelar y anunciar la etiqueta «Magia de fuego» de un bastón cuando su usuario haya usado una habilidad mágica de fuego asociada a dicha arma.<br>
+          <strong>Otro ejemplo:</strong> El Director debe revelar la etiqueta «Sheriff del condado» de un PNJ, si alguien se dirige a él por este título.
+        </div>
+      </section>
+
+      <section id="sacrificios">
+        <h2>5. Sacrificios</h2>
+        <p>Se puede hacer sacrificio para reducir en uno la dificultad de la tirada como si se usara una etiqueta, solo se puede hacer un sacrificio por tirada.</p>
+        <ul>
+          <li><strong>Sacrificio de tiempo:</strong> Para acciones a las que es posible dedicar tiempo. Esto es, reducir la dificultad a cambio de que a la acción se le dedique más tiempo, gastando toda una escena entera en conseguirla.</li>
+          <li><strong>Sacrificio de salud:</strong> Para acciones que conllevan desgaste físico. Haz una tirada de daño y retira los dados que saquen un 5 o más. Si no sale ningún daño, se genera una etiqueta perjudicial coherente con la situación.</li>
+          <li><strong>Sacrificio de seguridad:</strong> Para acciones que pueden tener consecuencias peligrosas. Proporciona 1 Amenaza al Director a cambio de bajar la dificultad.</li>
+        </ul>
+      </section>
+
+      <section id="aspectos">
+        <h2>6. Aspectos</h2>
+        <p>Los tres aspectos que aportan bonificación o penalización y de los cuales dependen otras estadísticas son:</p>
+        <ul>
+          <li><strong>INTELECTO:</strong> El pensamiento profundo, aprendizaje, memoria, creatividad, percepción y análisis. La cantidad de espacios de habilidades especiales del personaje se calculan a partir de este Aspecto.</li>
+          <li><strong>RENDIMIENTO:</strong> La fuerza, la resistencia, los reflejos y la coordinación. La reserva de Bienestar y los espacios de equipamiento del personaje se calculan a partir de este Aspecto.</li>
+          <li><strong>VÍNCULO:</strong> La interacción con otros seres vivos, el mundo y los misterios del universo. El número de asistencias que puede tener un personaje para apoyar a sus aliados se definen por este Aspecto.</li>
+        </ul>
+        <p>Reparte -1 y +3 entre los tres Aspectos. Se pueden obtener más nivel de Aspectos gastando 3 puntos de experiencia hasta un máximo de +4.</p>
+      </section>
+
+      <section id="habilidades">
+        <h2>7. Habilidades Especiales</h2>
+        <p>Acciones que solo el personaje o alguien como él podría llevar a cabo y que no son habituales. Están basadas siempre en las etiquetas personales y, normalmente, precisan de una tirada de reto para activarse.</p>
+        <p>Las Habilidades dependen de la imaginación del jugador y el Director. Tienen un nombre y una breve descripción y la tirada será del aspecto más pertinente al uso que se le dé a esa habilidad.</p>
+        <div class="example-box">
+          <strong>Ejemplos de Habilidad:</strong><br>
+          - <em>Alas:</em> Grandes alas que crean ráfagas y te permiten volar (por ejemplo: si lo usas para empalar a alguien en un ataque aéreo, usa REN. Si vas a levantar polvo con el batir de tus alas, usa INT).<br>
+          - <em>Telepatía:</em> Lee y manipula el pensamiento y las emociones (por ejemplo: si lo usas para trastocar emociones usa VIN, si lo usas para buscar entre los recuerdos de alguien, usa INT).<br>
+          - <em>Experto lanzador:</em> Permite lanzamientos en ángulos imposibles con crítico asegurado, usando, por ejemplo, tiradas de REN.
+        </div>
+      </section>
+
+      <section id="flujo">
+        <h2>8. Flujo</h2>
+        <p>Cada arquetipo entra en flujo cuando concurren ciertas circunstancias o ejecutan ciertas acciones. Cuando se entra en Flujo, se debe elegir inmediatamente entre:</p>
+        <ul>
+          <li>Tira los dados de Bienestar que hayas perdido y recupera los dados que saquen 5 o más. Si no recuperas Bienestar, añade una etiqueta de estado beneficiosa temporal.</li>
+          <li>Restaura 1 etiqueta.</li>
+          <li>Lleva a cabo una habilidad especial sin necesidad de tirada de forma inmediata.</li>
+        </ul>
+      </section>
+
+      <section id="bienestar">
+        <h2>9. Bienestar y Daño</h2>
+        <p>Crea una reserva de 4 dados + 1 extra por cada bonificador de Rendimiento.</p>
+        <p>Cada vez que un personaje vaya a recibir un daño, puede intentar reaccionar para evitarlo de alguna forma. Si lo consigue, no recibirá daño. Si no lo consigue, tirará tantos d6 como su reserva de Bienestar. Aquellos dados que tengan como resultado 5 o más (en caso de que sea un fracaso afortunado) o solo 6 (en caso de fracaso desafortunado), serán retirados haciendo que disminuya el Bienestar disponible. Si ningún dado se retira, se entiende que el personaje recibe una etiqueta de estado perjudicial en vez de daño o, si lo desea, puede reiniciar una etiqueta de estado del contrincante.</p>
+        <p>Algunas Habilidades especiales o situaciones permiten tirar por crítico, como cuando se ataca en sigilo y por la espalda. Esto significa que se harán dos tiradas de daño.</p>
+        
+        <h3>Recuperar Bienestar</h3>
+        <p>Cada vez que te beneficies de un movimiento de curación o uses algún consumible que recupera salud, tira los dados descartados de tu reserva de Bienestar. Aquellos que tengan 5 o más se recuperan. En caso de dormir toda una noche o con un descanso similar, tirarás los dados descartados y reincorporarás todos los dados que saquen un 4 o más.</p>
+        <p>Si tu reserva de bienestar llega a 0 no podrás llevar a cabo tiradas y estarás prácticamente inconsciente. Si recibes daño estando así, tirarás un solo d6. Solo morirás si en ese dado sale un 6.</p>
+
+        <h3>DESCANSO</h3>
+        <p>Las escenas de descanso son escenas en las que el Director establece que es seguro y pertinente dormir. La escena de descanso tendrá estos efectos:</p>
+        <ul>
+          <li>El tiempo pasará (una escena equivalente a 8 horas).</li>
+          <li>Los personajes pierden 1 etiqueta de efecto de estado.</li>
+          <li>Los personajes recuperan Bienestar. Tirarán los dados faltantes de su reserva y recuperarán aquellos que saquen un 4 o más. Si no recuperan nada ganan una etiqueta de estado beneficiosa para el día o anulan una etiqueta de efecto de estado extra si así lo desean.</li>
+          <li>Los personajes recuperan todas las etiquetas agotadas.</li>
+          <li>El Director pierde 1 Amenaza.</li>
+        </ul>
+      </section>
+
+      <section id="asistencias">
+        <h2>10. Asistencias</h2>
+        <p>El número de espacios de asistencias es 1 + tu bonificador de Vínculos. Las asistencias son acciones (definidas por verbos o frases) que explican con qué acciones tiende tu personaje a ayudar a otros. Esa acción puede ser cualquiera, pero aquí hay una lista con sugerencias:</p>
+        <ul>
+          <li>Aconsejar emocionalmente</li>
+          <li>Animar</li>
+          <li>Apartar del peligro</li>
+          <li>Asistir en proyectos</li>
+          <li>Auxiliar sanitariamente</li>
+          <li>Avisar de un peligro</li>
+          <li>Ayudar en deducciones</li>
+          <li>Colaborar en una búsqueda</li>
+          <li>Dar impulso</li>
+          <li>Dar la réplica</li>
+          <li>Defender verbalmente</li>
+          <li>Discutir estrategias</li>
+          <li>Esconder</li>
+          <li>Hacer de alcahuete</li>
+          <li>Hacer de cebo</li>
+          <li>Hacer de compinche</li>
+          <li>Hacer de intérprete</li>
+          <li>Levantar</li>
+          <li>Proteger de un golpe</li>
+          <li>Señalar a un objetivo</li>
+          <li>Vigilar las espaldas</li>
+        </ul>
+        <p>Si un aliado tuyo está a punto de hacer una tirada y tu personaje está en posición de ayudarle (tiene que ser narrativamente viable), podrá escoger una de estas acciones de asistencia y justificar cómo la aplica a la tirada de su compañero. Podrá tirar su dado de fortuna y dejar ese resultado disponible para el aliado, que podrá decidir sustituir ese dado por cualquiera de los suyos, pudiendo así, incluso, tirar dos dados afortunados.</p>
+      </section>
+
+      <section id="relaciones">
+        <h2>11. Relaciones</h2>
+        <p>Una lista de los nombres de tus compañeros PJ y la expectativa que tienes respecto a cada uno de ellos. Si esa expectativa se cumple, podrás añadir un fragmento de experiencia y escribir una nueva expectativa.</p>
+        <div class="example-box">
+          <strong>Ejemplo:</strong> Lilith es una guerrera de la justicia, me gustaría hacerle ver que la justicia no tiene cabida en este mundo.<br>
+          En el momento en que ayudes a que Lilith vea que la justicia es un ideal inalcanzable habrás conseguido alcanzar tus expectativas con ella, ganarás experiencia y podrás escribir una nueva expectativa para que vuestro vínculo evolucione para bien o para mal.
+        </div>
+      </section>
+
+      <section id="equipamiento">
+        <h2>12. Equipamiento</h2>
+        <p>Cada personaje tiene tantos espacios de equipamiento como 3 + su RENDIMIENTO. Cada pieza de equipamiento ocupará un espacio, si la pieza es pesada o voluminosa ocupará dos. Las armas y atavíos más voluminosos suelen ofrecer más bonificadores de daño o puntos de defensa.</p>
+        
+        <h3>Armas</h3>
+        <p>Se usan para combatir, suelen mostrar esta información:</p>
+        <ul>
+          <li><strong>Alcance:</strong> Puede tener alcance cercano (en un tablero, dos figuras que se tocan), alcance medio (en un tablero, dos figuras que se separan lo equivalente al alto de un naipe), alcance lejano (en un tablero, dos figuras distanciadas por el largo de un folio), alcance muy lejano (en un tablero, dos figuras separadas entre sí igual al largo de dos folios).</li>
+        </ul>
+        
+        <h3>Categoría:</h3>
+        <ul>
+          <li><strong>Cuerpo a cuerpo:</strong> Armas que se blanden, suelen tener distancias más cortas, aunque algunas de ellas pueden tener la etiqueta «Arrojable», que se puede consumir para lanzarlas a mayor distancia (por ejemplo, dagas o lanzas).</li>
+          <li><strong>Proyectil:</strong> Armas que propulsan proyectiles a modo de munición a largas distancias. Las municiones se gastarán con cada disparo.</li>
+          <li><strong>Arrojadiza:</strong> Armas cuyo uso natural es ser arrojadas, perdiendo el arma en el proceso. Las armas arrojadas podrán ser recuperadas narrativamente tras el combate de forma automática o gastando el turno en recuperar las armas lanzadas a un objetivo ya caído. Es importante no confundir las armas arrojadizas con las armas con etiquetas «Arrojable» que solo estarán presentes en armas de Cuerpo a cuerpo.</li>
+        </ul>
+
+        <ul>
+          <li><strong>Etiquetas de daño:</strong> Aplastante (una maza), perforante (una flecha), cortante (una espada), abrasivo (un ácido), lacerante (un látigo), criogénico (un rayo de hielo), eléctrico (una descarga eléctrica), biológico (veneno), asfixiante (humo). Estas etiquetas pueden agotarse para eliminar interferencias y bonificar tiradas o perjudicarlas por parte del Director, pero también para aplicar efectos de estado con tiradas exitosas.</li>
+        </ul>
+        <div class="example-box">
+          <strong>Ejemplo:</strong> Una pistola química con la etiqueta “abrasiva” puede facilitar una tirada de ataque contra un enemigo con armadura. O si la tirada es afortunada y la etiqueta no está agotada podrá aplicar la etiqueta de estado «Corroída» o similar para provocar que su armadura se quede sin puntos de defensa.
+        </div>
+        <p>A mayor abundamiento, las etiquetas de estado están para informar del tipo de daño que provoca el arma, lo que es importante para gestionar resistencias, debilidades o inmunidades a ciertos tipos de daño. Estas etiquetas agotadas se reinician al inicio de cada escena o de cada ronda de combate y generan marcas de amenaza.</p>
+        <p><strong>Otras etiquetas:</strong> Pueden ser etiquetas sobre la atención que atraen o su discreción, su tamaño u otros calificativos. Estas etiquetas también se reinician al inicio de cada escena o de cada ronda de combate y generan marcas de amenaza. (Ejemplos: Discreta, ruidosa, arrojable, frágil, maldita, ostentosa, forjada por los dioses).</p>
+        <p><strong>Bonif. Daño:</strong> Estos bonificadores (+1, +2) implican que, antes de tirar por daño, los personajes afectados deben borrar tantos corazones de su reserva de bienestar como bonificadores de daño tenga el arma que los ha afectado.</p>
+        <p><strong>Habilidad Temporal:</strong> Algunas armas otorgan habilidades especiales que se añadirán a tu lista de Habilidades Temporales. Estas habilidades están inspiradas en alguna de las etiquetas del arma.</p>
+
+        <h3>Atavíos</h3>
+        <p><strong>Etiquetas:</strong> Etiquetas diversas que pueden indicar desde cómo influye el atavío en la apariencia del personaje hasta qué tipo de daño resiste más o es más débil, entre otras. Estas etiquetas se reinician al inicio de cada Escena o ronda de combate y generan marcas de amenaza. (Ejemplos: Elegante, inquietante, metálica, ligera, esotérica…).</p>
+        <p><strong>Puntos de defensa:</strong> Cada punto de defensa de un atavío puede ser agotado para evitar reducir en uno un punto de bienestar. Se reinician en cada ronda de combate o pulso narrativo.</p>
+        <p><strong>Habilidad Temporal:</strong> Algunos atavíos otorgan habilidades especiales que se añadirán a tu lista de Habilidades Temporales.</p>
+
+        <h3>Accesorios</h3>
+        <p><strong>Etiquetas:</strong> Los accesorios poseen una sola etiqueta que se reinicia en cada escena o ronda de combate y generan marcas de amenaza. Los accesorios ocupan solo medio espacio de equipamiento. (Ejemplo: brillante, lujoso, impermeable, moderno).</p>
+        <p><strong>Habilidad Temporal:</strong> Algunos accesorios otorgan habilidades especiales que se añadirán a tu lista de Habilidades Temporales.</p>
+      </section>
+
+      <section id="inventario">
+        <h2>13. Inventario</h2>
+        <p>No tiene límite ni espacios concretos, aquí van los consumibles, objetos clave y herramientas.</p>
+        <ul>
+          <li><strong>Objetos clave:</strong> Estos objetos son necesarios para avanzar en la aventura, aportan información o permiten hacer una acción específica como abrir una puerta o activar un mecanismo.</li>
+          <li><strong>Consumibles:</strong> Objetos que tienen una o más etiquetas. Agotar una sola de ellas es agotar todo el objeto y hacer que desaparezca, a cambio, estas etiquetas no generan marcas de amenaza.</li>
+          <li><strong>Herramientas:</strong> Objetos con una sola etiqueta permanente y que nunca se agota, pero son etiquetas muy específicas. Usar la etiqueta, aunque no se agote, genera marcas de amenaza. <br><em>Por ejemplo: Sierra: Corta madera. Alicates: Corta cables y alambres. Ganzúa: Descerraja puertas.</em></li>
+        </ul>
+      </section>
+
+      <section id="amenaza">
+        <h2>14. Amenaza</h2>
+        <p>El Director comienza sin ninguna marca de amenaza al principio de cada sesión de juego.</p>
+        <p>El Director puede acumular marcas de amenaza cada vez que:</p>
+        <ul>
+          <li>Un jugador saca un resultado de 3 o menos en un reto.</li>
+          <li>Cada vez que un jugador agota una o más etiquetas para bajar la dificultad de las tiradas o generar giros narrativos.</li>
+        </ul>
+        <p>Cuando el Director acumula tantas marcas como jugadores en juego, recibe una Amenaza. Puede gastar esta Amenaza para agotar etiquetas de PJ, PNJ, de equipamiento, consumibles, herramientas, de estados y de escena para dificultar las tiradas de reto o crear giros narrativos en su contra.</p>
+        <p>Las etiquetas de estado son las etiquetas favoritas para generar caos y se reinician en cada escena o ronda de combate, así que es importante librarse de ellas rápido.</p>
+      </section>
+
+      <section id="riqueza">
+        <h2>15. Riqueza y Adquisición</h2>
+        <h3>Riqueza</h3>
+        <p>Hay cinco niveles de riqueza:</p>
+        <ul>
+          <li><strong>Miserable (riqueza 0):</strong> No tienes puntos de riqueza. Puedes tachar uno de tus espacios de fragmento de experiencia iniciales (4 espacios en total).</li>
+          <li><strong>Promedio (riqueza 1):</strong> Comienzas con 1 punto de riqueza equivalente a mercancías comunes.</li>
+          <li><strong>Desahogado (riqueza 2):</strong> Comienzas con 2 puntos de riqueza, equivalente a mercancías poco comunes.</li>
+          <li><strong>Rico (riqueza 3):</strong> Comienzas con 3 puntos de riqueza, equivalente a mercancías raras. Añade un espacio de fragmento de experiencia (6 espacios en total) a tu reserva de experiencia.</li>
+          <li><strong>Magnate (riqueza 4):</strong> Comienzas con 4 puntos de riqueza, equivalente a mercancías únicas. Añade 2 espacios de fragmento de experiencia a tu reserva de experiencia (7 espacios en total).</li>
+        </ul>
+        <p>Cada vez que quieras adquirir una mercancía, el director te dirá si es una mercancía común (valor 1), poco común (valor 2), rara (valor 3) o única (valor 4). Podrás adquirirla si tu nivel de riqueza es equivalente a la mercancía. Tras adquirirla el nivel de riqueza bajará en 1. Si tu nivel de riqueza actual no es equivalente a la mercancía, no podrás adquirirla. Por fortuna, siempre podrás compensar lo restante con consumibles valiosos (normalmente billetes, monedas, gemas…) cuyas etiquetas especifican un valor de riqueza. Agotar estas etiquetas, agota el consumible, pero permite aumentar tu nivel de riqueza para alcanzar el valor de la mercancía y adquirirla. <br><em>Ejemplos: Puñado de monedas: Riqueza 1, Gema: Riqueza 3, Fajo de Billetes: Riqueza 2.</em></p>
+        <p>Esto no impide que tus puntos de riqueza bajen en uno igualmente tras la compra. Los puntos de riqueza se reinician por completo al inicio de cada sesión de juego.</p>
+
+        <h3>Trueque</h3>
+        <p>El Director compara la valía de ambos objetos que quieren ser intercambiados, puede subir o bajar este valor dependiendo de la situación, los deseos, gustos y urgencias que satisfagan los objetos intercambiados.</p>
+        
+        <h3>Regateo en trueques y en compraventas</h3>
+        <p>Una tirada de Vínculo puede subir o reducir en uno el valor del objeto a comprar, vender o intercambiar. Independiente del éxito o no del regateo, sacar tiradas afortunadas puede predisponer positivamente a tu interlocutor, que puede darte información sobre los objetos, hacer buenas migas contigo, ofrecerte otras ofertas o incluso proponerte un encargo como alternativa. Las desafortunadas, en cambio, pueden significar engaños, artimañas o mala predisposición.</p>
+      </section>
+
+      <section id="peligro">
+        <h2>16. Situaciones de Peligro</h2>
+        <p>Las situaciones de peligro es cuando los personajes se confrontan a riesgos que pueden afectar a su bienestar o acabar con su vida. Comúnmente, estas situaciones los enfrentan a otros personajes antagonistas y contrincantes. Cuando el director declara una situación de peligro, cada segundo cuenta. La escena se dividirá en rondas y cada ronda, en turnos.</p>
+        <p>Antes de cada turno, se tirarán el dado de fortuna y el de infortunio. El dado que salga mayor es el que marca si actúa alguien del bando de los PJ o del bando enemigo a continuación. Tras el turno de esa persona, se volverá a tirar los dados y así sucesivamente hasta que no queden más PJ o PNJ por actuar. Entonces se declara la siguiente ronda y se repite el proceso. Si los dos dados salen iguales, se volverá a tirar.</p>
+        <p>En su turno, cada personaje tiene una actuación. La actuación es una acción o conjunto de acciones complementarias que, narrativamente, no podrían ejecutarse en un tiempo superior a cinco segundos. No se puede atacar más de una vez por turno. Moverse por terrenos difíciles vale por el doble de grados de distancia.</p>
+        <p><strong>Referencia no vinculante de lo que se podría hacer en un turno:</strong></p>
+        <ul>
+          <li>Llevar a cabo una acción para recuperarse de un estado.</li>
+          <li>Moverse tres grados de distancia.</li>
+          <li>Rebuscar en el inventario y consumir o usar algo de él.</li>
+          <li>Moverse dos grados de distancia y atacar con un arma ligera o hacer una acción rápida, o cualquier combinación entre estas.</li>
+          <li>Moverse un grado de distancia y atacar con un arma pesada.</li>
+        </ul>
+      </section>
+
+      <section id="reacciones">
+        <h2>17. Reacciones</h2>
+        <p>Siempre que se vaya a recibir un perjuicio se puede reaccionar. Si se reacciona a una acción dañina y no se tiene éxito, es posible que se tenga que tirar por Bienestar. La tirada de Bienestar cambia, dependiendo de si se obtiene un fracaso afortunado o desafortunado (ver BIENESTAR para más información). Hay efectos de estado y otras etiquetas que se pueden agotar para impedir que un personaje reaccione, esto significará que su reacción es similar a un fracaso desafortunado en su reacción.</p>
+      </section>
+
+      <section id="crear-pj">
+        <h2>18. Crear PJ</h2>
+        <p>En la ficha de personaje reflejarás los datos más relevantes e intuitivos de tu personaje para consultarlos y permitir que cualquiera comprenda su naturaleza al consultarla, así como las estadísticas más técnicas, pero no hace falta que refleje toda la profundidad de tu PJ. Deja que esta eclosione durante la partida y vaya tomando forma de manera orgánica a medida que construyes la historia con tus compañeros.</p>
+        <p><strong>Sigue estos pasos para crear a tu personaje:</strong></p>
+        <ul>
+          <li><strong>Elige un concepto:</strong> Es una frase que describa qué tiene de especial tu personaje y que lo defina. <em>(Por ejemplo: «Una vampiresa motorista que atraviesa Texas a medianoche en busca de quien la convirtió»)</em>.<br>
+          El concepto puede cambiar por circunstancias de la historia, acciones y decisiones del personaje. Cuando es así, las etiquetas personales asociadas a este concepto también pueden mutar.<br>
+          <em>Ejemplo:</em> La vampiresa del ejemplo anterior encuentra a su creador, que resulta ser el líder de una banda que protege a los mortales de las criaturas de la noche y decide unirse. Ahora es una «Vampiresa cazadora de monstruos, que protege Texas en la noche».</li>
+          <li><strong>Elige un origen:</strong> ¿De dónde procede tu personaje y qué acontecimiento ha marcado su pasado? Defínelo en una frase. <em>(Por ejemplo: Hija de un tabernero del ghetto orco en la ciudad condal)</em>.</li>
+          <li><strong>Elige sus circunstancias:</strong> ¿A qué se dedica en el presente este personaje? Defínelo en una frase. <em>(Por ejemplo: Es una miliciana que se dedica a atrapar a magos rebeldes y llevarlos ante la justicia)</em>.<br>
+          Las circunstancias pueden cambiar por circunstancias de la historia, acciones y decisiones del personaje. Cuando es así, las etiquetas personales asociadas a estas circunstancias también pueden mutar.<br>
+          <em>Ejemplo:</em> Es una antigua cazadora de magos que ahora protege al hechicero al que ama.</li>
+          <li><strong>Elige una meta vital:</strong> ¿Qué es lo que busca o desea conseguir? Defínelo en una frase. <em>(Por ejemplo: Conseguir ascender en la corporación para llegar a ser director ejecutivo)</em>.<br>
+          La meta de un personaje puede cambiar por circunstancias de la historia, acciones y decisiones del personaje. Cuando es así, las etiquetas personales asociadas a esa meta también pueden mutar.</li>
+          <li><strong>Escribe las etiquetas:</strong> Escoge una etiqueta basada en el concepto, una en el origen, una en sus circunstancias y una en su meta. La última etiqueta definirá su personalidad. <em>(Por ejemplo: Si tomamos el concepto del paso 1. Podríamos sacar las etiquetas: Vampiresa y Motera, o quizás No Muerta y Viajera)</em>.<br>
+          Estas etiquetas pueden desaparecer, cambiar o añadirse nuevas a lo largo de la crónica según lo que acontezca en la historia o si las circunstancias, metas o concepto del personaje cambian.</li>
+          <li><strong>Reparte:</strong> +3 y -1 entre los tres Aspectos: Rendimiento (REN), Vínculo (VIN), Intelecto (INT).</li>
+<li>OPCIONAL: Añade un +1 extra a un de tus Aspectos, siempre que recibas un -1 a otro Aspecto a cambio. Ningún Aspecto puede tener un bonificador superior a 3 en la creación de personaje.</li>
+          <li><strong>Define las estadísticas secundarias:</strong>
+            <ul>
+              <li>Marca tantos corazones como bonificador REN +4.</li>
+              <li>Marca 2 espacios de equipamiento básicos + otro espacio por cada bonificador positivo de REN.</li>
+              <li>Marca 2 espacios básicos de Habilidad especial + otro más por cada bonificador positivo de INT.</li>
+              <li>Marca 1 espacio de asistencia básico + otro más por cada bonificador positivo de VIN.</li>
+            </ul>
+          </li>
+          <li>Recibe una habilidad especial y una asistencia.</li>
+          <li>Ahora recibe 5 puntos de experiencia. Recuerda:
+            <ul>
+              <li><strong>3 XP:</strong> Añade un bonificador +1 a un Aspecto.</li>
+              <li><strong>2 XP:</strong> Una nueva Habilidad especial o una nueva Asistencia.</li>
+              <li>Conservarás la XP no gastada.</li>
+            </ul>
+          </li>
+          <li>Elige el nivel de riqueza que tenga sentido para tu personaje: Miserable (riqueza 1), Promedio (riqueza 2), Desahogado (riqueza 3), Rico (riqueza 4) o Magnate (riqueza 5).</li>
+          <li>Reconfigura los espacios de experiencia según tu riqueza: Empiezas con 5. Resta 1 si eres Miserable. Añade 1 si eres Rico. Añade 2 si eres Magnate.</li>
+          <li>Escribe tus Relaciones. Pon el nombre de cada uno de los PJ aliados, escribe una expectativa para cada uno de ellos con una frase que indique qué esperas de ellos, qué quieres obtener de ellos o cómo quieres influir en ellos.</li>
+          <li>Configura tus objetos iniciales. Deben ser coherentes con el trasfondo y concepto de tu personaje. Elige:
+            <ul>
+              <li>Añade una pieza de equipamiento y tres objetos personales (herramientas, consumibles, objetos clave).</li>
+              <li>Añade dos piezas de equipamiento.</li>
+            </ul>
+          </li>
+          <li>Escribe el nombre y los pronombres de tu personaje.</li>
+        </ul>
+      </section>
+
+      <section id="experiencia">
+        <h2>19. Experiencia</h2>
+        <p>Cinco fragmentos de experiencia generan un punto de experiencia. Por cada punto de riqueza, el personaje añade un espacio de fragmento de experiencia más, haciendo más difícil adquirir puntos de experiencia.</p>
+        <p><strong>Se consigue un fragmento de experiencia:</strong></p>
+        <ul>
+          <li>Cuando llevas a cabo acciones relevantes referidas a tu meta.</li>
+          <li>Cuando se consigue un éxito afortunado de 10 o más.</li>
+          <li>Cuando se cumple una expectativa respecto a una relación.</li>
+          <li>Por recompensa del Director.</li>
+        </ul>
+        <p><strong>Con los puntos de experiencia puedes mejorar a tu personaje:</strong></p>
+        <ul>
+          <li><strong>Mejorar Habilidades especiales:</strong> 1 punto. Permite potenciar o mejorar una habilidad que ya tienes, discutiendo con el director cuál puede ser ese avance.</li>
+          <li><strong>Olvidar Habilidades Especiales:</strong> 1 punto. Deja libre un espacio de Habilidad.</li>
+          <li><strong>Olvidar Asistencias:</strong> 1 punto. Deja libre un espacio de Asistencia.</li>
+          <li><strong>Adquirir una nueva Habilidad Especial:</strong> 2 puntos. Si tienes un espacio de habilidad libre, puedes adquirir una nueva habilidad especial coherente con tus etiquetas, tu concepto y tu trasfondo. Lo mismo si tienes espacios de Asistencia libre.</li>
+          <li><strong>Adquirir una nueva Asistencia:</strong> Si tienes un espacio de asistencia libre, puedes adquirir una nueva asistencia coherente con tus etiquetas, tu concepto y tu trasfondo.</li>
+          <li><strong>Subir un Aspecto en +1:</strong> 3 puntos. Aumentar los bonificadores de los Aspectos también aumenta otras estadísticas, como espacios de equipamiento, de habilidad, asistencias, puntos de Bienestar…</li>
+        </ul>
+        <p>Recuerda que las etiquetas personales se ganan, transforman o pierden de forma narrativa, por decisión del Director, gracias a la reputación o títulos que ganes, los logros obtenidos y las acciones destacadas que lleves a cabo a lo largo de la historia, no se pueden adquirir con XP.</p>
+      </section>
+
+      <section id="crear-pnj">
+        <h2>20. Crear PNJ Principales</h2>
+        <p>Los PNJ principales son aliados y contrincantes que no son meros figurantes circunstanciales. Los PNJ no precisan una construcción estadística tan pormenorizada, aunque su trasfondo narrativo sí debe estar trabajado según su trascendencia en la historia.</p>
+        <p>Para crear un PNJ rápidamente sigue estos pasos:</p>
+        <ol>
+          <li>Decide qué tipo de importancia tiene en la historia:
+            <ul>
+              <li><strong>Comparsa:</strong> Son personajes que ofrecen cierta utilidad puntual y son pequeñas amenazas para los PJ en caso de ser contrincantes.</li>
+              <li><strong>Relevante:</strong> Son personajes que ofrecen ayuda o asistencia recurrente y son amenazas que requieren cierto esfuerzo.</li>
+              <li><strong>Destacado:</strong> Son personajes clave para avanzar en la historia y superar retos importantes o son amenazas que precisan un esfuerzo enfocado y estratégico.</li>
+              <li><strong>Principal:</strong> Son personajes responsables de los giros de la trama y pueden suponer grandes amenazas que requerirán de un esfuerzo coordinado por parte del grupo para poder ser derrotadas.</li>
+            </ul>
+          </li>
+          <li>Escribe un concepto para el PNJ, en un par de frases que resuman quiénes son, qué hacen, qué quieren conseguir y qué relación tienen con los personajes o la historia principal.<br><em>Por ejemplo: Un miembro destacado de la nobleza que celebra el baile de máscaras anual para ganarse el favor del rey y que detesta al PNJ porque arruinó su última fiesta.</em></li>
+          <li>Añade etiquetas:
+            <ul>
+              <li><strong>Comparsa:</strong> 1 etiqueta.</li>
+              <li><strong>Relevante:</strong> 2 etiquetas.</li>
+              <li><strong>Destacado:</strong> 4 etiquetas.</li>
+              <li><strong>Principal:</strong> 6 etiquetas.</li>
+            </ul>
+          </li>
+          <li>Regula las Estadísticas: En los PNJ los Aspectos (REN, INT, VIN) no tienen bonificadores, sino que simplemente un indicador (bajo, alto, muy alto) que ayuden al Director a definir la dificultad de la tirada contra estos personajes dependiendo de cuáles sean sus acciones o reacciones.<br>
+          Para definir estos indicadores, usa este truco. Reparte los siguientes puntos entre los tres Aspectos según la relevancia del PNJ:
+            <ul>
+              <li><strong>Comparsa:</strong> 3 puntos.</li>
+              <li><strong>Relevante:</strong> 5 puntos.</li>
+              <li><strong>Destacado:</strong> 7 puntos.</li>
+              <li><strong>Principal:</strong> 9 puntos.</li>
+            </ul>
+          Ningún Aspecto puede tener más de 5 puntos.<br>
+          Si un Aspecto tiene 1 punto o menos, es bajo. Si tiene de 2 a 3, es alto. Si tiene de 4 a 5, es muy alto.</li>
+          <li>Especifica su nivel de Bienestar según la puntuación obtenida en Rendimiento en el paso anterior:
+            <ul>
+              <li><strong>Rendimiento bajo:</strong> 4 puntos de Bienestar.</li>
+              <li><strong>Rendimiento alto:</strong> 6 puntos de Bienestar.</li>
+              <li><strong>Rendimiento muy alto:</strong> 8 puntos de Bienestar.</li>
+            </ul>
+          </li>
+          <li>Añade Habilidades especiales coherentes con el personaje:
+            <ul>
+              <li><strong>Comparsa:</strong> Ninguna habilidad.</li>
+              <li><strong>Relevante:</strong> 1 Habilidad.</li>
+              <li><strong>Destacado:</strong> 2 Habilidades.</li>
+              <li><strong>Principal:</strong> 3 Habilidades.</li>
+            </ul>
+          </li>
+          <li>Añade equipamiento coherente con el concepto de los personajes:
+            <ul>
+              <li><strong>Comparsa y Relevante:</strong> 1 a 2 piezas de equipamiento comunes (valor 1). Muy raramente, alguna poco común (valor 2).</li>
+              <li><strong>Destacado:</strong> 2 a 3 piezas de equipamiento poco comunes (valor 2). Muy raramente, alguna rara (valor 3).</li>
+              <li><strong>Principal:</strong> 3 a 4 piezas de equipamiento poco comunes (valor 2) o raras (valor 3), entre ellas, siempre ha de haber una única (valor 4).</li>
+            </ul>
+          </li>
+          <li>Añade otro botín en sus bolsillos para cuando los personajes sean robados o vencidos. Los PNJ también podrán echar mano de esos objetos, si quieren. El botín suele ser consumibles, incluidos consumibles valiosos (con etiquetas de riqueza), objetos clave y herramientas.
+            <ul>
+              <li><strong>Comparsa y Relevante:</strong> 1 a 2 piezas de botín comunes (valor 1).</li>
+              <li><strong>Destacado:</strong> 2 a 3 piezas de botín poco comunes y raras (valor 2-3).</li>
+              <li><strong>Principal:</strong> 3 a 4 piezas de botín raras y únicas (valor 3-4).</li>
+            </ul>
+          </li>
+          <li>Ponle un nombre, ya sea nombre propio o descriptor, al PNJ.</li>
+          <li>No te tomes los anteriores puntos al pie de la letra ni seas rígido con la construcción de tus PNJ. Si desviarte de los consejos anteriores contribuye a crear un PNJ más interesante (siempre que no desequilibre la experiencia), adelante.</li>
+        </ol>
+      </section>
+
+    </main>
+
+  </div>
+
+  <script>
+    function scrollToSection(sectionId) {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // En móviles, oculta el menú al hacer clic en una sección
+        if (window.innerWidth <= 900) {
+          const toc = document.getElementById('manualToc');
+          const icon = document.getElementById('toggleIcon');
+          toc.classList.remove('open');
+          icon.textContent = '▼';
+        }
+      }
+    }
+
+    function toggleMobileToc() {
+      const toc = document.getElementById('manualToc');
+      const icon = document.getElementById('toggleIcon');
+      toc.classList.toggle('open');
+      if (toc.classList.contains('open')) {
+        icon.textContent = '▲';
+      } else {
+        icon.textContent = '▼';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tag Managing System — PBTA RPG</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --surface: #ffffff;
+      --surface-alt: #f1f5f9;
+      --ink-main: #0f172a;
+      --ink-muted: #475569;
+      --ink-light: #94a3b8;
+      --border: #e2e8f0;
+      --accent: #0f766e;
+      --accent-dark: #115e59;
+      --radius: 8px;
+      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-page);
+      color: var(--ink-main);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* BARRA SUPERIOR */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .brand-mini {
+      font-family: 'Cinzel', serif;
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--ink-main);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      flex-grow: 1;
+      justify-content: flex-end;
+    }
+
+    .nav-link {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--ink-muted);
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      transition: all 0.18s ease;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      background: var(--surface-alt);
+      color: var(--ink-main);
+    }
+
+    .btn-pages-drawer {
+      background: var(--ink-main);
+      color: #ffffff;
+      border: none;
+      padding: 7px 12px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-pages-drawer:hover {
+      background: #1e293b;
+    }
+
+    /* HERO BANNER */
+    .hero-banner {
+      position: relative;
+      width: 100%;
+      min-height: 300px;
+      max-height: 410px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #1e293b;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.76) contrast(1.06);
+    }
+
+    .hero-scrim {
+      position: relative;
+      z-index: 2;
+      max-width: 820px;
+      padding: 36px 24px;
+      text-align: center;
+    }
+
+    .hero-title {
+      font-family: 'Caveat', 'Cinzel', cursive, serif;
+      font-size: clamp(2.6rem, 6.5vw, 4.6rem);
+      font-weight: 700;
+      line-height: 1.02;
+      color: #ffffff;
+      text-shadow:
+        0 4px 18px rgba(0, 0, 0, 0.72),
+        0 1px 2px rgba(0, 0, 0, 0.9);
+      letter-spacing: -0.01em;
+    }
+
+    .hero-subtitle {
+      margin-top: 10px;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1rem, 2.4vw, 1.45rem);
+      font-weight: 800;
+      color: #fde047;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      text-shadow: 0 3px 12px rgba(0, 0, 0, 0.85);
+    }
+
+    /* CONTENEDOR PRINCIPAL DE SECCIONES */
+    .main-container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 34px 20px 56px;
+    }
+
+    .section-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .section-heading {
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--ink-main);
+    }
+
+    .search-box {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--ink-main);
+      font-size: 0.84rem;
+      min-width: 240px;
+      outline: none;
+    }
+
+    .search-box:focus {
+      border-color: var(--accent);
+    }
+
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px 24px;
+    }
+
+    @media (max-width: 920px) {
+      .modules-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .modules-grid {
+        grid-template-columns: 1fr;
+      }
+      .nav-links {
+        display: none;
+      }
+    }
+
+    .module-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .module-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.14);
+    }
+
+    .module-link {
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .module-banner {
+      padding: 14px 12px 10px;
+      text-align: center;
+      color: #ffffff;
+      border-bottom: 2px solid rgba(15, 23, 42, 0.16);
+    }
+
+    .module-banner h2 {
+      font-family: 'Caveat', 'Cinzel', cursive, serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.05;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    }
+
+    .module-art {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      background: var(--surface-alt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .module-art svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .module-desc {
+      padding: 12px 14px 16px;
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+      line-height: 1.45;
+      background: var(--surface);
+      flex-grow: 1;
+    }
+
+    /* PANEL LATERAL DE PÁGINAS (ESTILO LATERAL DERECHO) */
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      display: none;
+      justify-content: flex-end;
+      z-index: 200;
+    }
+
+    .drawer-backdrop.open {
+      display: flex;
+    }
+
+    .drawer-panel {
+      width: 290px;
+      max-width: 90vw;
+      background: var(--surface);
+      height: 100%;
+      padding: 18px;
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: -10px 0 30px rgba(15, 23, 42, 0.18);
+    }
+
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+    }
+
+    .drawer-header h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      color: var(--ink-main);
+    }
+
+    .btn-close-drawer {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--ink-main);
+      border-radius: 4px;
+      padding: 3px 8px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .drawer-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .drawer-list a {
+      display: block;
+      padding: 8px 10px;
+      border-radius: 6px;
+      text-decoration: none;
+      color: var(--ink-main);
+      font-size: 0.84rem;
+      font-weight: 500;
+    }
+
+    .drawer-list a:hover,
+    .drawer-list a.current {
+      background: var(--surface-alt);
+      font-weight: 700;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 18px 20px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRA SUPERIOR DE NAVEGACIÓN -->
+  <header class="topbar">
+    <a href="#top" class="brand-mini">🎲 TMS PBTA RPG</a>
+
+    <nav class="nav-links" aria-label="Navegación principal">
+      <a href="#top" class="nav-link active">Página Principal</a>
+      <a href="#" data-nav="manual" class="nav-link">Manual de reglas</a>
+      <a href="#" data-nav="pj" class="nav-link">Hoja de personaje</a>
+      <a href="#" data-nav="pnj" class="nav-link">Fichas de PNJ</a>
+      <a href="#" data-nav="director" class="nav-link">Herramientas del Director</a>
+      <a href="#" data-nav="cronicas" class="nav-link">Lista de crónicas</a>
+      <a href="#" data-nav="mapas" class="nav-link">Generador de mapas</a>
+    </nav>
+
+    <button type="button" class="btn-pages-drawer" onclick="togglePagesDrawer(true)">☰ Páginas</button>
+  </header>
+
+  <!-- CABECERA PRINCIPAL -->
+  <section id="top" class="hero-banner" aria-label="Portada Tag Managing System PBTA RPG">
+    <!-- Ilustración de mesa de rol, dados, mapa y libreta en SVG embebido -->
+    <svg class="hero-bg" viewBox="0 0 1400 420" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="deskGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#334155"/>
+          <stop offset="55%" stop-color="#1e293b"/>
+          <stop offset="100%" stop-color="#0f172a"/>
+        </linearGradient>
+        <linearGradient id="parchmentGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#fef3c7"/>
+          <stop offset="100%" stop-color="#fde68a"/>
+        </linearGradient>
+      </defs>
+      <rect width="1400" height="420" fill="url(#deskGrad)"/>
+      <!-- Cuadrícula sutil de mapa en el fondo -->
+      <g stroke="#475569" stroke-width="1" opacity="0.28">
+        <path d="M0 60 H1400 M0 120 H1400 M0 180 H1400 M0 240 H1400 M0 300 H1400 M0 360 H1400"/>
+        <path d="M120 0 V420 M240 0 V420 M360 0 V420 M480 0 V420 M600 0 V420 M720 0 V420 M840 0 V420 M960 0 V420 M1080 0 V420 M1200 0 V420 M1320 0 V420"/>
+      </g>
+      <!-- Hoja de campaña / mapa a la izquierda -->
+      <g transform="translate(95, 55) rotate(-5)">
+        <rect width="340" height="270" rx="8" fill="url(#parchmentGrad)" stroke="#92400e" stroke-width="2"/>
+        <path d="M40 70 Q130 35 190 95 T300 80" fill="none" stroke="#b45309" stroke-width="2.5" stroke-dasharray="6 5"/>
+        <polygon points="110,145 140,105 170,145" fill="#d97706" opacity="0.45"/>
+        <polygon points="155,155 190,110 225,155" fill="#b45309" opacity="0.4"/>
+        <circle cx="245" cy="185" r="24" fill="none" stroke="#92400e" stroke-width="2"/>
+        <path d="M245 165 L251 182 L268 185 L251 190 L245 207 L239 190 L222 185 L239 182 Z" fill="#92400e"/>
+      </g>
+      <!-- Dados poliedros en primer plano izquierdo -->
+      <g transform="translate(185, 265)">
+        <polygon points="45,5 85,32 70,80 20,80 5,32" fill="#0f766e" stroke="#99f6e4" stroke-width="2"/>
+        <text x="45" y="52" text-anchor="middle" fill="#ffffff" font-family="Cinzel, serif" font-size="22" font-weight="700">20</text>
+      </g>
+      <g transform="translate(275, 295)">
+        <polygon points="32,4 60,22 50,56 14,56 4,22" fill="#be123c" stroke="#fecdd3" stroke-width="2"/>
+        <text x="32" y="38" text-anchor="middle" fill="#ffffff" font-family="Cinzel, serif" font-size="18" font-weight="700">12</text>
+      </g>
+      <!-- Libreta y lápiz a la derecha -->
+      <g transform="translate(975, 65) rotate(6)">
+        <rect width="320" height="250" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+        <line x1="35" y1="50" x2="280" y2="50" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="35" y1="85" x2="260" y2="85" stroke="#cbd5e1" stroke-width="2"/>
+        <line x1="35" y1="120" x2="275" y2="120" stroke="#cbd5e1" stroke-width="2"/>
+        <line x1="35" y1="155" x2="220" y2="155" stroke="#cbd5e1" stroke-width="2"/>
+        <circle cx="240" cy="195" r="26" fill="none" stroke="#0284c7" stroke-width="2.5"/>
+        <polygon points="240,174 258,205 222,205" fill="none" stroke="#0284c7" stroke-width="2"/>
+      </g>
+    </svg>
+
+    <div class="hero-scrim">
+      <h1 class="hero-title">Tag Managing System</h1>
+      <div class="hero-subtitle">PBTA RPG</div>
+    </div>
+  </section>
+
+  <!-- CUADRÍCULA DE MÓDULOS DEL SISTEMA -->
+  <main class="main-container">
+    <div class="section-toolbar">
+      <div class="section-heading">Módulos de Campaña</div>
+      <input
+        type="search"
+        id="moduleSearch"
+        class="search-box"
+        placeholder="Buscar sección o herramienta..."
+        oninput="filterModules()"
+      >
+    </div>
+
+    <div class="modules-grid" id="modulesGrid">
+      <!-- 1. Manual de reglas -->
+      <article class="module-card" data-keywords="manual reglas basicas tms rpg">
+        <a href="#" data-nav="manual" class="module-link">
+          <div class="module-banner" style="background: #2f5e69;">
+            <h2>Manual de reglas</h2>
+          </div>
+          <div class="module-art">
+            <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg">
+              <rect width="400" height="250" fill="#e2e8f0"/>
+              <path d="M55 48 Q128 32 200 54 L200 206 Q128 188 55 204 Z" fill="#fffbeb" stroke="#334155" stroke-width="2.5"/>
+              <path d="M345 48 Q272 32 200 54 L200 206 Q272 188 345 204 Z" fill="#fef3c7" stroke="#334155" stroke-width="2.5"/>
+              <line x1="200" y1="54" x2="200" y2="206" stroke="#1e293b" stroke-width="3"/>
+              <path d="M82 82 H175 M82 108 H168 M82 134 H172 M225 82 H318 M225 108 H310 M225 134 H316" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
+              <polygon points="105,195 130,175 155,195 130,215" fill="#0f766e"/>
+              <circle cx="275" cy="192" r="16" fill="#be123c"/>
+            </svg>
+          </div>
+          <p class="module-desc">Revisa el manual con las reglas básicas de TMS RPG</p>
+        </a>
+      </article>
+
+      <!-- 2. Hoja de personaje -->
+      <article class="module-card" data-keywords="hoja personaje tiradas modulo dado integrado pj">
+        <a href="#" data-nav="pj" class="module-link">
+          <div class="module-banner" style="background: #2f5e69;">
+            <h2>Hoja de personaje</h2>
+          </div>
+          <div class="module-art">
+            <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg">
+              <rect width="400" height="250" fill="#cbd5e1"/>
+              <rect x="75" y="26" width="210" height="198" rx="6" fill="#ffffff" stroke="#1e293b" stroke-width="2.5"/>
+              <circle cx="122" cy="72" r="22" fill="#e2e8f0" stroke="#334155" stroke-width="2"/>
+              <circle cx="122" cy="67" r="8" fill="#475569"/>
+              <path d="M107 88 Q122 76 137 88" fill="#475569"/>
+              <path d="M158 56 H258 M158 76 H240 M158 96 H252" stroke="#475569" stroke-width="3" stroke-linecap="round"/>
+              <rect x="98" y="122" width="164" height="76" rx="4" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+              <path d="M112 145 H246 M112 165 H230 M112 185 H242" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"/>
+              <polygon points="315,155 348,175 338,212 292,212 282,175" fill="#d97706" stroke="#78350f" stroke-width="2"/>
+            </svg>
+          </div>
+          <p class="module-desc">Gestiona tu hoja de personaje y haz tus tiradas con el módulo de dado integrado</p>
+        </a>
+      </article>
+
+      <!-- 3. Fichas de PNJ -->
+      <article class="module-card" data-keywords="fichas pnj cronica exportar personajes no jugadores">
+        <a href="#" data-nav="pnj" class="module-link">
+          <div class="module-banner" style="background: #14532d;">
+            <h2>Fichas de PNJ</h2>
+          </div>
+          <div class="module-art">
+            <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg">
+              <rect width="400" height="250" fill="#d1fae5"/>
+              <g transform="translate(55, 38) rotate(-4)">
+                <rect width="125" height="165" rx="6" fill="#ffffff" stroke="#14532d" stroke-width="2"/>
+                <circle cx="62" cy="54" r="18" fill="#bbf7d0" stroke="#15803d" stroke-width="2"/>
+                <path d="M24 102 H100 M24 124 H92 M24 144 H84" stroke="#475569" stroke-width="2.5" stroke-linecap="round"/>
+              </g>
+              <g transform="translate(215, 44) rotate(4)">
+                <rect width="125" height="165" rx="6" fill="#ffffff" stroke="#14532d" stroke-width="2"/>
+                <circle cx="62" cy="54" r="18" fill="#fde68a" stroke="#b45309" stroke-width="2"/>
+                <path d="M24 102 H100 M24 124 H92 M24 144 H84" stroke="#475569" stroke-width="2.5" stroke-linecap="round"/>
+              </g>
+            </svg>
+          </div>
+          <p class="module-desc">Crea las fichas de los PNJ de tu crónica y expórtalas</p>
+        </a>
+      </article>
+
+      <!-- 4. Herramientas del Director -->
+      <article class="module-card" data-keywords="herramientas director gm master partida">
+        <a href="#" data-nav="director" class="module-link">
+          <div class="module-banner" style="background: #2f5e69;">
+            <h2>Herramientas del Director</h2>
+          </div>
+          <div class="module-art">
+            <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg">
+              <rect width="400" height="250" fill="#e2e8f0"/>
+              <rect x="65" y="42" width="270" height="166" rx="8" fill="#1e293b" stroke="#0f172a" stroke-width="2.5"/>
+              <rect x="85" y="62" width="140" height="126" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5"/>
+              <circle cx="282" cy="95" r="24" fill="#0f766e" stroke="#99f6e4" stroke-width="2"/>
+              <text x="282" y="102" text-anchor="middle" fill="#ffffff" font-family="Cinzel, serif" font-size="16" font-weight="700">GM</text>
+              <path d="M102 92 H205 M102 118 H188 M102 144 H196 M248 148 H316 M248 168 H304" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <p class="module-desc">Herramientas de apoyo y control para el Director durante la partida</p>
+        </a>
+      </article>
+
+      <!-- 5. Lista de crónicas -->
+      <article class="module-card" data-keywords="lista cronicas sesiones historia campana">
+        <a href="#" data-nav="cronicas" class="module-link">
+          <div class="module-banner" style="background: #2f5e69;">
+            <h2>Lista de crónicas</h2>
+          </div>
+          <div class="module-art">
+            <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg">
+              <rect width="400" height="250" fill="#fef3c7"/>
+              <rect x="90" y="28" width="220" height="194" rx="6" fill="#fffbeb" stroke="#78350f" stroke-width="2.5"/>
+              <line x1="122" y1="28" x2="122" y2="222" stroke="#dc2626" stroke-width="1.5" opacity="0.55"/>
+              <path d="M138 66 H282 M138 96 H274 M138 126 H268 M138 156 H278 M138 186 H235" stroke="#475569" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <p class="module-desc">Consulta y organiza el registro de crónicas y sesiones de juego</p>
+        </a>
+      </article>
+
+      <!-- 6. Generador de mapas -->
+      <article class="module-card" data-keywords="generador mapas tactico cuadrícula escenario">
+        <a href="#" data-nav="mapas" class="module-link">
+          <div class="module-banner" style="background: #2f5e69;">
+            <h2>Generador de mapas</h2>
+          </div>
+          <div class="module-art">
+            <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg">
+              <rect width="400" height="250" fill="#0f172a"/>
+              <g transform="translate(85, 32)">
+                <rect width="186" height="186" rx="6" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+                <g stroke="#334155" stroke-width="1">
+                  <path d="M0 31 H186 M0 62 H186 M0 93 H186 M0 124 H186 M0 155 H186"/>
+                  <path d="M31 0 V186 M62 0 V186 M93 0 V186 M124 0 V186 M155 0 V186"/>
+                </g>
+                <rect x="32" y="32" width="60" height="60" fill="#334155"/>
+                <rect x="93" y="93" width="60" height="30" fill="#0284c7"/>
+                <circle cx="140" cy="50" r="9" fill="#ef4444" stroke="#ffffff" stroke-width="1.5"/>
+                <circle cx="55" cy="140" r="9" fill="#facc15" stroke="#ffffff" stroke-width="1.5"/>
+              </g>
+              <circle cx="318" cy="182" r="24" fill="#d97706" stroke="#fef3c7" stroke-width="2"/>
+              <path d="M318 164 L323 177 L336 182 L323 187 L318 200 L313 187 L300 182 L313 177 Z" fill="#fef3c7"/>
+            </svg>
+          </div>
+          <p class="module-desc">Crea, edita y exporta mapas tácticos para tus encuentros</p>
+        </a>
+      </article>
+    </div>
+  </main>
+
+  <!-- PANEL LATERAL DE PÁGINAS -->
+  <div id="pagesDrawer" class="drawer-backdrop" onclick="handleDrawerBackdropClick(event)">
+    <aside class="drawer-panel" aria-label="Lista de páginas">
+      <div class="drawer-header">
+        <h3>Páginas</h3>
+        <button type="button" class="btn-close-drawer" onclick="togglePagesDrawer(false)">✕</button>
+      </div>
+      <ul class="drawer-list">
+        <li><a href="#top" class="current" onclick="togglePagesDrawer(false)">Página Principal</a></li>
+        <li><a href="#" data-nav="manual">Manual de reglas</a></li>
+        <li><a href="#" data-nav="pj">Hoja de personaje</a></li>
+        <li><a href="#" data-nav="pnj">Fichas de PNJ</a></li>
+        <li><a href="#" data-nav="director">Herramientas del Director</a></li>
+        <li><a href="#" data-nav="cronicas">Lista de crónicas</a></li>
+        <li><a href="#" data-nav="mapas">Generador de mapas</a></li>
+      </ul>
+    </aside>
+  </div>
+
+  <footer>
+    Tag Managing System (TMS PBTA RPG) — Portada HTML lista para GitHub Pages.
+  </footer>
+
+  <script>
+    // Ajusta estas rutas cuando subas tus demás archivos HTML al repositorio de GitHub
+    const SITE_ROUTES = {
+      manual: 'https://sites.google.com/view/tms-pbta/manual-de-reglas',
+      pj: './hoja-personaje.html',
+      pnj: './pnj.html',
+      director: './director.html',
+      cronicas: './cronicas.html',
+      mapas: './mapas.html'
+    };
+
+    function applyRoutes() {
+      document.querySelectorAll('[data-nav]').forEach((el) => {
+        const key = el.getAttribute('data-nav');
+        if (SITE_ROUTES[key]) {
+          el.setAttribute('href', SITE_ROUTES[key]);
+        }
+      });
+    }
+
+    function filterModules() {
+      const query = (document.getElementById('moduleSearch').value || '').trim().toLowerCase();
+      const cards = document.querySelectorAll('.module-card');
+
+      cards.forEach((card) => {
+        const title = (card.querySelector('h2')?.textContent || '').toLowerCase();
+        const desc = (card.querySelector('.module-desc')?.textContent || '').toLowerCase();
+        const kw = (card.getAttribute('data-keywords') || '').toLowerCase();
+        const matches = !query || title.includes(query) || desc.includes(query) || kw.includes(query);
+        card.style.display = matches ? '' : 'none';
+      });
+    }
+
+    function togglePagesDrawer(open) {
+      const drawer = document.getElementById('pagesDrawer');
+      if (!drawer) return;
+      drawer.classList.toggle('open', Boolean(open));
+    }
+
+    function handleDrawerBackdropClick(event) {
+      if (event.target.id === 'pagesDrawer') {
+        togglePagesDrawer(false);
+      }
+    }
+
+    applyRoutes();
+  </script>
+</body>
+</html>

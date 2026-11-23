@@ -1,0 +1,3402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ficha de Personaje PbtA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #f1f5f9;
+      --card-bg: #ffffff;
+      --border-color: #cbd5e1;
+      --accent-color: #1e293b;
+      --accent-light: #f8fafc;
+      --accent-active: #0f172a;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --danger: #e11d48;
+      --radius: 6px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding: 15px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .action-bar {
+      width: 100%;
+      max-width: 1000px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      padding: 12px 20px;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .action-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .drive-status-bar {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .drive-badge {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .drive-badge.online {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .drive-badge.syncing {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .drive-badge.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button, label.btn {
+      background: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    button:hover, label.btn:hover {
+      background: var(--accent-active);
+      transform: translateY(-1px);
+    }
+
+    button.btn-drive-save {
+      background: #0284c7;
+    }
+
+    button.btn-drive-save:hover {
+      background: #0369a1;
+    }
+
+    button.btn-drive-load {
+      background: #0f766e;
+    }
+
+    button.btn-drive-load:hover {
+      background: #115e59;
+    }
+
+    button.btn-drive-refresh {
+      background: #475569;
+    }
+
+    button.btn-drive-refresh:hover {
+      background: #334155;
+    }
+
+    button.btn-reset {
+      background: #ef4444;
+    }
+
+    button.btn-reset:hover {
+      background: #dc2626;
+    }
+
+    /* --- VENTANA FLOTANTE DE EXPLORADOR DE GOOGLE DRIVE (PJ) --- */
+    #driveExplorerModal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 1250;
+      user-select: none;
+    }
+
+    .drive-explorer-card {
+      width: 480px;
+      max-width: 100%;
+      max-height: 82vh;
+      background: #1e293b;
+      color: #f8fafc;
+      border-radius: 10px;
+      border: 1.5px solid #38bdf8;
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .drive-explorer-header {
+      background: #0f172a;
+      padding: 11px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+    }
+
+    .drive-explorer-header span {
+      font-family: 'Cinzel', serif;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #38bdf8;
+      letter-spacing: 0.04em;
+    }
+
+    .drive-explorer-subbar {
+      padding: 8px 15px;
+      background: rgba(15, 23, 42, 0.6);
+      border-bottom: 1px solid #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: #cbd5e1;
+    }
+
+    .drive-explorer-list {
+      padding: 12px 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .drive-file-item {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: left;
+    }
+
+    .drive-file-item:hover {
+      border-color: #38bdf8;
+      background: #172554;
+    }
+
+    .drive-file-name {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: #f8fafc;
+      word-break: break-word;
+    }
+
+    .drive-file-meta {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    .drive-file-load-tag {
+      background: #0284c7;
+      color: #ffffff;
+      padding: 4px 9px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .drive-empty-state {
+      text-align: center;
+      padding: 24px 12px;
+      color: #94a3b8;
+      font-size: 0.84rem;
+    }
+
+    .sheet-container {
+      width: 100%;
+      max-width: 1000px;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      border: 1px solid var(--border-color);
+      position: relative;
+    }
+
+    .sheet-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 850px) {
+      .sheet-grid { grid-template-columns: 1fr; }
+      .sheet-container { padding: 15px; }
+    }
+
+    .col { display: flex; flex-direction: column; gap: 16px; }
+
+    .box {
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 8px 12px;
+      position: relative;
+    }
+
+    .box-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--accent-color);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .concept-title-left {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .concept-random-btn {
+      background: #e2e8f0;
+      color: var(--accent-color);
+      border: 1px solid #94a3b8;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .concept-random-btn:hover {
+      background: #0284c7;
+      color: #ffffff;
+      border-color: #0284c7;
+      transform: scale(1.08);
+    }
+
+    .concept-sheet-actions {
+      margin-top: 8px;
+      display: flex;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .btn-sheet-concept-gemini {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 6px 11px;
+      border-radius: 4px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+
+    .btn-sheet-concept-gemini:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+    }
+
+    .box-subtitle {
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .editable {
+      width: 100%;
+      min-height: 24px;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      background: transparent;
+      word-break: break-word;
+      padding: 2px 4px;
+      border-radius: 3px;
+      border: 1px transparent solid;
+    }
+
+    .editable:focus {
+      background: #f8fafc;
+      border-color: var(--border-color);
+    }
+
+    .editable:empty:before {
+      content: attr(placeholder);
+      color: #a0aec0;
+      pointer-events: none;
+      display: block;
+    }
+
+    .editable strike, .editable s, .editable [style*="strike"] {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .header-row {
+      display: flex;
+      gap: 15px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .header-item {
+      flex: 1;
+      min-width: 180px;
+      border-bottom: 2px solid var(--accent-color);
+      padding-bottom: 2px;
+    }
+
+    .header-item label {
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--accent-color);
+      display: block;
+    }
+
+    .portrait-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    @media (max-width: 500px) {
+      .portrait-grid { grid-template-columns: 1fr; }
+    }
+
+    .portrait-area {
+      min-height: 160px;
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      background: var(--accent-light);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .portrait-area img {
+      width: 100%;
+      height: auto;
+      max-height: 300px;
+      object-fit: contain;
+      display: block;
+      border-radius: 3px;
+    }
+
+    .portrait-placeholder {
+      font-family: 'Cinzel', serif;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      text-align: center;
+      padding: 10px;
+    }
+
+    .tags-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    @media (max-width: 480px) {
+      .tags-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .tag-input {
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 4px 6px;
+      font-size: 0.82rem;
+      background: #fafafa;
+      text-align: center;
+      min-height: 28px;
+    }
+
+    .flujo-box { background: #fafafa; }
+    .flujo-note { font-size: 0.7rem; color: var(--text-muted); margin-top: 6px; text-align: right; font-style: italic; }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .stat-box {
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 6px;
+      text-align: center;
+    }
+
+    .stat-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--accent-color);
+    }
+
+    .bienestar-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 0;
+    }
+
+    .bienestar-top-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      width: 100%;
+    }
+
+    .hearts-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .heart-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #cbd5e1;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+      transition: color 0.15s;
+    }
+
+    .heart-btn.active { color: var(--danger); }
+
+    .checkbox-square {
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid var(--accent-color);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border-radius: 2px;
+    }
+
+    .checkbox-square.checked::after {
+      content: "✔";
+      font-size: 11px;
+      color: var(--accent-color);
+    }
+
+    .table-container { width: 100%; overflow-x: auto; }
+
+    .table-custom {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      min-width: 320px;
+    }
+
+    .table-custom th {
+      font-family: 'Cinzel', serif;
+      text-align: left;
+      font-size: 0.7rem;
+      padding: 4px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--accent-color);
+    }
+
+    .table-custom td { padding: 3px 2px; border-bottom: 1px solid #f1f5f9; }
+
+    .check-cell { width: 24px; text-align: center; }
+
+    .flex-row-boxes {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    @media (max-width: 500px) {
+      .flex-row-boxes { grid-template-columns: 1fr; }
+    }
+
+    .exp-boxes {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .exp-check {
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid var(--accent-color);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 2px;
+    }
+
+    .exp-check.dashed { border-style: dashed; }
+    .exp-check.checked::after { content: "■"; font-size: 10px; color: var(--accent-color); }
+
+    /* --- VENTANA FLOTANTE Y MOVIBLE DEL RANDOMIZADOR DE CONCEPTO --- */
+    #conceptRandomizerModal {
+      position: fixed;
+      top: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 380px;
+      max-width: calc(100vw - 24px);
+      background: #1e293b;
+      color: #f8fafc;
+      border-radius: 10px;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+      border: 1.5px solid #38bdf8;
+      z-index: 1050;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+    }
+
+    .concept-modal-header {
+      background: #0f172a;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: grab;
+      border-bottom: 1px solid #334155;
+      touch-action: none;
+    }
+
+    .concept-modal-header:active { cursor: grabbing; }
+
+    .concept-modal-header span {
+      font-family: 'Cinzel', serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #38bdf8;
+      letter-spacing: 0.04em;
+    }
+
+    .concept-modal-close {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0 4px;
+      line-height: 1;
+    }
+
+    .concept-modal-close:hover { color: #ffffff; }
+
+    .concept-modal-body {
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      text-align: center;
+      max-height: calc(100vh - 110px);
+      overflow-y: auto;
+    }
+
+    .concept-phrase-box {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 11px 12px;
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.96rem;
+      font-weight: 600;
+      line-height: 1.35;
+      color: #f8fafc;
+      user-select: text;
+    }
+
+    .concept-parts-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-size: 0.7rem;
+      color: #94a3b8;
+      text-align: left;
+      background: rgba(15, 23, 42, 0.55);
+      padding: 7px 10px;
+      border-radius: 6px;
+      border: 1px dashed #334155;
+    }
+
+    .concept-parts-breakdown strong {
+      color: #38bdf8;
+    }
+
+    .concept-modal-actions {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-randomize {
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 7px 10px;
+      border-radius: 5px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      flex: 1 1 100%;
+      justify-content: center;
+    }
+
+    .btn-randomize:hover {
+      background: #0369a1;
+    }
+
+    .btn-use-concept,
+    .btn-gemini-image {
+      color: #ffffff;
+      border: none;
+      padding: 7px 10px;
+      border-radius: 5px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+
+    .btn-use-concept {
+      background: #334155;
+    }
+
+    .btn-use-concept:hover {
+      background: #475569;
+    }
+
+    .btn-gemini-image {
+      background: #2563eb;
+      flex: 1 1 100%;
+    }
+
+    .btn-gemini-image:hover {
+      background: #1d4ed8;
+    }
+
+    /* --- VENTANA SUPERPUESTA PARA PEGAR EL PROMPT EN GEMINI --- */
+    #geminiPromptOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 1200;
+      user-select: none;
+    }
+
+    .gemini-overlay-card {
+      width: 440px;
+      max-width: 100%;
+      background: #1e293b;
+      color: #f8fafc;
+      border-radius: 10px;
+      border: 1.5px solid #38bdf8;
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .gemini-overlay-header {
+      background: #0f172a;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+    }
+
+    .gemini-overlay-header span {
+      font-family: 'Cinzel', serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #38bdf8;
+      letter-spacing: 0.04em;
+    }
+
+    .gemini-overlay-body {
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: left;
+    }
+
+    .gemini-overlay-instruction {
+      font-size: 0.78rem;
+      line-height: 1.4;
+      color: #e2e8f0;
+    }
+
+    .gemini-prompt-textarea {
+      width: 100%;
+      min-height: 105px;
+      background: #0f172a;
+      color: #f8fafc;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 0.8rem;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.4;
+      resize: vertical;
+      user-select: text;
+    }
+
+    .gemini-overlay-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      margin-top: 2px;
+    }
+
+    .btn-go-gemini {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+
+    .btn-go-gemini:hover {
+      background: #1d4ed8;
+    }
+
+    .btn-copy-again {
+      background: #334155;
+      color: #ffffff;
+      border: none;
+      padding: 8px 11px;
+      border-radius: 5px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-copy-again:hover {
+      background: #475569;
+    }
+
+    /* --- WIDGET Y LANZADOR FLOTANTE ARRASTRABLES --- */
+    #floatingDiceLauncher {
+      position: fixed;
+      bottom: 75px;
+      right: 25px;
+      width: 54px;
+      height: 54px;
+      background: var(--accent-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: grab;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+      z-index: 1000;
+      border: 2px solid #38bdf8;
+      user-select: none;
+      touch-action: none;
+    }
+    #floatingDiceLauncher:active { cursor: grabbing; }
+
+    #diceWidgetModal {
+      position: fixed;
+      bottom: 140px;
+      right: 25px;
+      width: 330px;
+      background: #1e293b;
+      color: white;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      border: 1.5px solid #38bdf8;
+      z-index: 1001;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+      user-select: none;
+    }
+
+    .dice-modal-header {
+      background: #0f172a;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: grab;
+      border-bottom: 1px solid #334155;
+      touch-action: none;
+    }
+    .dice-modal-header:active { cursor: grabbing; }
+    .dice-modal-header span {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #38bdf8;
+    }
+    .dice-modal-close {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+    .dice-modal-close:hover { color: white; }
+
+    .dice-tabs {
+      display: flex;
+      background: #0f172a;
+      border-bottom: 1px solid #334155;
+    }
+    .dice-tab {
+      flex: 1;
+      padding: 8px 3px;
+      text-align: center;
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: #94a3b8;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .dice-tab.active {
+      color: #38bdf8;
+      background: #1e293b;
+      border-bottom: 2px solid #38bdf8;
+    }
+
+    .dice-tab-content {
+      padding: 14px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      text-align: center;
+      position: relative;
+    }
+    .dice-tab-content.active { display: flex; }
+
+    /* SUB-VENTANA FLOTANTE DE ASISTENCIA */
+    #asistenciaSubModal {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.95);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      z-index: 10;
+      padding: 15px;
+    }
+    .asistencia-close-btn {
+      position: absolute;
+      top: 8px; right: 10px;
+      background: none; border: none;
+      color: #94a3b8; font-size: 1.2rem;
+      cursor: pointer;
+    }
+    .asistencia-close-btn:hover { color: white; }
+
+    .dice-container {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      margin: 4px 0;
+      flex-wrap: wrap;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    .d6 {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 700;
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.3), 0 4px 8px rgba(0,0,0,0.3);
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .d6:active { transform: scale(0.92); }
+
+    .d6-white {
+      background: #ffffff;
+      color: #0f172a;
+      border: 1px solid #cbd5e1;
+    }
+
+    .d6-black {
+      background: #0f172a;
+      color: #ffffff;
+      border: 1px solid #475569;
+    }
+
+    .roll-btn-container {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .roll-btn {
+      background: #0d9488;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .roll-btn:hover { background: #0f766e; }
+
+    .mod-btn {
+      background: #334155;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .mod-btn:hover { background: #475569; }
+
+    .dice-result-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      min-height: 22px;
+    }
+    .dice-sub-status {
+      font-size: 0.72rem;
+      font-weight: 600;
+      min-height: 16px;
+    }
+    .dice-extra-info {
+      font-size: 0.65rem;
+      font-weight: 600;
+      min-height: 14px;
+    }
+
+    #floatingToolbar {
+      position: absolute;
+      display: none;
+      background: #0f172a;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 1000;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #floatingToolbar button {
+      background: #334155;
+      color: white;
+      border: none;
+      padding: 3px 8px;
+      font-size: 0.75rem;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    #floatingToolbar button:hover { background: #475569; }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .action-bar, #floatingToolbar, #floatingDiceLauncher, #diceWidgetModal, #conceptRandomizerModal, #geminiPromptOverlay, #driveExplorerModal, .concept-random-btn, .concept-sheet-actions { display: none !important; }
+      .sheet-container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
+      .editable:focus { background: transparent; border-color: transparent; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- VENTANA FLOTANTE DE EXPLORADOR DE GOOGLE DRIVE (SUBCARPETA PJ) -->
+  <div id="driveExplorerModal" onclick="closeDriveExplorer(event)">
+    <div class="drive-explorer-card" onclick="event.stopPropagation()">
+      <div class="drive-explorer-header">
+        <span>EXPLORADOR DRIVE · TMS PBTA / PJ</span>
+        <button class="concept-modal-close" onclick="closeDriveExplorer(event)" title="Cerrar">×</button>
+      </div>
+      <div class="drive-explorer-subbar">
+        <span id="driveExplorerPath">Carpeta: TMS PBTA / PJ</span>
+        <button type="button" class="roll-btn" style="background: #334155;" onclick="refreshDriveExplorerList()">🔄 Refrescar lista</button>
+      </div>
+      <div class="drive-explorer-list" id="driveExplorerList">
+        <div class="drive-empty-state">Pulsa «Cargar ficha online» para listar los personajes en Drive.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VENTANA SUPERPUESTA PARA PEGAR EL PROMPT EN GEMINI -->
+  <div id="geminiPromptOverlay" onclick="closeGeminiPromptOverlay(event)">
+    <div class="gemini-overlay-card" onclick="event.stopPropagation()">
+      <div class="gemini-overlay-header">
+        <span>PROMPT PARA GEMINI (HORA DE AVENTURAS)</span>
+        <button class="concept-modal-close" onclick="closeGeminiPromptOverlay(event)" title="Cerrar">×</button>
+      </div>
+      <div class="gemini-overlay-body">
+        <div class="gemini-overlay-instruction" id="geminiOverlayStatus">
+          Este es el prompt que hay que pegar en Gemini. Gemini no lo pega automáticamente en una nueva conversación: pégalo a mano con <strong>Ctrl+V</strong> (o <strong>Cmd+V</strong>).
+        </div>
+        <textarea id="geminiPromptTextarea" class="gemini-prompt-textarea" readonly></textarea>
+        <div class="gemini-overlay-actions">
+          <button type="button" class="btn-copy-again" onclick="copyOverlayPromptAgain()">📋 Copiar prompt</button>
+          <button type="button" class="btn-go-gemini" onclick="goToGeminiAndPastePrompt()">🚀 Ir a Gemini para pegar el prompt</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VENTANA FLOTANTE Y MOVIBLE DEL RANDOMIZADOR DE CONCEPTO -->
+  <div id="conceptRandomizerModal">
+    <div class="concept-modal-header" id="conceptModalHeader">
+      <span>RANDOMIZADOR DE CONCEPTO</span>
+      <button class="concept-modal-close" onclick="closeConceptRandomizer(event)" title="Cerrar">×</button>
+    </div>
+    <div class="concept-modal-body">
+      <div class="concept-phrase-box" id="conceptRandomPhrase">Pulsa «Randomizar» para generar un concepto...</div>
+
+      <div class="concept-parts-breakdown" id="conceptPartsBreakdown">
+        <div><strong>1. Sustantivo:</strong> <span id="partNoun">-</span></div>
+        <div><strong>2. Adjetivo:</strong> <span id="partAdj">-</span></div>
+        <div><strong>3. Rol / Clase:</strong> <span id="partComp">-</span></div>
+      </div>
+
+      <div class="concept-modal-actions">
+        <button type="button" class="btn-randomize" onclick="generateRandomConcept()">🎲 Randomizar concepto</button>
+        <button type="button" class="btn-gemini-image" onclick="generateImageInGemini()">✨ Generar imagen en Gemini</button>
+        <button type="button" class="btn-use-concept" onclick="useGeneratedConcept()">✏️ Usar frase</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTÓN FLOTANTE ARRASTRABLE PARA ABRIR DADOS -->
+  <div id="floatingDiceLauncher" title="Lanzador de Dados PbtA (Arrástrame)">
+    🎲
+  </div>
+
+  <!-- VENTANA FLOTANTE DE DADOS -->
+  <div id="diceWidgetModal">
+    <div class="dice-modal-header" id="diceModalHeader">
+      <span>TIRADAS DE DADOS</span>
+      <button class="dice-modal-close" onclick="closeDiceWidget(event)">×</button>
+    </div>
+    <div class="dice-tabs">
+      <button class="dice-tab active" onclick="switchDiceTab(0)">Tirada reto</button>
+      <button class="dice-tab" onclick="switchDiceTab(1)">Asistencia</button>
+      <button class="dice-tab" onclick="switchDiceTab(2)">Tiradas daño</button>
+      <button class="dice-tab" onclick="switchDiceTab(3)">Tiradas curación</button>
+    </div>
+
+    <!-- PESTAÑA 1: TIRADA DE RETO -->
+    <div class="dice-tab-content active" id="diceTab0">
+      <div class="dice-container">
+        <div class="d6 d6-white" id="diceWhite" onclick="rollRetoDice()" title="Clic para tirar">-</div>
+        <div class="d6 d6-black" id="diceBlack" onclick="rollRetoDice()" title="Clic para tirar">-</div>
+      </div>
+      <div class="roll-btn-container">
+        <button class="roll-btn" onclick="rollRetoDice()">🎲 Tirar</button>
+        <button class="mod-btn" onclick="modifyRetoSum(1)">+1</button>
+        <button class="mod-btn" onclick="modifyRetoSum(-1)">-1</button>
+      </div>
+      <div class="roll-btn-container">
+        <button class="roll-btn" style="background: #0284c7;" onclick="openAsistenciaSubModal()">🤝 Asistencia</button>
+      </div>
+      <div>
+        <div class="dice-result-title" id="retoResultTitle" style="color: #94a3b8;">Suma: -</div>
+        <div class="dice-sub-status" id="retoSubStatus" style="color: #cbd5e1;"></div>
+        <div class="dice-extra-info" id="retoExtraInfo"></div>
+      </div>
+
+      <!-- SUB-VENTANA FLOTANTE DE ASISTENCIA INTERACTIVA -->
+      <div id="asistenciaSubModal">
+        <button class="asistencia-close-btn" onclick="closeAsistenciaSubModal()">✕</button>
+        <div style="font-family: 'Cinzel', serif; font-size: 0.8rem; color: #38bdf8; font-weight: 700;" id="asistenciaPromptText">ELIGE EL DADO A SUSTITUIR:</div>
+        
+        <!-- Paso 1: Selección de iconos de dados -->
+        <div class="dice-container" id="asistenciaDiceChoice">
+          <div class="d6 d6-white" onclick="selectAsistenciaTarget('white')" title="Elegir Dado Blanco">B</div>
+          <div class="d6 d6-black" onclick="selectAsistenciaTarget('black')" title="Elegir Dado Negro">N</div>
+        </div>
+
+        <!-- Paso 2: Introducir número y confirmar -->
+        <div id="asistenciaInputContainer" style="display: none; flex-direction: column; gap: 8px; align-items: center;">
+          <span style="font-size: 0.75rem; color: #cbd5e1;" id="asistenciaTargetLabel">Dado seleccionado</span>
+          <input type="number" id="asistenciaValueInput" min="1" max="6" value="6" style="width: 60px; text-align: center; font-size: 1.2rem; font-weight: 700; border-radius: 4px; border: 1px solid #38bdf8; background: #0f172a; color: white; outline: none;">
+          <button class="roll-btn" style="background: #22c55e;" onclick="confirmAsistencia()">Confirmar Asistencia</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PESTAÑA 2: ASISTENCIA | SUPERVIVENCIA -->
+    <div class="dice-tab-content" id="diceTab1">
+      <div class="dice-container">
+        <div class="d6 d6-white" id="diceSingle" onclick="rollSingleDice()" title="Clic para tirar">-</div>
+      </div>
+      <button class="roll-btn" onclick="rollSingleDice()">🎲 Tirar Dado</button>
+      <div>
+        <div class="dice-result-title" id="singleResultTitle" style="color: #38bdf8;">Resultado: -</div>
+      </div>
+    </div>
+
+    <!-- PESTAÑA 3: TIRADAS DE DAÑO -->
+    <div class="dice-tab-content" id="diceTab2">
+      <div id="damageMaxIndicator" style="font-size: 0.75rem; font-weight: 600; color: #38bdf8;">MAX: -</div>
+      <div id="damageDiceContainer" class="dice-container"></div>
+      
+      <!-- Botones de Acción Iniciales -->
+      <div class="roll-btn-container" id="damageActionBtns">
+        <button class="roll-btn" style="background: #ef4444;" onclick="rollDamage(false)">Daño desafortunado</button>
+        <button class="roll-btn" style="background: #f59e0b;" onclick="rollDamage(true)">Daño afortunado</button>
+      </div>
+
+      <!-- Botón Nueva Tirada (Sustituto) -->
+      <div class="roll-btn-container" id="damageNewRollBtnContainer" style="display: none;">
+        <button class="roll-btn" style="background: #0284c7;" onclick="resetDamageRoll()">🔄 Nueva tirada</button>
+      </div>
+
+      <div>
+        <div class="dice-result-title" id="damageResultTitle" style="color: #94a3b8;">Daño: -</div>
+        <div class="dice-sub-status" id="damageSubStatus" style="color: #cbd5e1;"></div>
+      </div>
+    </div>
+
+    <!-- PESTAÑA 4: TIRADAS DE CURACIÓN -->
+    <div class="dice-tab-content" id="diceTab3">
+      <div id="healingMaxIndicator" style="font-size: 0.75rem; font-weight: 600; color: #38bdf8;">MAX: -</div>
+      <div id="healingDiceContainer" class="dice-container"></div>
+      
+      <!-- Botones de Acción Iniciales -->
+      <div class="roll-btn-container" id="healingActionBtns">
+        <button class="roll-btn" style="background: #0d9488;" onclick="rollHealing(false)">Recuperación</button>
+        <button class="roll-btn" style="background: #2563eb;" onclick="rollHealing(true)">Descanso</button>
+      </div>
+
+      <!-- Botón Nueva Tirada (Sustituto) -->
+      <div class="roll-btn-container" id="healingNewRollBtnContainer" style="display: none;">
+        <button class="roll-btn" style="background: #0284c7;" onclick="resetHealingRoll()">🔄 Nueva tirada</button>
+      </div>
+
+      <div>
+        <div class="dice-result-title" id="healingResultTitle" style="color: #94a3b8;">Curación: -</div>
+        <div class="dice-sub-status" id="healingSubStatus" style="color: #cbd5e1;"></div>
+        <div class="dice-extra-info" id="healingExtraInfo" style="color: #cbd5e1;"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="floatingToolbar">
+    <button onmousedown="toggleStrike(event)"><s>S</s> Tachar / Limpiar</button>
+  </div>
+
+  <div class="action-bar">
+    <div class="action-title-group">
+      <div style="font-family: 'Cinzel', serif; font-weight: 700; color: var(--accent-color);">PBTA - HOJA DE PERSONAJE</div>
+      <div class="drive-status-bar">
+        <span id="driveStatusBadge" class="drive-badge">Drive: local</span>
+        <span id="driveLinkedFileLabel">Sin archivo en TMS PBTA / PJ</span>
+      </div>
+    </div>
+    <div class="btn-group">
+      <button type="button" class="btn-drive-save" onclick="savePjToDrive()">☁️ Guardar online</button>
+      <button type="button" class="btn-drive-load" onclick="openPjDriveExplorer()">📥 Cargar ficha online</button>
+      <button type="button" class="btn-drive-refresh" onclick="refreshPjFromDrive()">🔄 Actualizar</button>
+      <button type="button" onclick="printSheet()">🖨️ Imprimir / Guardar PDF</button>
+      <button type="button" onclick="exportData()">💾 Guardar JSON</button>
+      <label class="btn">
+        📂 Cargar JSON
+        <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importData(event)">
+      </label>
+    </div>
+  </div>
+
+  <div class="sheet-container">
+    
+    <div class="header-row" style="margin-bottom: 15px;">
+      <div class="header-item" style="flex: 2;">
+        <label>NOMBRE:</label>
+        <div class="editable" contenteditable="true" id="nombre" placeholder="Nombre del personaje..."></div>
+      </div>
+      <div class="header-item" style="flex: 1;">
+        <label>PRONOMBRE:</label>
+        <div class="editable" contenteditable="true" id="pronombre" placeholder="Él / Ella / Ello..."></div>
+      </div>
+    </div>
+
+    <div class="sheet-grid">
+      
+      <div class="col">
+        
+        <div class="box">
+          <div class="box-title">
+            <span class="concept-title-left">
+              CONCEPTO:
+              <button type="button" class="concept-random-btn" onclick="toggleConceptRandomizer(event)" title="Generador de conceptos">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9.5"></circle>
+                  <path d="M9.8 9.2a2.3 2.3 0 0 1 4.4.8c0 1.6-2.2 2.2-2.2 3.8"></path>
+                  <circle cx="12" cy="16.8" r="0.8" fill="currentColor" stroke="none"></circle>
+                </svg>
+              </button>
+            </span>
+          </div>
+          <div class="editable" contenteditable="true" id="concepto" placeholder="Arquetipo, idea principal..." style="min-height: 45px;"></div>
+          <div class="concept-sheet-actions">
+            <button type="button" class="btn-sheet-concept-gemini" onclick="generateConceptImageInGemini()">✨ Generar imagen del concepto en Gemini</button>
+          </div>
+        </div>
+
+        <div class="portrait-grid">
+          <div class="col">
+            <div class="box">
+              <div class="box-title">ORIGEN:</div>
+              <div class="editable" contenteditable="true" id="origen" placeholder="Procedencia..."></div>
+            </div>
+
+            <div class="box">
+              <div class="box-title">CIRCUNSTANCIAS:</div>
+              <div class="editable" contenteditable="true" id="circunstancias" placeholder="Pasado o trasfondo..." style="min-height: 50px;"></div>
+            </div>
+
+            <div class="box">
+              <div class="box-title">
+                META:
+                <span class="box-subtitle">+1 fragmento XP</span>
+              </div>
+              <div class="editable" contenteditable="true" id="meta" placeholder="Objetivo personal..." style="min-height: 40px;"></div>
+            </div>
+          </div>
+
+          <div class="box portrait-area" onclick="document.getElementById('portraitInput').click()">
+            <input type="file" id="portraitInput" accept="image/*" style="display:none;" onchange="loadPortrait(event)">
+            <div id="portraitPlaceholder" class="portrait-placeholder">
+              📷<br>Haz clic para añadir<br>RETRATO
+            </div>
+            <img id="portraitImg" src="" style="display:none;">
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-title">ETIQUETAS PERSONALES:</div>
+          <div class="tags-grid">
+            <div class="editable tag-input" contenteditable="true" id="tag_p_1"></div>
+            <div class="editable tag-input" contenteditable="true" id="tag_p_2"></div>
+            <div class="editable tag-input" contenteditable="true" id="tag_p_3"></div>
+            <div class="editable tag-input" contenteditable="true" id="tag_p_4"></div>
+            <div class="editable tag-input" contenteditable="true" id="tag_p_5"></div>
+            <div class="editable tag-input" contenteditable="true" id="tag_p_6"></div>
+            <div class="editable tag-input" contenteditable="true" id="tag_p_7"></div>
+            <div class="editable tag-input" contenteditable="true" id="tag_p_8"></div>
+            <div class="editable tag-input" contenteditable="true" id="tag_p_9"></div>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-title">ETIQUETAS DE ESTADO:</div>
+          <div class="tags-grid">
+            <div class="editable tag-input" contenteditable="true" id="tag_e_1"></div>
+            <div class="editable tag-input" contenteditable="true" id="tag_e_2"></div>
+            <div class="editable tag-input" contenteditable="true" id="tag_e_3"></div>
+            <div class="editable tag-input" contenteditable="true" id="tag_e_4"></div>
+            <div class="editable tag-input" contenteditable="true" id="tag_e_5"></div>
+            <div class="editable tag-input" contenteditable="true" id="tag_e_6"></div>
+          </div>
+        </div>
+
+        <div class="box flujo-box">
+          <div class="box-title">FLUJO:</div>
+          <div class="editable" contenteditable="true" id="flujo" placeholder="Notas sobre el estado de flujo..." style="min-height: 40px;"></div>
+          <div class="flujo-note">Cada vez que estés en flujo, elige: Recupera bienestar | Recupera una etiqueta | Lleva a cabo una habilidad exitosa sin tirada</div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="stat-title">RENDIMIENTO</div>
+            <div class="editable" contenteditable="true" id="stat_rendimiento" style="text-align: center;"></div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-title">INTELECTO</div>
+            <div class="editable" contenteditable="true" id="stat_intelecto" style="text-align: center;"></div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-title">VÍNCULO</div>
+            <div class="editable" contenteditable="true" id="stat_vinculo" style="text-align: center;"></div>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-title" style="justify-content: center;">BIENESTAR</div>
+          <div class="bienestar-container">
+            <div class="bienestar-top-row">
+              <div class="hearts-row" id="heartsRow"></div>
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                <span style="font-size: 0.6rem; font-family: 'Cinzel', serif; font-weight: 700; color: var(--accent-color);">MÁX</span>
+                <div class="editable" contenteditable="true" id="max_bienestar" style="width: 28px; height: 26px; border: 1.5px solid var(--accent-color); border-radius: 3px; text-align: center; font-size: 0.9rem; font-weight: 700; line-height: 22px; padding: 0;"></div>
+              </div>
+            </div>
+            <div id="bienestarMsg" style="font-size: 0.72rem; color: var(--danger); font-weight: 600; text-align: center; display: none;">Señala una salud máxima antes de repartir corazones</div>
+          </div>
+        </div>
+
+        <div class="flex-row-boxes">
+          <div class="box">
+            <div class="box-title">EXPERIENCIA</div>
+            <div class="exp-boxes">
+              <div class="exp-check" onclick="toggleCheck(this)" id="exp_1"></div>
+              <div class="exp-check" onclick="toggleCheck(this)" id="exp_2"></div>
+              <div class="exp-check" onclick="toggleCheck(this)" id="exp_3"></div>
+              <div class="exp-check" onclick="toggleCheck(this)" id="exp_4"></div>
+              <div class="exp-check" onclick="toggleCheck(this)" id="exp_5"></div>
+              <div class="exp-check dashed" onclick="toggleCheck(this)" id="exp_6"></div>
+              <div class="exp-check dashed" onclick="toggleCheck(this)" id="exp_7"></div>
+              <div class="editable" contenteditable="true" id="exp_level" style="width: 26px; height: 20px; border: 1.5px solid var(--accent-color); border-radius: 2px; text-align: center; font-size: 0.8rem; font-weight: 700; line-height: 18px; padding: 0;"></div>
+            </div>
+          </div>
+
+          <div class="box">
+            <div class="box-title">RIQUEZA:</div>
+            <div class="exp-boxes" style="margin-top: 4px;">
+              <div class="exp-check" onclick="toggleCheck(this)" id="riq_1"></div>
+              <div class="exp-check" onclick="toggleCheck(this)" id="riq_2"></div>
+              <div class="exp-check" onclick="toggleCheck(this)" id="riq_3"></div>
+              <div class="exp-check" onclick="toggleCheck(this)" id="riq_4"></div>
+              <div class="exp-check" onclick="toggleCheck(this)" id="riq_5"></div>
+            </div>
+          </div>
+
+          <div class="box">
+            <div class="box-title">DEFENSA:</div>
+            <div class="exp-boxes" style="margin-top: 4px;">
+              <div class="exp-check" onclick="toggleCheck(this)" id="def_1"></div>
+              <div class="exp-check" onclick="toggleCheck(this)" id="def_2"></div>
+              <div class="exp-check" onclick="toggleCheck(this)" id="def_3"></div>
+              <div class="exp-check" onclick="toggleCheck(this)" id="def_4"></div>
+              <div class="exp-check" onclick="toggleCheck(this)" id="def_5"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="col">
+        
+        <div class="box">
+          <div class="box-title">EQUIPAMIENTO</div>
+          <div class="table-container">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th class="check-cell">X</th>
+                  <th>NOMBRE</th>
+                  <th style="width: 35px;">PD</th>
+                  <th>ETIQUETAS</th>
+                  <th style="width: 35px;">BD</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="check-cell"><div class="checkbox-square" onclick="toggleCheck(this)" id="eq_x_1"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_nom_1"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_pd_1"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_etq_1"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_bd_1"></div></td>
+                </tr>
+                <tr>
+                  <td class="check-cell"><div class="checkbox-square" onclick="toggleCheck(this)" id="eq_x_2"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_nom_2"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_pd_2"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_etq_2"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_bd_2"></div></td>
+                </tr>
+                <tr>
+                  <td class="check-cell"><div class="checkbox-square" onclick="toggleCheck(this)" id="eq_x_3"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_nom_3"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_pd_3"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_etq_3"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_bd_3"></div></td>
+                </tr>
+                <tr>
+                  <td class="check-cell"><div class="checkbox-square" onclick="toggleCheck(this)" id="eq_x_4"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_nom_4"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_pd_4"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_etq_4"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_bd_4"></div></td>
+                </tr>
+                <tr>
+                  <td class="check-cell"><div class="checkbox-square" onclick="toggleCheck(this)" id="eq_x_5"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_nom_5"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_pd_5"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_etq_5"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_bd_5"></div></td>
+                </tr>
+                <tr>
+                  <td class="check-cell"><div class="checkbox-square" onclick="toggleCheck(this)" id="eq_x_6"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_nom_6"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_pd_6"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_etq_6"></div></td>
+                  <td><div class="editable" contenteditable="true" id="eq_bd_6"></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-title">INVENTARIO</div>
+          <div class="editable" contenteditable="true" id="inventario" placeholder="Objetos portados, notas adicionales..." style="min-height: 80px;"></div>
+        </div>
+
+        <div class="box">
+          <div class="box-title">ASISTENCIAS</div>
+          <div class="table-container">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th class="check-cell">X</th>
+                  <th>DESCRIPCIÓN / DETALLE</th>
+                  <th style="width: 30px;"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="check-cell"><div class="checkbox-square" onclick="toggleCheck(this)" id="as_x_1"></div></td>
+                  <td><div class="editable" contenteditable="true" id="as_desc_1"></div></td>
+                  <td><div class="editable" contenteditable="true" id="as_val_1"></div></td>
+                </tr>
+                <tr>
+                  <td class="check-cell"><div class="checkbox-square" onclick="toggleCheck(this)" id="as_x_2"></div></td>
+                  <td><div class="editable" contenteditable="true" id="as_desc_2"></div></td>
+                  <td><div class="editable" contenteditable="true" id="as_val_2"></div></td>
+                </tr>
+                <tr>
+                  <td class="check-cell"><div class="checkbox-square" onclick="toggleCheck(this)" id="as_x_3"></div></td>
+                  <td><div class="editable" contenteditable="true" id="as_desc_3"></div></td>
+                  <td><div class="editable" contenteditable="true" id="as_val_3"></div></td>
+                </tr>
+                <tr>
+                  <td class="check-cell"><div class="checkbox-square" onclick="toggleCheck(this)" id="as_x_4"></div></td>
+                  <td><div class="editable" contenteditable="true" id="as_desc_4"></div></td>
+                  <td><div class="editable" contenteditable="true" id="as_val_4"></div></td>
+                </tr>
+                <tr>
+                  <td class="check-cell"><div class="checkbox-square" onclick="toggleCheck(this)" id="as_x_5"></div></td>
+                  <td><div class="editable" contenteditable="true" id="as_desc_5"></div></td>
+                  <td><div class="editable" contenteditable="true" id="as_val_5"></div></td>
+                </tr>
+                <tr>
+                  <td class="check-cell"><div class="checkbox-square" onclick="toggleCheck(this)" id="as_x_6"></div></td>
+                  <td><div class="editable" contenteditable="true" id="as_desc_6"></div></td>
+                  <td><div class="editable" contenteditable="true" id="as_val_6"></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-title">RELACIONES</div>
+          <div class="table-container">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th style="width: 35%;">ALIADO</th>
+                  <th>EXPECTATIVA</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><div class="editable" contenteditable="true" id="rel_ali_1"></div></td><td><div class="editable" contenteditable="true" id="rel_exp_1"></div></td></tr>
+                <tr><td><div class="editable" contenteditable="true" id="rel_ali_2"></div></td><td><div class="editable" contenteditable="true" id="rel_exp_2"></div></td></tr>
+                <tr><td><div class="editable" contenteditable="true" id="rel_ali_3"></div></td><td><div class="editable" contenteditable="true" id="rel_exp_3"></div></td></tr>
+                <tr><td><div class="editable" contenteditable="true" id="rel_ali_4"></div></td><td><div class="editable" contenteditable="true" id="rel_exp_4"></div></td></tr>
+                <tr><td><div class="editable" contenteditable="true" id="rel_ali_5"></div></td><td><div class="editable" contenteditable="true" id="rel_exp_5"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-title">HABILIDADES ESPECIALES</div>
+          <div class="table-container">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th class="check-cell">X</th>
+                  <th style="width: 35%;">NOMBRE</th>
+                  <th>DESCRIPCIÓN</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="check-cell"><div class="checkbox-square" onclick="toggleCheck(this)" id="hab_x_1"></div></td>
+                  <td><div class="editable" contenteditable="true" id="hab_nom_1"></div></td>
+                  <td><div class="editable" contenteditable="true" id="hab_desc_1"></div></td>
+                </tr>
+                <tr>
+                  <td class="check-cell"><div class="checkbox-square" onclick="toggleCheck(this)" id="hab_x_2"></div></td>
+                  <td><div class="editable" contenteditable="true" id="hab_nom_2"></div></td>
+                  <td><div class="editable" contenteditable="true" id="hab_desc_2"></div></td>
+                </tr>
+                <tr>
+                  <td class="check-cell"><div class="checkbox-square" onclick="toggleCheck(this)" id="hab_x_3"></div></td>
+                  <td><div class="editable" contenteditable="true" id="hab_nom_3"></div></td>
+                  <td><div class="editable" contenteditable="true" id="hab_desc_3"></div></td>
+                </tr>
+                <tr>
+                  <td class="check-cell"><div class="checkbox-square" onclick="toggleCheck(this)" id="hab_x_4"></div></td>
+                  <td><div class="editable" contenteditable="true" id="hab_nom_4"></div></td>
+                  <td><div class="editable" contenteditable="true" id="hab_desc_4"></div></td>
+                </tr>
+                <tr>
+                  <td class="check-cell"><div class="checkbox-square" onclick="toggleCheck(this)" id="hab_x_5"></div></td>
+                  <td><div class="editable" contenteditable="true" id="hab_nom_5"></div></td>
+                  <td><div class="editable" contenteditable="true" id="hab_desc_5"></div></td>
+                </tr>
+                <tr>
+                  <td class="check-cell"><div class="checkbox-square" onclick="toggleCheck(this)" id="hab_x_6"></div></td>
+                  <td><div class="editable" contenteditable="true" id="hab_nom_6"></div></td>
+                  <td><div class="editable" contenteditable="true" id="hab_desc_6"></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-title">HABILIDADES TEMPORALES</div>
+          <div class="table-container">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th style="width: 35%;">NOMBRE Y ORIGEN</th>
+                  <th>DESCRIPCIÓN</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><div class="editable" contenteditable="true" id="hab_t_nom_1"></div></td><td><div class="editable" contenteditable="true" id="hab_t_desc_1"></div></td></tr>
+                <tr><td><div class="editable" contenteditable="true" id="hab_t_nom_2"></div></td><td><div class="editable" contenteditable="true" id="hab_t_desc_2"></div></td></tr>
+                <tr><td><div class="editable" contenteditable="true" id="hab_t_nom_3"></div></td><td><div class="editable" contenteditable="true" id="hab_t_desc_3"></div></td></tr>
+                <tr><td><div class="editable" contenteditable="true" id="hab_t_nom_4"></div></td><td><div class="editable" contenteditable="true" id="hab_t_desc_4"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="box" style="margin-top: 20px;">
+      <div class="box-title">NOTAS DEL JUGADOR:</div>
+      <div class="editable" contenteditable="true" id="notas_adicionales" placeholder="Anotaciones de la sesión, pistas, secretos, recordatorios..." style="min-height: 100px;"></div>
+    </div>
+
+  </div>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script>
+    let healthLevel = 0;
+    let currentRetoSum = 0;
+    let lastWhiteVal = null;
+    let lastBlackVal = null;
+    let isBlackWhite = false;
+    let selectedAsistenciaTarget = null;
+
+    // Variables de resultados y snapshots para congelar tiradas de daño y curación
+    let lastDamageResults = null;
+    let lastHealingResults = null;
+    let snapshotDamageHealth = null;
+    let snapshotHealingHealth = null;
+
+    // --- CONFIGURACIÓN Y ESTADO DE GOOGLE DRIVE (TMS PBTA / PJ) ---
+    const DRIVE_CONFIG = {
+      clientId: '3720906139-udra1unbra3vjpuogv200hgipur8dcrv.apps.googleusercontent.com', // Pega aquí tu OAuth 2.0 Client ID de Google Cloud Console
+      rootFolderId: '', // Opcional: ID de la carpeta "TMS PBTA" si ya lo tienes
+      rootFolderName: 'TMS PBTA',
+      subFolderName: 'PJ',
+      scope: 'https://www.googleapis.com/auth/drive.file'
+    };
+
+    const DRIVE_META_STORAGE_KEY = 'pbta_pj_drive_link_v1';
+
+    let driveAccessToken = null;
+    let driveTokenExpiresAt = 0;
+    let tokenClient = null;
+    let pendingAuthResolver = null;
+    let pendingAuthRejecter = null;
+
+    let cachedRootFolderId = DRIVE_CONFIG.rootFolderId || null;
+    let cachedPjFolderId = null;
+
+    let linkedDriveFile = {
+      fileId: null,
+      fileName: null,
+      autoSync: false
+    };
+
+    let driveAutoSaveTimer = null;
+    let isApplyingRemoteDriveData = false;
+    let isDriveSyncInProgress = false;
+    let queuedDriveSave = false;
+
+    function setDriveStatus(mode, badgeText, detailText) {
+      const badgeEl = document.getElementById('driveStatusBadge');
+      const labelEl = document.getElementById('driveLinkedFileLabel');
+      if (badgeEl) {
+        badgeEl.className = 'drive-badge' + (mode ? ' ' + mode : '');
+        badgeEl.textContent = badgeText;
+      }
+      if (labelEl && detailText !== undefined) {
+        labelEl.textContent = detailText;
+      }
+    }
+
+    function updateDriveStatusSummary(customNote) {
+      if (linkedDriveFile.fileId && linkedDriveFile.autoSync) {
+        const namePart = linkedDriveFile.fileName || 'personaje.json';
+        const notePart = customNote ? ` · ${customNote}` : ' · Autoguardado activo';
+        setDriveStatus('online', 'Drive conectado', `Archivo: ${namePart}${notePart}`);
+      } else if (driveAccessToken && Date.now() < driveTokenExpiresAt) {
+        setDriveStatus('online', 'Drive conectado', customNote || 'Sin ficha vinculada en TMS PBTA / PJ');
+      } else {
+        setDriveStatus('', 'Drive: local', customNote || 'Se conecta al guardar, cargar o actualizar online');
+      }
+    }
+
+    function saveDriveLinkMeta() {
+      try {
+        getStorage().setItem(DRIVE_META_STORAGE_KEY, JSON.stringify({
+          fileId: linkedDriveFile.fileId,
+          fileName: linkedDriveFile.fileName,
+          autoSync: linkedDriveFile.autoSync,
+          cachedRootFolderId,
+          cachedPjFolderId
+        }));
+      } catch (e) {}
+    }
+
+    function loadDriveLinkMeta() {
+      try {
+        const raw = getStorage().getItem(DRIVE_META_STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (parsed.fileId && parsed.autoSync) {
+          linkedDriveFile = {
+            fileId: parsed.fileId,
+            fileName: parsed.fileName || null,
+            autoSync: true
+          };
+        }
+        if (!DRIVE_CONFIG.rootFolderId && parsed.cachedRootFolderId) {
+          cachedRootFolderId = parsed.cachedRootFolderId;
+        }
+        if (parsed.cachedPjFolderId) {
+          cachedPjFolderId = parsed.cachedPjFolderId;
+        }
+      } catch (e) {}
+      updateDriveStatusSummary();
+    }
+
+    function ensureTokenClient() {
+      if (tokenClient) return true;
+      if (!DRIVE_CONFIG.clientId || DRIVE_CONFIG.clientId.trim() === '') {
+        alert('Falta configurar DRIVE_CONFIG.clientId en el código de la página con tu Client ID de Google Cloud.');
+        return false;
+      }
+      if (!window.google || !window.google.accounts || !window.google.accounts.oauth2) {
+        alert('Aún no ha terminado de cargar Google Identity Services. Revisa tu conexión o espera un segundo y reintenta.');
+        return false;
+      }
+      tokenClient = window.google.accounts.oauth2.initTokenClient({
+        client_id: DRIVE_CONFIG.clientId.trim(),
+        scope: DRIVE_CONFIG.scope,
+        callback: (response) => {
+          if (response && response.access_token) {
+            driveAccessToken = response.access_token;
+            const expiresInSec = Number(response.expires_in) || 3500;
+            driveTokenExpiresAt = Date.now() + (expiresInSec - 60) * 1000;
+            updateDriveStatusSummary();
+            if (pendingAuthResolver) {
+              const resolve = pendingAuthResolver;
+              pendingAuthResolver = null;
+              pendingAuthRejecter = null;
+              resolve(driveAccessToken);
+            }
+          } else {
+            const errMsg = (response && response.error) ? response.error : 'No se obtuvo token de acceso de Google.';
+            setDriveStatus('error', 'Error de acceso', errMsg);
+            if (pendingAuthRejecter) {
+              const reject = pendingAuthRejecter;
+              pendingAuthResolver = null;
+              pendingAuthRejecter = null;
+              reject(new Error(errMsg));
+            }
+          }
+        }
+      });
+      return true;
+    }
+
+    function ensureDriveAuth(forcePrompt = false) {
+      return new Promise((resolve, reject) => {
+        if (!forcePrompt && driveAccessToken && Date.now() < driveTokenExpiresAt) {
+          resolve(driveAccessToken);
+          return;
+        }
+        if (!ensureTokenClient()) {
+          reject(new Error('Token client no disponible'));
+          return;
+        }
+        pendingAuthResolver = resolve;
+        pendingAuthRejecter = reject;
+        try {
+          tokenClient.requestAccessToken({ prompt: forcePrompt ? 'consent' : '' });
+        } catch (err) {
+          pendingAuthResolver = null;
+          pendingAuthRejecter = null;
+          reject(err);
+        }
+      });
+    }
+
+    async function driveFetch(url, options = {}, retriedOn401 = false) {
+      const token = await ensureDriveAuth(false);
+      const headers = new Headers(options.headers || {});
+      headers.set('Authorization', `Bearer ${token}`);
+
+      const response = await fetch(url, { ...options, headers });
+
+      if (response.status === 401 && !retriedOn401) {
+        driveAccessToken = null;
+        driveTokenExpiresAt = 0;
+        await ensureDriveAuth(false);
+        return driveFetch(url, options, true);
+      }
+
+      if (!response.ok) {
+        let errorDetail = `${response.status} ${response.statusText}`;
+        try {
+          const errJson = await response.json();
+          if (errJson && errJson.error && errJson.error.message) {
+            errorDetail = errJson.error.message;
+          }
+        } catch (e) {}
+        throw new Error(errorDetail);
+      }
+
+      return response;
+    }
+
+    function escapeDriveQuery(str) {
+      return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    }
+
+    async function findOrCreateFolder(name, parentId = null) {
+      const parentClause = parentId
+        ? `'${escapeDriveQuery(parentId)}' in parents`
+        : `'root' in parents`;
+      const q = encodeURIComponent(
+        `name = '${escapeDriveQuery(name)}' and mimeType = 'application/vnd.google-apps.folder' and ${parentClause} and trashed = false`
+      );
+      const listRes = await driveFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)&pageSize=10`);
+      const listData = await listRes.json();
+
+      if (listData.files && listData.files.length > 0) {
+        return listData.files[0].id;
+      }
+
+      const metadata = {
+        name,
+        mimeType: 'application/vnd.google-apps.folder'
+      };
+      if (parentId) {
+        metadata.parents = [parentId];
+      }
+
+      const createRes = await driveFetch('https://www.googleapis.com/drive/v3/files?fields=id,name', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(metadata)
+      });
+      const created = await createRes.json();
+      return created.id;
+    }
+
+    async function getPjSubfolderId() {
+      if (cachedPjFolderId) {
+        return cachedPjFolderId;
+      }
+      if (!cachedRootFolderId) {
+        cachedRootFolderId = DRIVE_CONFIG.rootFolderId
+          ? DRIVE_CONFIG.rootFolderId.trim()
+          : await findOrCreateFolder(DRIVE_CONFIG.rootFolderName, null);
+      }
+      cachedPjFolderId = await findOrCreateFolder(DRIVE_CONFIG.subFolderName, cachedRootFolderId);
+      saveDriveLinkMeta();
+      return cachedPjFolderId;
+    }
+
+    function getCharacterPlainName() {
+      const nombreEl = document.getElementById('nombre');
+      if (!nombreEl) return 'personaje';
+      const txt = (nombreEl.textContent || nombreEl.innerText || '').trim();
+      return txt || 'personaje';
+    }
+
+    function buildPjDriveFileName() {
+      const baseName = getCharacterPlainName()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '') || 'personaje';
+      return `pj_${baseName}.json`;
+    }
+
+    function collectCurrentSheetPayload() {
+      autoSave();
+      const rawLocal = getStorage().getItem('pbta_sheet_data_master_v5');
+      let sheetData = {};
+      try {
+        sheetData = rawLocal ? JSON.parse(rawLocal) : {};
+      } catch (e) {
+        sheetData = {};
+      }
+      return {
+        schema: 'pbta-pj-v1',
+        updatedAt: new Date().toISOString(),
+        characterName: getCharacterPlainName(),
+        sheetData
+      };
+    }
+
+    async function uploadJsonToDriveFile(fileId, fileName, folderId, payloadObj) {
+      const jsonString = JSON.stringify(payloadObj, null, 2);
+      const boundary = 'pbta_drive_boundary_' + Date.now();
+      const metadataPart = {
+        name: fileName,
+        mimeType: 'application/json'
+      };
+      if (!fileId && folderId) {
+        metadataPart.parents = [folderId];
+      }
+
+      const multipartBody =
+        `--${boundary}\r\n` +
+        `Content-Type: application/json; charset=UTF-8\r\n\r\n` +
+        `${JSON.stringify(metadataPart)}\r\n` +
+        `--${boundary}\r\n` +
+        `Content-Type: application/json; charset=UTF-8\r\n\r\n` +
+        `${jsonString}\r\n` +
+        `--${boundary}--`;
+
+      const url = fileId
+        ? `https://www.googleapis.com/upload/drive/v3/files/${encodeURIComponent(fileId)}?uploadType=multipart&fields=id,name,modifiedTime`
+        : `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,modifiedTime`;
+
+      const method = fileId ? 'PATCH' : 'POST';
+      const res = await driveFetch(url, {
+        method,
+        headers: {
+          'Content-Type': `multipart/related; boundary=${boundary}`
+        },
+        body: multipartBody
+      });
+      return res.json();
+    }
+
+    async function flushDriveAutoSave(isManualSave = false) {
+      if (!linkedDriveFile.fileId && !isManualSave) return;
+
+      if (isDriveSyncInProgress) {
+        queuedDriveSave = true;
+        return;
+      }
+
+      isDriveSyncInProgress = true;
+      setDriveStatus('syncing', 'Guardando en Drive...', linkedDriveFile.fileName || 'Sincronizando...');
+
+      try {
+        const folderId = await getPjSubfolderId();
+        const payload = collectCurrentSheetPayload();
+        const fileName = linkedDriveFile.fileName || buildPjDriveFileName();
+        const result = await uploadJsonToDriveFile(linkedDriveFile.fileId, fileName, folderId, payload);
+
+        linkedDriveFile.fileId = result.id;
+        linkedDriveFile.fileName = result.name || fileName;
+        linkedDriveFile.autoSync = true;
+        saveDriveLinkMeta();
+
+        const hora = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        updateDriveStatusSummary(`Guardado ${hora}`);
+      } catch (err) {
+        console.error('Error al guardar PJ en Drive:', err);
+        setDriveStatus('error', 'Error al guardar', err.message || 'No se pudo subir a Drive');
+        if (isManualSave) {
+          alert('No se pudo guardar la ficha en Google Drive: ' + (err.message || err));
+        }
+      } finally {
+        isDriveSyncInProgress = false;
+        if (queuedDriveSave) {
+          queuedDriveSave = false;
+          flushDriveAutoSave(false);
+        }
+      }
+    }
+
+    function scheduleDriveAutoSave() {
+      if (isApplyingRemoteDriveData) return;
+      if (!linkedDriveFile.fileId || !linkedDriveFile.autoSync) return;
+
+      if (driveAutoSaveTimer) {
+        clearTimeout(driveAutoSaveTimer);
+      }
+      setDriveStatus('syncing', 'Pendiente de guardar...', `${linkedDriveFile.fileName || 'Ficha'} · Cambios sin subir`);
+      driveAutoSaveTimer = setTimeout(() => {
+        flushDriveAutoSave(false);
+      }, 1500);
+    }
+
+    async function savePjToDrive() {
+      linkedDriveFile.autoSync = true;
+      await flushDriveAutoSave(true);
+    }
+
+    function applyLoadedSheetObject(rawObj) {
+      const sheetData = (rawObj && rawObj.sheetData && typeof rawObj.sheetData === 'object')
+        ? rawObj.sheetData
+        : rawObj;
+
+      if (!sheetData || typeof sheetData !== 'object') {
+        throw new Error('El JSON de la ficha no tiene un formato válido.');
+      }
+
+      isApplyingRemoteDriveData = true;
+      try {
+        getStorage().setItem('pbta_sheet_data_master_v5', JSON.stringify(sheetData));
+        loadAutoSave();
+      } finally {
+        isApplyingRemoteDriveData = false;
+      }
+    }
+
+    async function openPjDriveExplorer() {
+      const modal = document.getElementById('driveExplorerModal');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+      await refreshDriveExplorerList();
+    }
+
+    function closeDriveExplorer(event) {
+      if (event) event.stopPropagation();
+      const modal = document.getElementById('driveExplorerModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    async function refreshDriveExplorerList() {
+      const listEl = document.getElementById('driveExplorerList');
+      if (listEl) {
+        listEl.innerHTML = '<div class="drive-empty-state">Conectando con Google Drive y cargando archivos de PJ...</div>';
+      }
+
+      try {
+        setDriveStatus('syncing', 'Consultando Drive...', 'Buscando JSON en TMS PBTA / PJ');
+        const pjFolderId = await getPjSubfolderId();
+        const q = encodeURIComponent(`'${escapeDriveQuery(pjFolderId)}' in parents and trashed = false`);
+        const fields = encodeURIComponent('files(id,name,modifiedTime,mimeType)');
+        const res = await driveFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=${fields}&orderBy=modifiedTime%20desc&pageSize=100`);
+        const data = await res.json();
+
+        const files = (data.files || []).filter(f =>
+          f.name.toLowerCase().endsWith('.json') || f.mimeType === 'application/json'
+        );
+
+        updateDriveStatusSummary();
+
+        if (!listEl) return;
+        if (files.length === 0) {
+          listEl.innerHTML = '<div class="drive-empty-state">No hay archivos JSON de personajes en <strong>TMS PBTA / PJ</strong> todavía.</div>';
+          return;
+        }
+
+        listEl.innerHTML = '';
+        files.forEach(file => {
+          const itemBtn = document.createElement('button');
+          itemBtn.type = 'button';
+          itemBtn.className = 'drive-file-item';
+          itemBtn.onclick = () => selectPjFromDriveExplorer(file.id, file.name);
+
+          const infoDiv = document.createElement('div');
+          const nameDiv = document.createElement('div');
+          nameDiv.className = 'drive-file-name';
+          nameDiv.textContent = file.name;
+
+          const metaDiv = document.createElement('div');
+          metaDiv.className = 'drive-file-meta';
+          const fechaText = file.modifiedTime
+            ? new Date(file.modifiedTime).toLocaleString('es-ES')
+            : 'Sin fecha';
+          metaDiv.textContent = `Actualizado: ${fechaText}`;
+
+          infoDiv.appendChild(nameDiv);
+          infoDiv.appendChild(metaDiv);
+
+          const tagSpan = document.createElement('span');
+          tagSpan.className = 'drive-file-load-tag';
+          tagSpan.textContent = 'Cargar';
+
+          itemBtn.appendChild(infoDiv);
+          itemBtn.appendChild(tagSpan);
+          listEl.appendChild(itemBtn);
+        });
+      } catch (err) {
+        console.error('Error al listar PJ en Drive:', err);
+        setDriveStatus('error', 'Error en Drive', err.message || 'No se pudo listar PJ');
+        if (listEl) {
+          listEl.innerHTML = `<div class="drive-empty-state">Error al cargar la carpeta PJ: ${err.message || err}</div>`;
+        }
+      }
+    }
+
+    async function selectPjFromDriveExplorer(fileId, fileName) {
+      try {
+        setDriveStatus('syncing', 'Cargando ficha...', fileName);
+        const res = await driveFetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}?alt=media`);
+        const jsonData = await res.json();
+
+        applyLoadedSheetObject(jsonData);
+
+        linkedDriveFile = {
+          fileId,
+          fileName: fileName || 'personaje.json',
+          autoSync: true
+        };
+        saveDriveLinkMeta();
+        closeDriveExplorer();
+
+        const hora = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        updateDriveStatusSummary(`Cargado ${hora}`);
+      } catch (err) {
+        console.error('Error al cargar ficha desde Drive:', err);
+        setDriveStatus('error', 'Error al cargar', err.message || 'No se pudo leer el JSON');
+        alert('No se pudo cargar la ficha seleccionada desde Drive: ' + (err.message || err));
+      }
+    }
+
+    async function refreshPjFromDrive() {
+      try {
+        if (!linkedDriveFile.fileId) {
+          await openPjDriveExplorer();
+          return;
+        }
+        if (driveAutoSaveTimer) {
+          clearTimeout(driveAutoSaveTimer);
+          driveAutoSaveTimer = null;
+        }
+        setDriveStatus('syncing', 'Actualizando...', linkedDriveFile.fileName || 'Consultando Drive');
+        const res = await driveFetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(linkedDriveFile.fileId)}?alt=media`);
+        const jsonData = await res.json();
+
+        applyLoadedSheetObject(jsonData);
+        linkedDriveFile.autoSync = true;
+        saveDriveLinkMeta();
+
+        const hora = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        updateDriveStatusSummary(`Actualizado ${hora}`);
+      } catch (err) {
+        console.error('Error al actualizar ficha desde Drive:', err);
+        setDriveStatus('error', 'Error al actualizar', err.message || 'No se pudo refrescar');
+        alert('No se pudo actualizar la ficha desde Drive: ' + (err.message || err));
+      }
+    }
+
+    // --- RANDOMIZADOR ABSURDO DE CONCEPTO (ESTILO HORA DE AVENTURAS / REGULAR SHOW / FANTASÍA / MITOLOGÍA / TERROR) ---
+    const ABSURD_NOUNS = [
+      // Mitología y mitos
+      "Cíclope", "Minotauro", "Centauro", "Quimera", "Fénix", "Hidra",
+      "Gárgola", "Mantícora", "Dríada", "Náyade", "Esfinge", "Pegaso",
+      "Unicornio", "Kraken", "Leviatán", "Wyvern", "Medusa", "Valquiria",
+      "Sátiro", "Ninfa", "Tritón", "Sirena", "Grifo", "Basilisco",
+      "Titán", "Hada", "Elfo", "Enano", "Dragón", "Cuervo",
+
+      // Criaturas de terror y seres oscuros
+      "Vampiro", "Fantasma", "Zombi", "Licántropo", "Banshee", "Aparición",
+      "Liche", "Gólem", "Mimético", "Espectro", "Sombra", "Duende",
+      "Trasgo", "Orco", "Goblin", "Ogro", "Trol", "Homúnculo",
+      "Esqueleto", "Murciélago", "Escorpión", "Polilla", "Cucaracha", "Serpiente",
+
+      // Alimentos y comidas con «humanoide»
+      "Flan humanoide", "Pudín humanoide", "Gelatina humanoide", "Taco humanoide",
+      "Galleta humanoide", "Bizcocho humanoide", "Donut humanoide", "Croissant humanoide",
+      "Helado humanoide", "Chicle humanoide", "Caramelo humanoide", "Calabaza humanoide",
+      "Zanahoria humanoide", "Patata humanoide", "Nabo humanoide", "Sandía humanoide",
+      "Piña humanoide", "Limón humanoide", "Berenjena humanoide", "Hongo humanoide",
+      "Seta humanoide", "Mandrágora humanoide", "Tarta humanoide", "Empanada humanoide",
+      "Sopa humanoide", "Queso humanoide", "Pan humanoide", "Bolillo humanoide",
+      "Fresa humanoide", "Manzana humanoide", "Pera humanoide", "Cereza humanoide",
+      "Uva humanoide", "Melón humanoide", "Coco humanoide", "Nuez humanoide",
+      "Avellana humanoide", "Castaña humanoide", "Maíz humanoide", "Guisante humanoide",
+      "Garbanzo humanoide", "Lenteja humanoide", "Tomate humanoide", "Pepino humanoide",
+      "Pimiento humanoide", "Cebolla humanoide", "Ajo humanoide", "Rábano humanoide",
+      "Churro humanoide", "Waffle humanoide", "Crepa humanoide", "Flanecillo humanoide",
+      "Natilla humanoide", "Turrón humanoide", "Mazapán humanoide", "Bombón humanoide",
+
+      // Seres vivos y animales
+      "Robot", "Gato", "Mapache", "Hombre", "Pato", "Búho",
+      "Lagarto", "Yeti", "Perro", "Gigante", "Tiburón", "Ciervo",
+      "Dinosaurio", "Pez", "Calamar", "Gnomo", "Rana", "Lechuza",
+      "Camaleón", "Tortuga", "Oveja", "Zorro", "Huevo", "Caracol",
+      "Marmota", "Flamenco", "Alpaca", "Llama", "Camello", "Rinoceronte",
+      "Hipopótamo", "Tapir", "Armadillo", "Pangolín", "Perezoso", "Escarabajo",
+      "Mantis", "Pulpo", "Sepia", "Anguila", "Mantarraya", "Foca",
+      "Nutria", "Halcón", "Águila", "Buitre", "Cisne", "Ganso",
+      "Castor", "Comadreja", "Tejón", "Topo", "Erizo",
+
+      // Objetos inanimados, herramientas y elementos no vivos con «viviente»
+      "Dispensador viviente", "Nube viviente", "Árbol viviente", "Meteorito viviente",
+      "Cometa viviente", "Eclipse viviente", "Aurora viviente", "Torbellino viviente",
+      "Volcán viviente", "Glaciar viviente", "Pantano viviente", "Cueva viviente",
+      "Ruina viviente", "Torre viviente", "Puente viviente", "Bote viviente",
+      "Dirigible viviente", "Galeón viviente", "Carro viviente", "Yunque viviente",
+      "Fuelle viviente", "Altar viviente", "Tótem viviente", "Ídolo viviente",
+      "Amuleto viviente", "Talismán viviente", "Cáliz viviente", "Corona viviente",
+      "Cetro viviente", "Anillo viviente", "Capa viviente", "Capucha viviente",
+      "Bota viviente", "Guante viviente", "Cinturón viviente", "Mochila viviente",
+      "Cantimplora viviente", "Linterna viviente", "Antorcha viviente", "Cuerda viviente",
+      "Gancho viviente", "Pico viviente", "Pala viviente", "Cráneo viviente",
+      "Hueso viviente", "Colmillo viviente", "Garra viviente", "Caparazón viviente",
+      "Nido viviente", "Alambique viviente", "Catalejo viviente", "Candelabro viviente",
+      "Cofre viviente", "Llave viviente", "Candado viviente", "Espejo viviente",
+      "Campana viviente", "Tambor viviente", "Laúd viviente", "Flauta viviente",
+      "Dado viviente", "Reloj viviente", "Brújula viviente", "Caldero viviente",
+      "Pergamino viviente", "Grimorio viviente", "Báculo viviente", "Espada viviente",
+      "Hacha viviente", "Martillo viviente", "Escudo viviente", "Tostadora viviente",
+      "Calcetín viviente", "Armadura viviente", "Espantapájaros viviente", "Guantelete viviente",
+      "Tetera viviente", "Lámpara viviente"
+    ];
+
+    const ABSURD_ADJECTIVES = [
+      // Bloque 1: Materia, forma y estado
+      "humanoide", "mutante", "parlante", "espectral", "cibernético", "místico",
+      "gruñón", "brillante", "sombrío", "espacial", "rebelde", "elemental",
+      "telepático", "nocturno", "ancestral", "diminuto", "luminoso", "miniatura",
+      "profeta", "encantado", "gigante", "oxidado", "radiactivo", "prismático",
+      "cósmico", "errante", "gelatinoso", "elástico", "pegajoso", "burbujeante",
+      "chispeante", "anciano", "salvaje", "amargo", "dulce", "acrílico",
+      "terroso", "etéreo", "rígido", "blando", "humeante", "fosforescente",
+
+      // Bloque 2: Fantásticos y de aventura
+      "arcano", "feérico", "abismal", "celestial", "infernal", "maldito",
+      "bendito", "primigenio", "runificado", "astral", "ígneo", "gélido",
+      "eléctrico", "magnético", "sónico", "cromático", "translúcido", "invisible",
+      "acorazado", "alado", "bicéfalo", "colosal", "microscópico", "antiguo",
+      "legendario", "olvidado", "despertado", "indómito", "astuto", "sereno",
+      "caótico", "inestable", "voraz", "astillado", "plateado", "dorado",
+      "cobrizo", "esmeraldino", "rubí", "zafiro", "ambarino", "perlado",
+      "marfileño", "ebúrneo", "musgoso", "frondoso", "rocoso", "arenoso",
+      "pantanosos", "salino", "ventoso", "tormentoso", "crepuscular", "auroral",
+      "lunar", "solar",
+
+      // Bloque 3: Peculiares, cómicos y de campo
+      "chirriante", "tambaleante", "parpadeante", "susurrante", "ruidoso", "silencioso",
+      "despistado", "audaz", "temerario", "cauteloso", "paranoico", "soñador",
+      "melancólico", "eufórico", "hambriento", "somnoliento", "nervioso", "estoico",
+      "chiflado", "excéntrico", "esponjoso", "gomoso", "crujiente", "viscoso",
+      "resbaladizo", "espumoso", "hinchado", "arrugado", "remendado", "deshilachado",
+      "perfumado", "apestoso", "picante", "ácido", "salado", "agridulce",
+      "fiel", "traicionero", "caprichoso", "obstinado", "inquieto", "errático",
+      "fantasmal", "mecánico", "alquímico", "sonámbulo", "lunático", "rechoncho",
+      "larguirucho", "patizambo", "corpulento", "escurridizo", "tenaz", "radiante",
+      "ceniciento", "brumoso", "centelleante", "vibrante", "titilante"
+    ];
+
+    const ABSURD_COMPLEMENTS = [
+      // Bloque 1: Clases, oficios y roles clásicos/absurdos
+      "mago", "motorista", "hostelero", "decano", "pirata", "paladín", "bardo", "cazarrecompensas",
+      "barista", "conspiranoico", "duque", "ladrón", "alquimista", "árbitro", "domador",
+      "contable", "ninja", "cronista", "gladiador", "repartidor", "guardabosques", "matón",
+      "médium", "inventor", "saboteador", "embajador", "cartógrafo", "chamán", "cerrajero",
+      "forajido", "mayordomo", "piloto", "filósofo", "buhonero", "inspector", "payaso",
+      "vigilante", "arqueólogo", "sastre", "mensajero", "nigromante", "socorrista", "agitador",
+      "coleccionista", "archivero", "mercenario", "cantinero", "farsante", "explorador",
+      "conde", "aprendiz", "cazafantasmas", "recaudador", "tahúr", "bufón", "guardián",
+      "espía", "monje", "corsario", "pícaro", "herbolario", "juez", "bohemio",
+      "aventurero", "embaucador", "centinela", "cazador", "marqués", "místico", "timonel",
+
+      // Bloque 2: Roles fantásticos y de aventura
+      "hechicero", "brujo", "druida", "guerrero", "arquero", "montaraz", "caballero", "templario",
+      "inquisidor", "evocador", "ilusionista", "piromante", "hidromante", "geomante", "aeromante",
+      "cronomante", "bárbaro", "berserker", "espadachín", "duelista", "ballestero", "artillero",
+      "granadero", "zapador", "explorador", "rastreador", "guía", "navegante", "capitán",
+      "contramaestre", "grumete", "bucanero", "saqueador", "cazadragones", "cazamonstruos", "exorcista",
+      "cazabrujas", "vidente", "oráculo", "augur", "profeta", "eremita", "peregrino",
+      "cruzado", "campeón", "vengador", "justiciero", "infiltrador", "asesino", "cazador",
+      "domador", "criador", "cuidador", "botánico", "zoólogo", "mineralogista", "astrónomo",
+      "alquimista", "forjador", "armero", "herrero", "joyero", "vidriero", "carpintero",
+      "alpinista", "espeleólogo", "buzo", "aviador", "caravana", "mensajero", "heraldo",
+
+      // Bloque 3: Títulos, cargos y aficiones de fantasía y comedia
+      "barón", "vizconde", "archiduque", "príncipe", "regente", "canciller", "embajador", "cónsul",
+      "alguacil", "sheriff", "carcelero", "verdugo", "notario", "escriba", "bibliotecario", "curador",
+      "tasador", "banquero", "prestamista", "comerciante", "mercader", "contrabandista", "perista",
+      "cocinero", "pastelero", "panadero", "carnicero", "tabernero", "posadero", "sommelier",
+      "jardinero", "apicultor", "leñador", "minero", "cantero", "pescador", "farero",
+      "actor", "titiritero", "malabarista", "acróbata", "equilibrista", "músico", "trovador",
+      "pintor", "escultor", "poeta", "dramaturgo", "coleccionista", "aficionado", "crítico",
+      "sabueso", "mensajero", "vigía", "centinela", "guardia", "escolta", "guardaespaldas",
+      "aprendiz", "discípulo", "maestro", "veterano", "recluta", "desertor", "fugitivo",
+      "soñador", "charlatán", "bromista", "estratega", "táctico", "mediador", "negociador"
+    ];
+
+    let currentGeneratedConcept = "";
+    let currentGeminiPromptText = "";
+
+    function pickRandom(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function buildAdventureTimeGeminiPrompt(phrase) {
+      return (
+        `Genera una imagen de cuerpo entero (de pies a cabeza, ocupando bien el alto del encuadre sin verse pequeño) de "${phrase}" ` +
+        `en formato rectangular y vertical, con el estilo artístico de la serie de animación Hora de Aventuras: ` +
+        `contornos oscuros orgánicos y limpios, proporciones expresivas, ojos sencillos y carismáticos, ` +
+        `colores planos vibrantes y atmósfera de fantasía absurda y aventurera.`
+      );
+    }
+
+    async function copyTextToClipboard(text) {
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+      } catch (err) {
+        // Continúa al respaldo con textarea
+      }
+
+      try {
+        const tempArea = document.createElement('textarea');
+        tempArea.value = text;
+        tempArea.setAttribute('readonly', '');
+        tempArea.style.position = 'fixed';
+        tempArea.style.opacity = '0';
+        document.body.appendChild(tempArea);
+        tempArea.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(tempArea);
+        return Boolean(ok);
+      } catch (err) {
+        return false;
+      }
+    }
+
+    async function openGeminiPromptWithText(conceptText) {
+      const geminiPrompt = buildAdventureTimeGeminiPrompt(conceptText);
+      currentGeminiPromptText = geminiPrompt;
+
+      const overlayEl = document.getElementById('geminiPromptOverlay');
+      const statusEl = document.getElementById('geminiOverlayStatus');
+      const textareaEl = document.getElementById('geminiPromptTextarea');
+
+      if (textareaEl) {
+        textareaEl.value = geminiPrompt;
+      }
+
+      const copied = await copyTextToClipboard(geminiPrompt);
+
+      if (statusEl) {
+        if (copied) {
+          statusEl.innerHTML =
+            '✅ <strong>Prompt copiado al portapapeles.</strong> Este es el prompt que hay que pegar en Gemini. ' +
+            'Como no se pega automáticamente en una nueva conversación, pégalo a mano con <strong>Ctrl+V</strong> (o <strong>Cmd+V</strong>).';
+        } else {
+          statusEl.innerHTML =
+            '⚠️ <strong>Este es el prompt que hay que pegar en Gemini.</strong> Cópialo y, como no se pega automáticamente en una nueva conversación, pégalo a mano con <strong>Ctrl+V</strong> (o <strong>Cmd+V</strong>).';
+        }
+      }
+
+      if (overlayEl) {
+        overlayEl.style.display = 'flex';
+      }
+    }
+
+    async function generateImageInGemini() {
+      if (!currentGeneratedConcept) {
+        generateRandomConcept();
+      }
+      await openGeminiPromptWithText(currentGeneratedConcept);
+    }
+
+    async function generateConceptImageInGemini() {
+      const conceptoEl = document.getElementById('concepto');
+      const typedConcept = conceptoEl ? (conceptoEl.innerText || '').trim() : '';
+
+      let targetConcept = typedConcept;
+      if (!targetConcept) {
+        if (!currentGeneratedConcept) {
+          generateRandomConcept();
+        }
+        targetConcept = currentGeneratedConcept;
+      }
+
+      await openGeminiPromptWithText(targetConcept);
+    }
+
+    async function copyOverlayPromptAgain() {
+      const textareaEl = document.getElementById('geminiPromptTextarea');
+      const statusEl = document.getElementById('geminiOverlayStatus');
+      const text = textareaEl ? textareaEl.value : currentGeminiPromptText;
+      if (!text) return;
+
+      const copied = await copyTextToClipboard(text);
+      if (statusEl) {
+        statusEl.innerHTML = copied
+          ? '✅ <strong>Prompt copiado al portapapeles.</strong> Pégalo a mano en Gemini con <strong>Ctrl+V</strong> (o <strong>Cmd+V</strong>).'
+          : '⚠️ Selecciona el texto y cópialo; luego pégalo a mano en Gemini con <strong>Ctrl+V</strong> (o <strong>Cmd+V</strong>).';
+      }
+    }
+
+    function goToGeminiAndPastePrompt() {
+      window.open('https://gemini.google.com/app', '_blank', 'noopener,noreferrer');
+    }
+
+    function closeGeminiPromptOverlay(event) {
+      if (event) event.stopPropagation();
+      const overlayEl = document.getElementById('geminiPromptOverlay');
+      if (overlayEl) {
+        overlayEl.style.display = 'none';
+      }
+    }
+
+    function generateRandomConcept() {
+      const noun = pickRandom(ABSURD_NOUNS);
+      const adj = pickRandom(ABSURD_ADJECTIVES);
+      const comp = pickRandom(ABSURD_COMPLEMENTS);
+
+      const phrase = `${noun} ${adj} ${comp}`;
+      currentGeneratedConcept = phrase;
+
+      document.getElementById('conceptRandomPhrase').innerText = phrase;
+      document.getElementById('partNoun').innerText = noun;
+      document.getElementById('partAdj').innerText = adj;
+      document.getElementById('partComp').innerText = comp;
+    }
+
+    function toggleConceptRandomizer(event) {
+      if (event) event.stopPropagation();
+      const modal = document.getElementById('conceptRandomizerModal');
+      if (modal.dataset.moved === "true") {
+        modal.dataset.moved = "false";
+        return;
+      }
+      const willOpen = modal.style.display !== 'flex';
+      modal.style.display = willOpen ? 'flex' : 'none';
+      if (willOpen && !currentGeneratedConcept) {
+        generateRandomConcept();
+      }
+    }
+
+    function closeConceptRandomizer(event) {
+      if (event) event.stopPropagation();
+      const modal = document.getElementById('conceptRandomizerModal');
+      modal.style.display = 'none';
+      modal.dataset.moved = "false";
+    }
+
+    function useGeneratedConcept() {
+      if (!currentGeneratedConcept) {
+        generateRandomConcept();
+      }
+      const conceptoEl = document.getElementById('concepto');
+      if (conceptoEl) {
+        conceptoEl.innerText = currentGeneratedConcept;
+        conceptoEl.focus();
+        autoSave();
+      }
+    }
+
+    // --- LÓGICA DE DADOS Y ARRASTRE MULTI-ELEMENTO ---
+    function toggleDiceWidget() {
+      const launcher = document.getElementById('floatingDiceLauncher');
+      if (launcher.dataset.moved === "true") {
+        launcher.dataset.moved = "false";
+        return;
+      }
+      const modal = document.getElementById('diceWidgetModal');
+      if (modal.dataset.moved === "true") {
+        modal.dataset.moved = "false";
+        return;
+      }
+      const willOpen = modal.style.display !== 'flex';
+      modal.style.display = willOpen ? 'flex' : 'none';
+      if (willOpen) {
+        updateDamageDiceDisplay();
+        updateHealingDiceDisplay();
+      }
+    }
+
+    function closeDiceWidget(event) {
+      if (event) event.stopPropagation();
+      const modal = document.getElementById('diceWidgetModal');
+      modal.style.display = 'none';
+      modal.dataset.moved = "false";
+    }
+
+    function switchDiceTab(tabIndex) {
+      closeAsistenciaSubModal();
+      const tabs = document.querySelectorAll('.dice-tab');
+      const contents = document.querySelectorAll('.dice-tab-content');
+      tabs.forEach((t, i) => {
+        if(i === tabIndex) t.classList.add('active');
+        else t.classList.remove('active');
+      });
+      contents.forEach((c, i) => {
+        if(i === tabIndex) c.classList.add('active');
+        else c.classList.remove('active');
+      });
+
+      if (tabIndex === 2) updateDamageDiceDisplay();
+      if (tabIndex === 3) updateHealingDiceDisplay();
+    }
+
+    function rollRetoDice() {
+      lastWhiteVal = Math.floor(Math.random() * 6) + 1;
+      lastBlackVal = Math.floor(Math.random() * 6) + 1;
+      isBlackWhite = false;
+
+      const blackDiceEl = document.getElementById('diceBlack');
+      blackDiceEl.className = "d6 d6-black";
+
+      document.getElementById('diceWhite').innerText = lastWhiteVal;
+      blackDiceEl.innerText = lastBlackVal;
+
+      currentRetoSum = lastWhiteVal + lastBlackVal;
+      evaluateRetoResult();
+    }
+
+    function modifyRetoSum(amount) {
+      if (lastWhiteVal === null || lastBlackVal === null) return;
+      currentRetoSum += amount;
+      evaluateRetoResult();
+    }
+
+    // Control de Sub-ventana de Asistencia
+    function openAsistenciaSubModal() {
+      selectedAsistenciaTarget = null;
+      document.getElementById('asistenciaDiceChoice').style.display = 'flex';
+      document.getElementById('asistenciaInputContainer').style.display = 'none';
+      document.getElementById('asistenciaPromptText').innerText = "ELIGE EL DADO A SUSTITUIR:";
+      document.getElementById('asistenciaSubModal').style.display = 'flex';
+    }
+
+    function closeAsistenciaSubModal() {
+      document.getElementById('asistenciaSubModal').style.display = 'none';
+    }
+
+    function selectAsistenciaTarget(target) {
+      selectedAsistenciaTarget = target;
+      document.getElementById('asistenciaDiceChoice').style.display = 'none';
+      document.getElementById('asistenciaInputContainer').style.display = 'flex';
+      document.getElementById('asistenciaPromptText').innerText = "INTRODUCE VALOR DE ASISTENCIA:";
+      document.getElementById('asistenciaTargetLabel').innerText = target === 'white' ? "Dado Blanco seleccionado" : "Dado Negro seleccionado";
+      document.getElementById('asistenciaValueInput').value = "6";
+      document.getElementById('asistenciaValueInput').focus();
+    }
+
+    function confirmAsistencia() {
+      const val = parseInt(document.getElementById('asistenciaValueInput').value);
+      if (isNaN(val) || val < 1 || val > 6) {
+        alert("Introduce un valor válido del 1 al 6.");
+        return;
+      }
+
+      if (selectedAsistenciaTarget === 'white') {
+        lastWhiteVal = val;
+        document.getElementById('diceWhite').innerText = lastWhiteVal;
+      } else if (selectedAsistenciaTarget === 'black') {
+        lastBlackVal = val;
+        isBlackWhite = true;
+        const blackDiceEl = document.getElementById('diceBlack');
+        blackDiceEl.className = "d6 d6-white";
+        blackDiceEl.innerText = lastBlackVal;
+      }
+
+      currentRetoSum = lastWhiteVal + lastBlackVal;
+      evaluateRetoResult();
+      closeAsistenciaSubModal();
+    }
+
+    function evaluateRetoResult() {
+      const titleEl = document.getElementById('retoResultTitle');
+      const subEl = document.getElementById('retoSubStatus');
+      const extraEl = document.getElementById('retoExtraInfo');
+
+      if (currentRetoSum >= 7) {
+        titleEl.innerText = "ÉXITO (" + currentRetoSum + ")";
+        titleEl.style.color = "#22c55e";
+        
+        if (currentRetoSum >= 10) {
+          extraEl.innerText = "+1 etiqueta o +1 frag. XP";
+          extraEl.style.color = "#22c55e";
+        } else {
+          extraEl.innerText = "";
+        }
+      } else {
+        titleEl.innerText = "FRACASO (" + currentRetoSum + ")";
+        titleEl.style.color = "#ef4444";
+
+        if (currentRetoSum <= 3) {
+          extraEl.innerText = "+1 marca de Amenaza";
+          extraEl.style.color = "#ef4444";
+        } else {
+          extraEl.innerText = "";
+        }
+      }
+
+      if (isBlackWhite) {
+        subEl.innerText = "AFORTUNADO (Asistencia)";
+        subEl.style.color = "#38bdf8";
+      } else if (lastBlackVal > lastWhiteVal) {
+        subEl.innerText = "DESAFORTUNADO";
+        subEl.style.color = "#f87171";
+      } else if (lastWhiteVal > lastBlackVal) {
+        subEl.innerText = "AFORTUNADO";
+        subEl.style.color = "#38bdf8";
+      } else {
+        subEl.innerText = "NEUTRO (Empates)";
+        subEl.style.color = "#94a3b8";
+      }
+    }
+
+    function rollSingleDice() {
+      const val = Math.floor(Math.random() * 6) + 1;
+      document.getElementById('diceSingle').innerText = val;
+      document.getElementById('singleResultTitle').innerText = "Resultado: " + val;
+    }
+
+    // --- LÓGICA DE DAÑO, CURACIÓN Y BIENESTAR CON SNAPSHOTS ---
+    function updateHeartsDisplay(skipSnapshotReset = false) {
+      const maxEl = document.getElementById('max_bienestar');
+      const msgEl = document.getElementById('bienestarMsg');
+      const heartsRow = document.getElementById('heartsRow');
+      if (!maxEl || !heartsRow || !msgEl) return;
+
+      const maxText = maxEl.textContent.trim();
+      const maxVal = parseInt(maxText);
+
+      if (maxText === '' || isNaN(maxVal) || maxVal <= 0) {
+        msgEl.style.display = 'block';
+        heartsRow.innerHTML = '';
+        healthLevel = 0;
+        resetDamageRoll();
+        resetHealingRoll();
+        autoSave();
+        return;
+      }
+
+      msgEl.style.display = 'none';
+
+      if (healthLevel > maxVal) {
+        healthLevel = maxVal;
+      }
+
+      heartsRow.innerHTML = '';
+      for (let i = 1; i <= Math.min(maxVal, 10); i++) {
+        const btn = document.createElement('button');
+        btn.className = 'heart-btn' + (i <= healthLevel ? ' active' : '');
+        btn.innerHTML = '♥';
+        btn.onclick = () => {
+          snapshotDamageHealth = null;
+          snapshotHealingHealth = null;
+          toggleHeart(i);
+        };
+        heartsRow.appendChild(btn);
+      }
+
+      if (!skipSnapshotReset) {
+        snapshotDamageHealth = null;
+        snapshotHealingHealth = null;
+      }
+
+      updateDamageDiceDisplay();
+      updateHealingDiceDisplay();
+      autoSave();
+    }
+
+    function setHealthLevel(val) {
+      const maxEl = document.getElementById('max_bienestar');
+      const maxVal = parseInt(maxEl ? maxEl.textContent.trim() : '');
+      if (isNaN(maxVal) || maxVal <= 0) return;
+
+      healthLevel = Math.max(0, Math.min(maxVal, val));
+      snapshotDamageHealth = null;
+      snapshotHealingHealth = null;
+      updateHeartsDisplay();
+    }
+
+    function toggleHeart(index) {
+      const maxEl = document.getElementById('max_bienestar');
+      const maxVal = parseInt(maxEl ? maxEl.textContent.trim() : '');
+      if (isNaN(maxVal) || maxVal <= 0) return;
+
+      if (index > maxVal) return;
+
+      if (healthLevel === index) {
+        setHealthLevel(index - 1);
+      } else {
+        setHealthLevel(index);
+      }
+    }
+
+    function updateDamageDiceDisplay() {
+      renderDamageDice();
+    }
+
+    function renderDamageDice() {
+      const container = document.getElementById('damageDiceContainer');
+      const maxInd = document.getElementById('damageMaxIndicator');
+      const maxEl = document.getElementById('max_bienestar');
+      const maxVal = maxEl ? maxEl.textContent.trim() : '-';
+      if (maxInd) maxInd.innerText = `MAX: ${maxVal}`;
+
+      if (!container) return;
+      container.innerHTML = '';
+
+      const effectiveHealth = (snapshotDamageHealth !== null) ? snapshotDamageHealth : healthLevel;
+
+      if (effectiveHealth <= 0) {
+        container.innerHTML = '<div style="font-family: \'Cinzel\', serif; font-weight: 700; font-size: 1.2rem; color: var(--danger);">K.O.</div>';
+        return;
+      }
+
+      for (let i = 0; i < effectiveHealth; i++) {
+        const d = document.createElement('div');
+        const res = lastDamageResults && lastDamageResults[i];
+        d.className = 'd6 ' + (res ? (res.isHit ? 'd6-black' : 'd6-white') : 'd6-white');
+        d.style.width = '36px';
+        d.style.height = '36px';
+        d.style.fontSize = '1.2rem';
+        d.innerText = res ? res.val : '-';
+        container.appendChild(d);
+      }
+    }
+
+    function resetDamageRoll() {
+      lastDamageResults = null;
+      snapshotDamageHealth = null;
+      document.getElementById('damageResultTitle').innerText = "Daño: -";
+      document.getElementById('damageResultTitle').style.color = "#94a3b8";
+      document.getElementById('damageSubStatus').innerText = "";
+      document.getElementById('damageActionBtns').style.display = 'flex';
+      document.getElementById('damageNewRollBtnContainer').style.display = 'none';
+      updateDamageDiceDisplay();
+    }
+
+    function rollDamage(isLucky) {
+      const maxEl = document.getElementById('max_bienestar');
+      const maxVal = parseInt(maxEl ? maxEl.textContent.trim() : '');
+      const titleEl = document.getElementById('damageResultTitle');
+      const subEl = document.getElementById('damageSubStatus');
+
+      if (isNaN(maxVal) || maxVal <= 0) {
+        titleEl.innerText = "Falta MAX";
+        subEl.innerText = "Indica un máximo de salud";
+        return;
+      }
+
+      if (healthLevel <= 0) {
+        titleEl.innerText = "K.O.";
+        subEl.innerText = "";
+        return;
+      }
+
+      if (snapshotDamageHealth === null) {
+        snapshotDamageHealth = healthLevel;
+      }
+
+      let damageCount = 0;
+      lastDamageResults = [];
+
+      for (let i = 0; i < snapshotDamageHealth; i++) {
+        const val = Math.floor(Math.random() * 6) + 1;
+        const isHit = isLucky ? (val === 6) : (val >= 5);
+        if (isHit) damageCount++;
+        lastDamageResults.push({ val, isHit });
+      }
+
+      renderDamageDice();
+
+      titleEl.innerText = `Daño: ${damageCount}`;
+      titleEl.style.color = damageCount > 0 ? '#ef4444' : '#22c55e';
+
+      if (damageCount === 0) {
+        subEl.innerText = "Ganas una etiqueta de estado perjudicial";
+        subEl.style.color = "#f59e0b";
+      } else {
+        subEl.innerText = "";
+      }
+
+      if (damageCount > 0) {
+        healthLevel = Math.max(0, healthLevel - damageCount);
+        updateHeartsDisplay(true);
+      }
+
+      document.getElementById('damageActionBtns').style.display = 'none';
+      document.getElementById('damageNewRollBtnContainer').style.display = 'flex';
+    }
+
+    function updateHealingDiceDisplay() {
+      renderHealingDice();
+    }
+
+    function renderHealingDice() {
+      const container = document.getElementById('healingDiceContainer');
+      const titleEl = document.getElementById('healingResultTitle');
+      const subEl = document.getElementById('healingSubStatus');
+      const extraEl = document.getElementById('healingExtraInfo');
+      const maxInd = document.getElementById('healingMaxIndicator');
+      const maxEl = document.getElementById('max_bienestar');
+      const maxText = maxEl ? maxEl.textContent.trim() : '';
+      const maxVal = parseInt(maxText);
+
+      if (maxInd) maxInd.innerText = `MAX: ${maxText || '-'}`;
+      if (!container) return;
+
+      container.innerHTML = '';
+      titleEl.innerText = "Curación: -";
+      subEl.innerText = "";
+      extraEl.innerText = "";
+
+      if (maxText === '' || isNaN(maxVal) || healthLevel > maxVal) {
+        container.innerHTML = '<div style="font-family: \'Cinzel\', serif; font-weight: 700; font-size: 0.85rem; color: var(--danger);">Error en salud máxima</div>';
+        return;
+      }
+
+      const effectiveHealth = (snapshotHealingHealth !== null) ? snapshotHealingHealth : healthLevel;
+      const diff = maxVal - effectiveHealth;
+
+      if (diff <= 0) {
+        container.innerHTML = '<div style="font-size: 0.85rem; color: var(--text-muted);">Salud al máximo</div>';
+        return;
+      }
+
+      for (let i = 0; i < diff; i++) {
+        const d = document.createElement('div');
+        d.className = 'd6';
+        const res = lastHealingResults && lastHealingResults[i];
+        if (res) {
+          const isSuccess = res.isSuccess;
+          d.style.background = isSuccess ? '#22c55e' : '#dc2626';
+          d.style.color = 'white';
+          d.style.border = '1px solid ' + (isSuccess ? '#16a34a' : '#b91c1c');
+          d.innerText = res.val;
+        } else {
+          d.style.background = '#dc2626';
+          d.style.color = 'white';
+          d.style.border = '1px solid #b91c1c';
+          d.innerText = '-';
+        }
+        d.style.width = '36px';
+        d.style.height = '36px';
+        d.style.fontSize = '1.2rem';
+        container.appendChild(d);
+      }
+    }
+
+    function resetHealingRoll() {
+      lastHealingResults = null;
+      snapshotHealingHealth = null;
+      document.getElementById('healingResultTitle').innerText = "Curación: -";
+      document.getElementById('healingResultTitle').style.color = "#94a3b8";
+      document.getElementById('healingSubStatus').innerText = "";
+      document.getElementById('healingExtraInfo').innerText = "";
+      document.getElementById('healingActionBtns').style.display = 'flex';
+      document.getElementById('healingNewRollBtnContainer').style.display = 'none';
+      updateHealingDiceDisplay();
+    }
+
+    function rollHealing(isRest) {
+      const maxEl = document.getElementById('max_bienestar');
+      const maxText = maxEl ? maxEl.textContent.trim() : '';
+      const maxVal = parseInt(maxText);
+
+      const titleEl = document.getElementById('healingResultTitle');
+      const subEl = document.getElementById('healingSubStatus');
+      const extraEl = document.getElementById('healingExtraInfo');
+
+      if (maxText === '' || isNaN(maxVal) || healthLevel > maxVal) {
+        titleEl.innerText = "Error";
+        subEl.innerText = "Error en salud máxima";
+        extraEl.innerText = "";
+        return;
+      }
+
+      if (snapshotHealingHealth === null) {
+        snapshotHealingHealth = healthLevel;
+      }
+
+      const diff = maxVal - snapshotHealingHealth;
+      if (diff <= 0) {
+        titleEl.innerText = "Salud al máximo";
+        subEl.innerText = "";
+        extraEl.innerText = "";
+        return;
+      }
+
+      let recovered = 0;
+      const threshold = isRest ? 4 : 5;
+      lastHealingResults = [];
+
+      for (let i = 0; i < diff; i++) {
+        const val = Math.floor(Math.random() * 6) + 1;
+        const isSuccess = val >= threshold;
+        if (isSuccess) recovered++;
+        lastHealingResults.push({ val, isSuccess });
+      }
+
+      renderHealingDice();
+
+      titleEl.innerText = `+ ${recovered} de Bienestar`;
+      titleEl.style.color = recovered > 0 ? '#22c55e' : '#f59e0b';
+
+      if (recovered === 0) {
+        subEl.innerText = "Ganas una etiqueta de estado beneficiosa";
+        subEl.style.color = "#38bdf8";
+      } else {
+        subEl.innerText = "";
+      }
+
+      if (isRest) {
+        extraEl.innerText = "Recuerda recuperar todas tus etiquetas y eliminar una etiqueta de estado al descansar. El Director pierde 1 Amenaza";
+        extraEl.style.color = "#cbd5e1";
+      } else {
+        extraEl.innerText = "";
+      }
+
+      if (recovered > 0) {
+        healthLevel = Math.min(maxVal, healthLevel + recovered);
+        updateHeartsDisplay(true);
+      }
+
+      document.getElementById('healingActionBtns').style.display = 'none';
+      document.getElementById('healingNewRollBtnContainer').style.display = 'flex';
+    }
+
+    // --- ARRASTRE UNIVERSAL ROBUSTO (RATÓN Y TÁCTIL) ---
+    function makeDraggable(el, handleEl) {
+      let isPointerDown = false;
+      let isDragging = false;
+      let startX = 0, startY = 0;
+      let initialX = 0, initialY = 0;
+
+      function onStart(clientX, clientY, target) {
+        if (target && (target.classList.contains('dice-modal-close') || target.classList.contains('concept-modal-close'))) return;
+        isPointerDown = true;
+        isDragging = false;
+        initialX = clientX;
+        initialY = clientY;
+        const rect = el.getBoundingClientRect();
+        startX = clientX - rect.left;
+        startY = clientY - rect.top;
+      }
+
+      function onMove(clientX, clientY) {
+        if (!isPointerDown) return;
+        
+        const dx = Math.abs(clientX - initialX);
+        const dy = Math.abs(clientY - initialY);
+
+        if (!isDragging && (dx > 6 || dy > 6)) {
+          isDragging = true;
+          el.style.bottom = 'auto';
+          el.style.right = 'auto';
+          el.style.transform = 'none';
+          el.dataset.moved = "true";
+        }
+
+        if (isDragging) {
+          el.style.left = (clientX - startX) + 'px';
+          el.style.top = (clientY - startY) + 'px';
+        }
+      }
+
+      function onEnd() {
+        isPointerDown = false;
+        setTimeout(() => { isDragging = false; }, 50);
+      }
+
+      handleEl.addEventListener('mousedown', (e) => {
+        onStart(e.clientX, e.clientY, e.target);
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        onMove(e.clientX, e.clientY);
+      });
+
+      document.addEventListener('mouseup', () => {
+        onEnd();
+      });
+
+      handleEl.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          onStart(e.touches[0].clientX, e.touches[0].clientY, e.target);
+        }
+      }, { passive: true });
+
+      document.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 1) {
+          onMove(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+
+      document.addEventListener('touchend', () => {
+        onEnd();
+      });
+    }
+
+    const launcher = document.getElementById('floatingDiceLauncher');
+    const modalBox = document.getElementById('diceWidgetModal');
+    const modalHeader = document.getElementById('diceModalHeader');
+    const conceptModal = document.getElementById('conceptRandomizerModal');
+    const conceptModalHeader = document.getElementById('conceptModalHeader');
+
+    makeDraggable(launcher, launcher);
+    makeDraggable(modalBox, modalHeader);
+    makeDraggable(conceptModal, conceptModalHeader);
+
+    launcher.addEventListener('click', toggleDiceWidget);
+
+    // --- SELECCIÓN Y EDICIÓN ---
+    document.addEventListener('selectionchange', () => {
+      const selection = window.getSelection();
+      const toolbar = document.getElementById('floatingToolbar');
+
+      if (!selection.isCollapsed && selection.toString().trim().length > 0) {
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+
+        toolbar.style.display = 'flex';
+        toolbar.style.top = `${rect.top + window.scrollY - 38}px`;
+        toolbar.style.left = `${rect.left + window.scrollX + (rect.width / 2) - 50}px`;
+      } else {
+        setTimeout(() => {
+          if (window.getSelection().isCollapsed) {
+            toolbar.style.display = 'none';
+          }
+        }, 150);
+      }
+    });
+
+    function toggleStrike(e) {
+      if (e) e.preventDefault();
+      document.execCommand('strikethrough', false, null);
+      autoSave();
+    }
+
+    function toggleCheck(el) {
+      if (el.classList.contains('dashed')) {
+        el.classList.remove('dashed');
+      }
+      el.classList.toggle('checked');
+      autoSave();
+    }
+
+    function loadPortrait(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.getElementById('portraitImg');
+          img.src = e.target.result;
+          img.style.display = 'block';
+          document.getElementById('portraitPlaceholder').style.display = 'none';
+          autoSave();
+        }
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function getStorage() {
+      try {
+        if (window.parent && window.parent.localStorage) {
+          return window.parent.localStorage;
+        }
+      } catch(e) {}
+      return window.localStorage;
+    }
+
+    function autoSave() {
+      const data = {};
+      const editables = document.querySelectorAll('.editable');
+      editables.forEach(el => {
+        if (el.id) data[el.id] = el.innerHTML;
+      });
+
+      const checks = document.querySelectorAll('.checkbox-square, .exp-check');
+      checks.forEach(check => {
+        if (check.id) {
+          data[check.id] = {
+            checked: check.classList.contains('checked'),
+            dashed: check.classList.contains('dashed')
+          };
+        }
+      });
+
+      data['healthLevel'] = healthLevel;
+
+      const portraitImg = document.getElementById('portraitImg');
+      if (portraitImg.src && portraitImg.style.display !== 'none') {
+        data['portraitSrc'] = portraitImg.src;
+      }
+
+      try {
+        getStorage().setItem('pbta_sheet_data_master_v5', JSON.stringify(data));
+      } catch (err) {
+        console.error('Error al guardar:', err);
+      }
+
+      scheduleDriveAutoSave();
+    }
+
+    function loadAutoSave() {
+      const saved = getStorage().getItem('pbta_sheet_data_master_v5');
+      if (!saved) return;
+      try {
+        const data = JSON.parse(saved);
+
+        Object.keys(data).forEach(id => {
+          const el = document.getElementById(id);
+          if (el) {
+            if (el.classList.contains('editable')) {
+              el.innerHTML = data[id];
+            } else if (el.classList.contains('checkbox-square') || el.classList.contains('exp-check')) {
+              if (data[id].checked) el.classList.add('checked');
+              else el.classList.remove('checked');
+
+              if (data[id].dashed !== undefined) {
+                if (data[id].dashed) el.classList.add('dashed');
+                else el.classList.remove('dashed');
+              }
+            }
+          }
+        });
+
+        if (data.healthLevel !== undefined) {
+          healthLevel = data.healthLevel;
+        }
+
+        if (data.portraitSrc) {
+          const img = document.getElementById('portraitImg');
+          img.src = data.portraitSrc;
+          img.style.display = 'block';
+          document.getElementById('portraitPlaceholder').style.display = 'none';
+        }
+      } catch (e) {
+        console.error('Error al cargar:', e);
+      }
+      updateHeartsDisplay();
+      updateDamageDiceDisplay();
+      updateHealingDiceDisplay();
+    }
+
+    document.querySelectorAll('.editable').forEach(el => {
+      const handleEditableChange = () => {
+        autoSave();
+        if (el.id === 'max_bienestar') {
+          snapshotDamageHealth = null;
+          snapshotHealingHealth = null;
+          updateHeartsDisplay();
+        }
+        updateHealingDiceDisplay();
+      };
+      el.addEventListener('input', handleEditableChange);
+      el.addEventListener('keyup', handleEditableChange);
+      el.addEventListener('blur', handleEditableChange);
+    });
+
+    // --- GUARDAR JSON CON VENTANA NATIVA "GUARDAR COMO..." ---
+    async function exportData() {
+      autoSave();
+      const data = getStorage().getItem('pbta_sheet_data_master_v5');
+      
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = document.getElementById('nombre').innerHTML;
+      const nombreTexto = tempDiv.textContent || tempDiv.innerText || 'personaje';
+      const nombreSugerido = `ficha_${nombreTexto.toLowerCase().replace(/\s+/g, '_')}.json`;
+
+      if ('showSaveFilePicker' in window) {
+        try {
+          const opciones = {
+            suggestedName: nombreSugerido,
+            types: [{
+              description: 'Archivo JSON de PbtA',
+              accept: { 'application/json': ['.json'] }
+            }]
+          };
+          const handle = await window.showSaveFilePicker(opciones);
+          const writable = await handle.createWritable();
+          await writable.write(data);
+          await writable.close();
+          return;
+        } catch (err) {
+          if (err.name === 'AbortError') return;
+        }
+      }
+
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = nombreSugerido;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        getStorage().setItem('pbta_sheet_data_master_v5', e.target.result);
+        loadAutoSave();
+      };
+      reader.readAsText(file);
+    }
+
+    function resetForm() {
+      if (confirm('¿Estás seguro de que quieres borrar todos los datos y empezar una nueva ficha desde cero?')) {
+        linkedDriveFile = { fileId: null, fileName: null, autoSync: false };
+        saveDriveLinkMeta();
+        getStorage().removeItem('pbta_sheet_data_master_v5');
+        location.reload();
+      }
+    }
+
+    function printSheet() {
+      const sheetContainer = document.querySelector('.sheet-container').innerHTML;
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = document.getElementById('nombre').innerHTML;
+      const nombreTexto = tempDiv.textContent || tempDiv.innerText || 'Ficha de Personaje';
+
+      const printHtml = `
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+          <meta charset="UTF-8">
+          <title>${nombreTexto}</title>
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+          <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+          <style>
+            :root {
+              --card-bg: #ffffff;
+              --border-color: #cbd5e1;
+              --accent-color: #1e293b;
+              --accent-light: #f8fafc;
+              --text-main: #0f172a;
+              --text-muted: #64748b;
+              --danger: #e11d48;
+              --radius: 6px;
+            }
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            body { font-family: 'Inter', sans-serif; background: white; color: var(--text-main); padding: 20px; }
+            .sheet-container { width: 100%; max-width: 1000px; margin: 0 auto; background: white; }
+            .sheet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+            .col { display: flex; flex-direction: column; gap: 16px; }
+            .box { border: 1.5px solid var(--border-color); border-radius: var(--radius); background: #fff; padding: 8px 12px; position: relative; }
+            .box-title { font-family: 'Cinzel', serif; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.05em; color: var(--accent-color); text-transform: uppercase; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+            .concept-random-btn, .concept-sheet-actions { display: none; }
+            .editable { width: 100%; min-height: 24px; font-family: 'Inter', sans-serif; font-size: 0.9rem; color: var(--text-main); background: transparent; word-break: break-word; padding: 2px 4px; border: none; }
+            .header-row { display: flex; gap: 15px; align-items: flex-end; margin-bottom: 15px; }
+            .header-item { flex: 1; min-width: 180px; border-bottom: 2px solid var(--accent-color); padding-bottom: 2px; }
+            .header-item label { font-family: 'Cinzel', serif; font-weight: 700; font-size: 0.8rem; color: var(--accent-color); display: block; }
+            .portrait-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
+            .portrait-area { border: 2px dashed var(--border-color); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--accent-light); padding: 4px; }
+            .portrait-area img { width: 100%; height: auto; max-height: 300px; object-fit: contain; display: block; border-radius: 3px; }
+            .portrait-placeholder { display: none; }
+            .tags-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+            .tag-input { border: 1px solid var(--border-color); border-radius: 4px; padding: 4px 6px; font-size: 0.82rem; background: #fafafa; text-align: center; min-height: 28px; }
+            .flujo-box { background: #fafafa; }
+            .flujo-note { font-size: 0.7rem; color: var(--text-muted); margin-top: 6px; text-align: right; font-style: italic; }
+            .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+            .stat-box { border: 1.5px solid var(--border-color); border-radius: var(--radius); padding: 6px; text-align: center; }
+            .stat-title { font-family: 'Cinzel', serif; font-size: 0.7rem; font-weight: 700; margin-bottom: 4px; color: var(--accent-color); }
+            .bienestar-container { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 0; }
+            .bienestar-top-row { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 15px; width: 100%; }
+            .hearts-row { display: flex; gap: 6px; justify-content: center; }
+            .heart-btn { background: none; border: none; font-size: 1.5rem; color: #cbd5e1; padding: 0; line-height: 1; }
+            .heart-btn.active { color: var(--danger); }
+            .checkbox-square { width: 16px; height: 16px; border: 1.5px solid var(--accent-color); display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 2px; }
+            .checkbox-square.checked::after { content: "✔"; font-size: 11px; color: var(--accent-color); }
+            .table-container { width: 100%; overflow-x: auto; }
+            .table-custom { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+            .table-custom th { font-family: 'Cinzel', serif; text-align: left; font-size: 0.7rem; padding: 4px; border-bottom: 1px solid var(--border-color); color: var(--accent-color); }
+            .table-custom td { padding: 3px 2px; border-bottom: 1px solid #f1f5f9; }
+            .check-cell { width: 24px; text-align: center; }
+            .flex-row-boxes { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; }
+            .exp-boxes { display: flex; gap: 4px; align-items: center; justify-content: center; }
+            .exp-check { width: 16px; height: 16px; border: 1.5px solid var(--accent-color); display: flex; align-items: center; justify-content: center; border-radius: 2px; }
+            .exp-check.dashed { border-style: dashed; }
+            .exp-check.checked::after { content: "■"; font-size: 10px; color: var(--accent-color); }
+          </style>
+        </head>
+        <body>
+          <div class="sheet-container">
+            ${sheetContainer}
+          </div>
+        </body>
+        </html>
+      `;
+
+      try {
+        const printWindow = window.open('', '_blank');
+        if (printWindow) {
+          printWindow.document.write(printHtml);
+          printWindow.document.close();
+          printWindow.focus();
+          setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+          }, 300);
+        } else {
+          window.print();
+        }
+      } catch (e) {
+        window.print();
+      }
+    }
+
+    window.onload = function() {
+      loadAutoSave();
+      loadDriveLinkMeta();
+    };
+  </script>
+</body>
+</html>
