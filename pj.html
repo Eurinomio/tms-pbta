@@ -1132,7 +1132,72 @@
   </style>
 </head>
 <body>
+<!-- BARRA DE NAVEGACIÓN SUPERIOR FIJA TMS PBTA -->
+<style>
+  .tms-fixed-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 44px;
+    background: #0f172a;
+    border-bottom: 1px solid #334155;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 12px;
+    flex-wrap: wrap;
+    z-index: 1500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    font-family: 'Inter', sans-serif;
+  }
 
+  .tms-fixed-nav a {
+    color: #e2e8f0;
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .tms-fixed-nav a:hover {
+    background: #1e293b;
+    color: #38bdf8;
+  }
+
+  /* Espacio superior para que la barra fija no tape el inicio de cada página */
+  body {
+    padding-top: 56px !important;
+  }
+
+  /* Ajuste en cronicas.html para que la barra lateral no quede pegada arriba del todo */
+  .sidebar {
+    top: 60px !important;
+  }
+
+  @media print {
+    .tms-fixed-nav {
+      display: none !important;
+    }
+    body {
+      padding-top: 0 !important;
+    }
+  }
+</style>
+
+<nav class="tms-fixed-nav" aria-label="Navegación principal del sitio">
+  <a href="index.html">Página principal</a>
+  <a href="manual.html">Manual de reglas</a>
+  <a href="pj.html">Hoja de personaje</a>
+  <a href="pnj.html">Fichas de PNJ</a>
+  <a href="herramientas.html">Herramientas del Director</a>
+  <a href="cronicas.html">Lista de crónicas</a>
+  <a href="mapas.html">Generador de mapas</a>
+</nav>
   <!-- VENTANA FLOTANTE DE EXPLORADOR DE GOOGLE DRIVE (SUBCARPETA PJ) -->
   <div id="driveExplorerModal" onclick="closeDriveExplorer(event)">
     <div class="drive-explorer-card" onclick="event.stopPropagation()">
