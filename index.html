@@ -370,84 +370,85 @@
   </style>
 </head>
 <body>
-<!-- BARRA DE NAVEGACIÓN SUPERIOR FIJA TMS PBTA -->
-<style>
-  .tms-fixed-nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    min-height: 44px;
-    background: #0f172a;
-    border-bottom: 1px solid #334155;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 6px 12px;
-    flex-wrap: wrap;
-    z-index: 1500;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    font-family: 'Inter', sans-serif;
-  }
-
-  .tms-fixed-nav a {
-    color: #e2e8f0;
-    text-decoration: none;
-    font-size: 0.78rem;
-    font-weight: 600;
-    padding: 5px 10px;
-    border-radius: 4px;
-    transition: background 0.15s ease, color 0.15s ease;
-    white-space: nowrap;
-  }
-
-  .tms-fixed-nav a:hover {
-    background: #1e293b;
-    color: #38bdf8;
-  }
-
-  /* Espacio superior para que la barra fija no tape el inicio de cada página */
-  body {
-    padding-top: 56px !important;
-  }
-
-  /* Ajuste en cronicas.html para que la barra lateral no quede pegada arriba del todo */
-  .sidebar {
-    top: 60px !important;
-  }
-
-  @media print {
+  <!-- BARRA DE NAVEGACIÓN SUPERIOR FIJA TMS PBTA -->
+  <style>
     .tms-fixed-nav {
-      display: none !important;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      min-height: 44px;
+      background: #0f172a;
+      border-bottom: 1px solid #334155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 6px 12px;
+      flex-wrap: wrap;
+      z-index: 1500;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      font-family: 'Inter', sans-serif;
     }
-    body {
-      padding-top: 0 !important;
-    }
-  }
-</style>
 
-<nav class="tms-fixed-nav" aria-label="Navegación principal del sitio">
-  <a href="index.html">Página principal</a>
-  <a href="manual.html">Manual de reglas</a>
-  <a href="pj.html">Hoja de personaje</a>
-  <a href="pnj.html">Fichas de PNJ</a>
-  <a href="herramientas.html">Herramientas del Director</a>
-  <a href="cronicas.html">Lista de crónicas</a>
-  <a href="mapas.html">Generador de mapas</a>
-</nav>
+    .tms-fixed-nav a {
+      color: #e2e8f0;
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: background 0.15s ease, color 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .tms-fixed-nav a:hover {
+      background: #1e293b;
+      color: #38bdf8;
+    }
+
+    /* Espacio superior para que la barra fija no tape el inicio de cada página */
+    body {
+      padding-top: 56px !important;
+    }
+
+    /* Ajuste en cronicas.html para que la barra lateral no quede pegada arriba del todo */
+    .sidebar {
+      top: 60px !important;
+    }
+
+    @media print {
+      .tms-fixed-nav {
+        display: none !important;
+      }
+      body {
+        padding-top: 0 !important;
+      }
+    }
+  </style>
+
+  <nav class="tms-fixed-nav" aria-label="Navegación principal del sitio">
+    <a href="index.html">Página principal</a>
+    <a href="manual.html">Manual de reglas</a>
+    <a href="pj.html">Hoja de personaje</a>
+    <a href="pnj.html">Fichas de PNJ</a>
+    <a href="herramientas.html">Herramientas del Director</a>
+    <a href="cronicas.html">Lista de crónicas</a>
+    <a href="mapas.html">Generador de mapas</a>
+  </nav>
+
   <!-- BARRA SUPERIOR DE NAVEGACIÓN -->
   <header class="topbar">
-    <a href="#top" class="brand-mini">🎲 TMS PBTA RPG</a>
+    <a href="index.html" class="brand-mini">🎲 TMS PBTA RPG</a>
 
     <nav class="nav-links" aria-label="Navegación principal">
-      <a href="#top" class="nav-link active">Página Principal</a>
-      <a href="#" data-nav="manual" class="nav-link">Manual de reglas</a>
-      <a href="#" data-nav="pj" class="nav-link">Hoja de personaje</a>
-      <a href="#" data-nav="pnj" class="nav-link">Fichas de PNJ</a>
-      <a href="#" data-nav="director" class="nav-link">Herramientas del Director</a>
-      <a href="#" data-nav="cronicas" class="nav-link">Lista de crónicas</a>
-      <a href="#" data-nav="mapas" class="nav-link">Generador de mapas</a>
+      <a href="index.html" data-nav="index" class="nav-link active">Página Principal</a>
+      <a href="manual.html" data-nav="manual" class="nav-link">Manual de reglas</a>
+      <a href="pj.html" data-nav="pj" class="nav-link">Hoja de personaje</a>
+      <a href="pnj.html" data-nav="pnj" class="nav-link">Fichas de PNJ</a>
+      <a href="herramientas.html" data-nav="herramientas" class="nav-link">Herramientas del Director</a>
+      <a href="cronicas.html" data-nav="cronicas" class="nav-link">Lista de crónicas</a>
+      <a href="mapas.html" data-nav="mapas" class="nav-link">Generador de mapas</a>
     </nav>
 
     <button type="button" class="btn-pages-drawer" onclick="togglePagesDrawer(true)">☰ Páginas</button>
@@ -526,7 +527,7 @@
     <div class="modules-grid" id="modulesGrid">
       <!-- 1. Manual de reglas -->
       <article class="module-card" data-keywords="manual reglas basicas tms rpg">
-        <a href="#" data-nav="manual" class="module-link">
+        <a href="manual.html" data-nav="manual" class="module-link">
           <div class="module-banner" style="background: #2f5e69;">
             <h2>Manual de reglas</h2>
           </div>
@@ -547,7 +548,7 @@
 
       <!-- 2. Hoja de personaje -->
       <article class="module-card" data-keywords="hoja personaje tiradas modulo dado integrado pj">
-        <a href="#" data-nav="pj" class="module-link">
+        <a href="pj.html" data-nav="pj" class="module-link">
           <div class="module-banner" style="background: #2f5e69;">
             <h2>Hoja de personaje</h2>
           </div>
@@ -570,7 +571,7 @@
 
       <!-- 3. Fichas de PNJ -->
       <article class="module-card" data-keywords="fichas pnj cronica exportar personajes no jugadores">
-        <a href="#" data-nav="pnj" class="module-link">
+        <a href="pnj.html" data-nav="pnj" class="module-link">
           <div class="module-banner" style="background: #14532d;">
             <h2>Fichas de PNJ</h2>
           </div>
@@ -595,7 +596,7 @@
 
       <!-- 4. Herramientas del Director -->
       <article class="module-card" data-keywords="herramientas director gm master partida">
-        <a href="#" data-nav="director" class="module-link">
+        <a href="herramientas.html" data-nav="herramientas" class="module-link">
           <div class="module-banner" style="background: #2f5e69;">
             <h2>Herramientas del Director</h2>
           </div>
@@ -615,7 +616,7 @@
 
       <!-- 5. Lista de crónicas -->
       <article class="module-card" data-keywords="lista cronicas sesiones historia campana">
-        <a href="#" data-nav="cronicas" class="module-link">
+        <a href="cronicas.html" data-nav="cronicas" class="module-link">
           <div class="module-banner" style="background: #2f5e69;">
             <h2>Lista de crónicas</h2>
           </div>
@@ -633,7 +634,7 @@
 
       <!-- 6. Generador de mapas -->
       <article class="module-card" data-keywords="generador mapas tactico cuadrícula escenario">
-        <a href="#" data-nav="mapas" class="module-link">
+        <a href="mapas.html" data-nav="mapas" class="module-link">
           <div class="module-banner" style="background: #2f5e69;">
             <h2>Generador de mapas</h2>
           </div>
@@ -669,13 +670,13 @@
         <button type="button" class="btn-close-drawer" onclick="togglePagesDrawer(false)">✕</button>
       </div>
       <ul class="drawer-list">
-        <li><a href="#top" class="current" onclick="togglePagesDrawer(false)">Página Principal</a></li>
-        <li><a href="#" data-nav="manual">Manual de reglas</a></li>
-        <li><a href="#" data-nav="pj">Hoja de personaje</a></li>
-        <li><a href="#" data-nav="pnj">Fichas de PNJ</a></li>
-        <li><a href="#" data-nav="director">Herramientas del Director</a></li>
-        <li><a href="#" data-nav="cronicas">Lista de crónicas</a></li>
-        <li><a href="#" data-nav="mapas">Generador de mapas</a></li>
+        <li><a href="index.html" data-nav="index" class="current" onclick="togglePagesDrawer(false)">Página Principal</a></li>
+        <li><a href="manual.html" data-nav="manual">Manual de reglas</a></li>
+        <li><a href="pj.html" data-nav="pj">Hoja de personaje</a></li>
+        <li><a href="pnj.html" data-nav="pnj">Fichas de PNJ</a></li>
+        <li><a href="herramientas.html" data-nav="herramientas">Herramientas del Director</a></li>
+        <li><a href="cronicas.html" data-nav="cronicas">Lista de crónicas</a></li>
+        <li><a href="mapas.html" data-nav="mapas">Generador de mapas</a></li>
       </ul>
     </aside>
   </div>
@@ -685,14 +686,14 @@
   </footer>
 
   <script>
-    // Ajusta estas rutas cuando subas tus demás archivos HTML al repositorio de GitHub
     const SITE_ROUTES = {
-      manual: 'https://sites.google.com/view/tms-pbta/manual-de-reglas',
-      pj: './hoja-personaje.html',
-      pnj: './pnj.html',
-      director: './director.html',
-      cronicas: './cronicas.html',
-      mapas: './mapas.html'
+      index: 'index.html',
+      manual: 'manual.html',
+      pj: 'pj.html',
+      pnj: 'pnj.html',
+      herramientas: 'herramientas.html',
+      cronicas: 'cronicas.html',
+      mapas: 'mapas.html'
     };
 
     function applyRoutes() {
