@@ -35,14 +35,14 @@
 
     /* BARRA LATERAL DEL MÁSTER */
     .sidebar {
-      width: 300px;
+      width: 305px;
       background: #1e293b;
       color: white;
       border-radius: var(--radius);
       padding: 15px;
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 12px;
       flex-shrink: 0;
       position: sticky;
       top: 15px;
@@ -52,35 +52,48 @@
 
     .sidebar h2 {
       font-family: 'Cinzel', serif;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       text-align: center;
       color: #38bdf8;
       border-bottom: 1px solid #334155;
-      padding-bottom: 10px;
+      padding-bottom: 8px;
+    }
+
+    .sidebar-btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
     }
 
     .btn-side {
       background: #0d9488;
       color: white;
       border: none;
-      padding: 10px;
+      padding: 8px 6px;
       border-radius: 4px;
       font-weight: 600;
-      font-size: 0.85rem;
+      font-size: 0.76rem;
       cursor: pointer;
       text-align: center;
-      display: block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
       width: 100%;
       transition: background 0.2s;
     }
 
     .btn-side:hover { background: #0f766e; }
+    .btn-side.drive-sub { background: #0f766e; }
+    .btn-side.drive-sub:hover { background: #115e59; }
+    .btn-side.map-sub { background: #0284c7; }
+    .btn-side.map-sub:hover { background: #0369a1; }
 
     .pj-list, .map-list {
       display: flex;
       flex-direction: column;
       gap: 6px;
-      max-height: 180px;
+      max-height: 150px;
       overflow-y: auto;
       padding-right: 4px;
     }
@@ -1290,23 +1303,37 @@
 
   <!-- BARRA LATERAL DE GESTIÓN -->
   <div class="sidebar">
-    <h2>🎮 ELENCO</h2>
-    
-    <label class="btn-side">
-      📂 Subir JSON (PJ / PNJ)
-      <input type="file" id="uploadJson" accept=".json" multiple style="display:none;" onchange="importCharacters(event)">
-    </label>
-
-    <div style="font-size: 0.7rem; color: #94a3b8; text-align: center; margin-top: 5px;">LISTA DE PERSONAJES:</div>
+    <h2>🧙 PJ</h2>
+    <div class="sidebar-btn-row">
+      <label class="btn-side">
+        📂 Disco PJ
+        <input type="file" id="uploadPjJson" accept=".json" multiple style="display:none;" onchange="importCharactersByType(event, 'PJ')">
+      </label>
+      <button type="button" class="btn-side drive-sub" onclick="openDriveExplorer('pj')">☁️ Drive PJ</button>
+    </div>
+    <div style="font-size: 0.7rem; color: #94a3b8; text-align: center;">LISTA DE PJ:</div>
     <div class="pj-list" id="pjList"></div>
 
-    <h2 style="margin-top: 10px;">🗺️ MAPAS</h2>
-    <label class="btn-side" style="background: #0284c7;">
-      📂 Subir Mapa JSON
-      <input type="file" id="uploadMapJson" accept=".json" multiple style="display:none;" onchange="importMaps(event)">
-    </label>
+    <h2>🎭 PNJ</h2>
+    <div class="sidebar-btn-row">
+      <label class="btn-side">
+        📂 Disco PNJ
+        <input type="file" id="uploadPnjJson" accept=".json" multiple style="display:none;" onchange="importCharactersByType(event, 'PNJ')">
+      </label>
+      <button type="button" class="btn-side drive-sub" onclick="openDriveExplorer('pnj')">☁️ Drive PNJ</button>
+    </div>
+    <div style="font-size: 0.7rem; color: #94a3b8; text-align: center;">LISTA DE PNJ:</div>
+    <div class="pj-list" id="pnjList"></div>
 
-    <div style="font-size: 0.7rem; color: #94a3b8; text-align: center; margin-top: 5px;">LISTA DE MAPAS:</div>
+    <h2>🗺️ MAPAS</h2>
+    <div class="sidebar-btn-row">
+      <label class="btn-side map-sub">
+        📂 Disco Mapa
+        <input type="file" id="uploadMapJson" accept=".json" multiple style="display:none;" onchange="importMaps(event)">
+      </label>
+      <button type="button" class="btn-side map-sub" onclick="openDriveExplorer('map')">☁️ Drive Mapa</button>
+    </div>
+    <div style="font-size: 0.7rem; color: #94a3b8; text-align: center;">LISTA DE MAPAS:</div>
     <div class="map-list" id="mapList"></div>
   </div>
 
@@ -1386,8 +1413,8 @@
 
     <!-- ÁREA DE VISUALIZACIÓN VACÍA O ACTIVA -->
     <div id="emptyNotice" class="empty-notice">
-      <h3>Selecciona un personaje o mapa de la barra lateral</h3>
-      <p style="font-size: 0.8rem; margin-top: 8px;">Sube los archivos JSON de tus fichas o mapas tácticos para visualizarlos aquí.</p>
+      <h3>Selecciona un PJ, PNJ o mapa de la barra lateral</h3>
+      <p style="font-size: 0.8rem; margin-top: 8px;">Sube archivos JSON desde el disco o cárgalos desde sus carpetas de Google Drive (PJ, PNJ, MAPAS).</p>
     </div>
 
     <!-- CONTENEDOR DE FICHA DE PERSONAJE -->
@@ -1397,13 +1424,13 @@
           <span style="font-weight: 700; font-size: 0.85rem; color: var(--accent-color);" id="activePjIndicator">FICHA ACTIVA</span>
           <div class="drive-status-line" style="color: var(--text-muted);">
             <span id="pjItemDriveBadge" class="drive-badge">Drive: local</span>
-            <span id="pjItemDriveLabel">Sin archivo individual vinculado en TMS PBTA / DIRECTOR / FICHAS</span>
+            <span id="pjItemDriveLabel">Sin archivo individual vinculado en TMS PBTA / DIRECTOR</span>
           </div>
         </div>
         <div class="item-drive-actions">
           <button type="button" class="item-btn btn-new" onclick="requestNewActiveItem()">🆕 Nuevo</button>
           <button type="button" class="item-btn btn-save" onclick="saveActiveItemToGoogleDrive()">☁️ Guardar en Drive</button>
-          <button type="button" class="item-btn btn-drive" onclick="openDriveExplorer('pj')">📥 Cargar / Gestionar</button>
+          <button type="button" class="item-btn btn-drive" id="btnExploreActiveCharDrive" onclick="openActiveCharDriveExplorer()">📥 Cargar / Gestionar</button>
           <button type="button" class="item-btn" onclick="refreshActiveItemFromGoogleDrive()">🔄 Actualizar</button>
           <button type="button" class="item-btn" onclick="window.print()">🖨️ Imprimir Ficha</button>
         </div>
@@ -1463,20 +1490,22 @@
     let snapshotDamageHealth = null;
     let snapshotHealingHealth = null;
 
-    // --- CONFIGURACIÓN Y ESTADO DE GOOGLE DRIVE (TMS PBTA / DIRECTOR) ---
+    // --- CONFIGURACIÓN Y ESTADO DE GOOGLE DRIVE (TMS PBTA / DIRECTOR / PJ, PNJ, MAPAS) ---
     const DRIVE_CONFIG = {
       clientId: '3720906139-udra1unbra3vjpuogv200hgipur8dcrv.apps.googleusercontent.com',
       rootFolderId: '',
       rootFolderName: 'TMS PBTA',
       subFolderName: 'DIRECTOR',
-      fichasFolderName: 'FICHAS',
+      pjFolderName: 'PJ',
+      pnjFolderName: 'PNJ',
       mapasFolderName: 'MAPAS',
       scope: 'https://www.googleapis.com/auth/drive.file'
     };
 
     const DRIVE_META_STORAGE_KEY = 'pbta_director_drive_link_v1';
-    const PJ_DRIVE_META_KEY = 'pbta_director_pj_drive_link_v1';
-    const MAP_DRIVE_META_KEY = 'pbta_director_map_drive_link_v1';
+    const PJ_DRIVE_META_KEY = 'pbta_director_pj_drive_link_v2';
+    const PNJ_DRIVE_META_KEY = 'pbta_director_pnj_drive_link_v2';
+    const MAP_DRIVE_META_KEY = 'pbta_director_map_drive_link_v2';
 
     let driveAccessToken = null;
     let driveTokenExpiresAt = 0;
@@ -1486,10 +1515,11 @@
 
     let cachedRootFolderId = DRIVE_CONFIG.rootFolderId || null;
     let cachedDirectorFolderId = null;
-    let cachedFichasFolderId = null;
+    let cachedPjFolderId = null;
+    let cachedPnjFolderId = null;
     let cachedMapasFolderId = null;
 
-    let currentExplorerScope = 'panel'; // 'panel' | 'pj' | 'map'
+    let currentExplorerScope = 'panel'; // 'panel' | 'pj' | 'pnj' | 'map'
     let pendingRenameTarget = null;     // { scope, fileId, currentName }
     let pendingDeleteTarget = null;     // { scope, fileId, fileName }
 
@@ -1516,6 +1546,15 @@
       }
     }
 
+    function getCharMetaKeyByType(charType) {
+      return charType === 'PNJ' ? PNJ_DRIVE_META_KEY : PJ_DRIVE_META_KEY;
+    }
+
+    function getCharFolderPathByType(charType) {
+      const sub = charType === 'PNJ' ? DRIVE_CONFIG.pnjFolderName : DRIVE_CONFIG.pjFolderName;
+      return `${DRIVE_CONFIG.rootFolderName} / ${DRIVE_CONFIG.subFolderName} / ${sub}`;
+    }
+
     function updatePanelDriveStatus(customNote) {
       const meta = readDriveLinkMeta();
       const fileName = meta.__activeFileName || null;
@@ -1529,14 +1568,17 @@
 
     function updateActiveItemDriveStatus(customNote) {
       if (activeId && characters[activeId]) {
-        const meta = readDriveMeta(PJ_DRIVE_META_KEY);
+        const char = characters[activeId];
+        const metaKey = getCharMetaKeyByType(char.type);
+        const folderPath = getCharFolderPathByType(char.type);
+        const meta = readDriveMeta(metaKey);
         const link = meta.byId && meta.byId[activeId] ? meta.byId[activeId] : null;
         const fileName = link ? link.fileName : null;
         if (fileName) {
           const notePart = customNote ? ` · ${customNote}` : '';
           setBadgeStatus('pjItemDriveBadge', 'pjItemDriveLabel', 'online', 'Drive vinculado', `Archivo: ${fileName}${notePart}`);
         } else {
-          setBadgeStatus('pjItemDriveBadge', 'pjItemDriveLabel', '', 'Drive: local', customNote || 'Sin archivo individual vinculado en TMS PBTA / DIRECTOR / FICHAS');
+          setBadgeStatus('pjItemDriveBadge', 'pjItemDriveLabel', '', 'Drive: local', customNote || `Sin archivo vinculado en ${folderPath}`);
         }
       } else if (activeMapId && maps[activeMapId]) {
         const meta = readDriveMeta(MAP_DRIVE_META_KEY);
@@ -1546,7 +1588,7 @@
           const notePart = customNote ? ` · ${customNote}` : '';
           setBadgeStatus('mapItemDriveBadge', 'mapItemDriveLabel', 'online', 'Drive vinculado', `Archivo: ${fileName}${notePart}`);
         } else {
-          setBadgeStatus('mapItemDriveBadge', 'mapItemDriveLabel', '', 'Drive: local', customNote || 'Sin archivo individual vinculado en TMS PBTA / DIRECTOR / MAPAS');
+          setBadgeStatus('mapItemDriveBadge', 'mapItemDriveLabel', '', 'Drive: local', customNote || 'Sin archivo vinculado en TMS PBTA / DIRECTOR / MAPAS');
         }
       }
     }
@@ -1605,7 +1647,7 @@
     function requestNewPanel() {
       openConfirmModal(
         '🆕 Nuevo panel de Director',
-        'Se vaciará la escena, las notas, el elenco y los mapas en pantalla para empezar de cero y se desvinculará el panel en Drive.',
+        'Se vaciará la escena, las notas, PJ, PNJ y mapas en pantalla para empezar de cero y se desvinculará el panel en Drive.',
         () => {
           sceneData = {
             amenaza_marks: [false, false, false, false, false],
@@ -1657,16 +1699,16 @@
           '🆕 Limpiar ficha activa',
           `Se vaciarán todos los campos de "${char.name}" para empezar de cero y se desvinculará su archivo en Drive.`,
           () => {
-            const emptyData = {};
-            characters[activeId].data = emptyData;
+            characters[activeId].data = {};
             healthLevel = 0;
             saveCharactersStorage();
             selectCharacter(activeId);
 
-            const meta = readDriveMeta(PJ_DRIVE_META_KEY);
+            const metaKey = getCharMetaKeyByType(char.type);
+            const meta = readDriveMeta(metaKey);
             if (meta.byId && meta.byId[activeId]) {
               delete meta.byId[activeId];
-              writeDriveMeta(PJ_DRIVE_META_KEY, meta);
+              writeDriveMeta(metaKey, meta);
             }
             updateActiveItemDriveStatus('Ficha vacía en blanco');
             showToast(`Ficha "${char.name}" limpiada.`);
@@ -1743,7 +1785,6 @@
       if (tabIndex === 4) updateHealingDiceDisplay();
     }
 
-    // Pestaña 1: Interferencias (2d4)
     function rollInterferences() {
       d4Values[0] = Math.floor(Math.random() * 4) + 1;
       d4Values[1] = Math.floor(Math.random() * 4) + 1;
@@ -1766,7 +1807,6 @@
       }
     }
 
-    // Pestaña 2: Tirada de reto
     function rollRetoDice() {
       lastWhiteVal = Math.floor(Math.random() * 6) + 1;
       lastBlackVal = Math.floor(Math.random() * 6) + 1;
@@ -1788,7 +1828,6 @@
       evaluateRetoResult();
     }
 
-    // Control de Sub-ventana de Asistencia
     function openAsistenciaSubModal() {
       selectedAsistenciaTarget = null;
       document.getElementById('asistenciaDiceChoice').style.display = 'flex';
@@ -1876,14 +1915,12 @@
       }
     }
 
-    // Pestaña 3: Tirar 1d4
     function rollSingleD4() {
       const val = Math.floor(Math.random() * 4) + 1;
       document.getElementById('d4Single').innerText = val;
       document.getElementById('singleD4Result').innerText = "Resultado: " + val;
     }
 
-    // --- LÓGICA DE DAÑO Y CURACIÓN CON SNAPSHOTS ---
     function getActiveMaxWellness() {
       const maxElPJ = document.getElementById('max_bienestar');
       const maxElPNJ = document.getElementById('pnj_max_bienestar');
@@ -2633,25 +2670,25 @@
       }
     }
 
-    // --- GESTIÓN DE PERSONAJES ---
-    function parseCharacterJson(data) {
+    // --- GESTIÓN DE PJ Y PNJ SEPARADOS ---
+    function parseCharacterJson(data, forcedType = null) {
       if (!data || typeof data !== 'object') return null;
       const sheetPayload = (data.data && typeof data.data === 'object' && !data.nombre && !data.pnj_nombre)
         ? data.data
         : data;
-      let name = data.name || "Personaje sin nombre";
-      let type = data.type || "PJ";
+      let name = data.name || (forcedType === 'PNJ' ? 'PNJ sin nombre' : 'Personaje sin nombre');
+      let type = forcedType || data.type || 'PJ';
 
       if (sheetPayload['nombre']) {
         const tmp = document.createElement('div');
         tmp.innerHTML = sheetPayload['nombre'];
         name = tmp.textContent || tmp.innerText || name;
-        type = "PJ";
+        if (!forcedType) type = 'PJ';
       } else if (sheetPayload['pnj_nombre']) {
         const tmp = document.createElement('div');
         tmp.innerHTML = sheetPayload['pnj_nombre'];
         name = tmp.textContent || tmp.innerText || name;
-        type = "PNJ";
+        if (!forcedType) type = 'PNJ';
       }
       return { name, type, data: sheetPayload };
     }
@@ -2660,25 +2697,26 @@
       const id = 'char_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
       characters[id] = {
         name: parsedChar.name,
-        type: parsedChar.type,
+        type: parsedChar.type === 'PNJ' ? 'PNJ' : 'PJ',
         data: parsedChar.data
       };
       saveCharactersStorage();
       renderPjList();
 
       if (driveFileInfo && driveFileInfo.fileId && driveFileInfo.fileName) {
-        const meta = readDriveMeta(PJ_DRIVE_META_KEY);
+        const metaKey = getCharMetaKeyByType(characters[id].type);
+        const meta = readDriveMeta(metaKey);
         meta.byId = meta.byId || {};
         meta.byId[id] = { fileId: driveFileInfo.fileId, fileName: driveFileInfo.fileName };
         meta[driveFileInfo.fileName] = driveFileInfo.fileId;
-        writeDriveMeta(PJ_DRIVE_META_KEY, meta);
+        writeDriveMeta(metaKey, meta);
       }
 
       selectCharacter(id);
       return id;
     }
 
-    function importCharacters(event) {
+    function importCharactersByType(event, expectedType) {
       const files = event.target.files;
       if (!files.length) return;
 
@@ -2687,7 +2725,7 @@
         reader.onload = function(e) {
           try {
             const data = JSON.parse(e.target.result);
-            const parsedChar = parseCharacterJson(data);
+            const parsedChar = parseCharacterJson(data, expectedType);
             if (!parsedChar) {
               alert(`El archivo ${file.name} no tiene el formato de ficha válido.`);
               return;
@@ -2702,13 +2740,18 @@
       event.target.value = '';
     }
 
-    function renderPjList() {
-      const listEl = document.getElementById('pjList');
+    function renderCharacterGroup(containerId, filterType, emptyText) {
+      const listEl = document.getElementById(containerId);
+      if (!listEl) return;
       listEl.innerHTML = '';
 
-      const charIds = Object.keys(characters);
+      const charIds = Object.keys(characters).filter(id => {
+        const t = characters[id].type === 'PNJ' ? 'PNJ' : 'PJ';
+        return t === filterType;
+      });
+
       if (charIds.length === 0) {
-        listEl.innerHTML = '<div style="font-size:0.75rem; color:#64748b; text-align:center; padding: 6px;">No hay personajes cargados</div>';
+        listEl.innerHTML = `<div style="font-size:0.75rem; color:#64748b; text-align:center; padding: 6px;">${emptyText}</div>`;
         return;
       }
 
@@ -2735,6 +2778,11 @@
       });
     }
 
+    function renderPjList() {
+      renderCharacterGroup('pjList', 'PJ', 'No hay PJ cargados');
+      renderCharacterGroup('pnjList', 'PNJ', 'No hay PNJ cargados');
+    }
+
     function updateCharName(id, newName) {
       if (characters[id]) {
         characters[id].name = newName;
@@ -2747,7 +2795,7 @@
 
     function deleteCharacter(id, event) {
       event.stopPropagation();
-      openConfirmModal('¿Eliminar personaje?', '¿Estás seguro de que deseas eliminar este personaje del elenco?', () => {
+      openConfirmModal('¿Eliminar ficha?', '¿Estás seguro de que deseas eliminar esta ficha de la lista?', () => {
         delete characters[id];
         saveCharactersStorage();
         renderPjList();
@@ -2773,7 +2821,7 @@
       document.getElementById('emptyNotice').style.display = 'none';
       document.getElementById('sheetArea').style.display = 'block';
       document.getElementById('btnExportJson').style.display = 'inline-block';
-      document.getElementById('activePjIndicator').innerText = "FICHA ACTIVA: " + char.name.toUpperCase();
+      document.getElementById('activePjIndicator').innerText = `FICHA ACTIVA (${char.type}): ` + char.name.toUpperCase();
 
       const dynamicContainer = document.getElementById('sheetDynamicContent');
       
@@ -2952,7 +3000,7 @@
       event.target.value = '';
     }
 
-    // --- INTEGRACIÓN GOOGLE DRIVE (TMS PBTA / DIRECTOR, FICHAS, MAPAS) ---
+    // --- INTEGRACIÓN GOOGLE DRIVE (TMS PBTA / DIRECTOR / PJ, PNJ, MAPAS) ---
     function loadGoogleIdentityScript() {
       return new Promise((resolve, reject) => {
         if (window.google && window.google.accounts && window.google.accounts.oauth2) {
@@ -3095,11 +3143,18 @@
       return cachedDirectorFolderId;
     }
 
-    async function ensureFichasFolderId() {
-      if (cachedFichasFolderId) return cachedFichasFolderId;
+    async function ensurePjFolderId() {
+      if (cachedPjFolderId) return cachedPjFolderId;
       const dirId = await ensureDirectorFolderId();
-      cachedFichasFolderId = await findOrCreateFolder(DRIVE_CONFIG.fichasFolderName, dirId);
-      return cachedFichasFolderId;
+      cachedPjFolderId = await findOrCreateFolder(DRIVE_CONFIG.pjFolderName, dirId);
+      return cachedPjFolderId;
+    }
+
+    async function ensurePnjFolderId() {
+      if (cachedPnjFolderId) return cachedPnjFolderId;
+      const dirId = await ensureDirectorFolderId();
+      cachedPnjFolderId = await findOrCreateFolder(DRIVE_CONFIG.pnjFolderName, dirId);
+      return cachedPnjFolderId;
     }
 
     async function ensureMapasFolderId() {
@@ -3135,9 +3190,20 @@
       if (scope === 'pj') {
         return {
           scope: 'pj',
-          folderPathLabel: `${DRIVE_CONFIG.rootFolderName} / ${DRIVE_CONFIG.subFolderName} / ${DRIVE_CONFIG.fichasFolderName}`,
+          folderPathLabel: `${DRIVE_CONFIG.rootFolderName} / ${DRIVE_CONFIG.subFolderName} / ${DRIVE_CONFIG.pjFolderName}`,
           metaKey: PJ_DRIVE_META_KEY,
-          ensureFolder: ensureFichasFolderId,
+          ensureFolder: ensurePjFolderId,
+          badgeId: 'pjItemDriveBadge',
+          labelId: 'pjItemDriveLabel',
+          updateStatus: updateActiveItemDriveStatus
+        };
+      }
+      if (scope === 'pnj') {
+        return {
+          scope: 'pnj',
+          folderPathLabel: `${DRIVE_CONFIG.rootFolderName} / ${DRIVE_CONFIG.subFolderName} / ${DRIVE_CONFIG.pnjFolderName}`,
+          metaKey: PNJ_DRIVE_META_KEY,
+          ensureFolder: ensurePnjFolderId,
           badgeId: 'pjItemDriveBadge',
           labelId: 'pjItemDriveLabel',
           updateStatus: updateActiveItemDriveStatus
@@ -3163,6 +3229,14 @@
         labelId: 'panelDriveLabel',
         updateStatus: updatePanelDriveStatus
       };
+    }
+
+    function openActiveCharDriveExplorer() {
+      if (activeId && characters[activeId]) {
+        openDriveExplorer(characters[activeId].type === 'PNJ' ? 'pnj' : 'pj');
+      } else {
+        openDriveExplorer('pj');
+      }
     }
 
     function sanitizeItemFileName(prefix, titleStr) {
@@ -3303,46 +3377,50 @@
 
     async function saveActiveItemToGoogleDrive() {
       if (activeId && characters[activeId]) {
+        const char = characters[activeId];
+        const isPnj = char.type === 'PNJ';
+        const scope = isPnj ? 'pnj' : 'pj';
+        const cfg = getDriveScopeConfig(scope);
         try {
           autoSaveActive();
-          setBadgeStatus('pjItemDriveBadge', 'pjItemDriveLabel', 'syncing', 'Guardando...', 'Conectando con TMS PBTA / DIRECTOR / FICHAS');
-          const folderId = await ensureFichasFolderId();
-          const char = characters[activeId];
-          const fileName = sanitizeItemFileName(char.type === 'PNJ' ? 'pnj' : 'pj', char.name);
+          setBadgeStatus(cfg.badgeId, cfg.labelId, 'syncing', 'Guardando...', `Conectando con ${cfg.folderPathLabel}`);
+          const folderId = await cfg.ensureFolder();
+          const fileName = sanitizeItemFileName(isPnj ? 'pnj' : 'pj', char.name);
           const payload = JSON.stringify({ name: char.name, type: char.type, data: char.data }, null, 2);
           await upsertJsonInDriveFolder(
             folderId,
-            `${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}/${DRIVE_CONFIG.fichasFolderName}`,
+            cfg.folderPathLabel,
             fileName,
             payload,
-            PJ_DRIVE_META_KEY,
+            cfg.metaKey,
             activeId
           );
           updateActiveItemDriveStatus('Guardado');
         } catch (err) {
           console.error(err);
-          setBadgeStatus('pjItemDriveBadge', 'pjItemDriveLabel', 'error', 'Error al guardar', err.message || 'No se pudo guardar');
+          setBadgeStatus(cfg.badgeId, cfg.labelId, 'error', 'Error al guardar', err.message || 'No se pudo guardar');
           showToast(`No se pudo guardar la ficha en Drive: ${err.message}`);
         }
       } else if (activeMapId && maps[activeMapId]) {
+        const cfg = getDriveScopeConfig('map');
         try {
-          setBadgeStatus('mapItemDriveBadge', 'mapItemDriveLabel', 'syncing', 'Guardando...', 'Conectando con TMS PBTA / DIRECTOR / MAPAS');
-          const folderId = await ensureMapasFolderId();
+          setBadgeStatus(cfg.badgeId, cfg.labelId, 'syncing', 'Guardando...', `Conectando con ${cfg.folderPathLabel}`);
+          const folderId = await cfg.ensureFolder();
           const mapObj = maps[activeMapId];
           const fileName = sanitizeItemFileName('mapa', mapObj.name);
           const payload = JSON.stringify({ name: mapObj.name, mapData: mapObj.mapData, textLabels: mapObj.textLabels }, null, 2);
           await upsertJsonInDriveFolder(
             folderId,
-            `${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}/${DRIVE_CONFIG.mapasFolderName}`,
+            cfg.folderPathLabel,
             fileName,
             payload,
-            MAP_DRIVE_META_KEY,
+            cfg.metaKey,
             activeMapId
           );
           updateActiveItemDriveStatus('Guardado');
         } catch (err) {
           console.error(err);
-          setBadgeStatus('mapItemDriveBadge', 'mapItemDriveLabel', 'error', 'Error al guardar', err.message || 'No se pudo guardar');
+          setBadgeStatus(cfg.badgeId, cfg.labelId, 'error', 'Error al guardar', err.message || 'No se pudo guardar');
           showToast(`No se pudo guardar el mapa en Drive: ${err.message}`);
         }
       }
@@ -3350,19 +3428,22 @@
 
     async function refreshActiveItemFromGoogleDrive() {
       if (activeId && characters[activeId]) {
-        const meta = readDriveMeta(PJ_DRIVE_META_KEY);
+        const char = characters[activeId];
+        const scope = char.type === 'PNJ' ? 'pnj' : 'pj';
+        const cfg = getDriveScopeConfig(scope);
+        const meta = readDriveMeta(cfg.metaKey);
         const link = meta.byId && meta.byId[activeId] ? meta.byId[activeId] : null;
         if (!link || !link.fileId) {
-          await openDriveExplorer('pj');
+          await openDriveExplorer(scope);
           return;
         }
         try {
-          setBadgeStatus('pjItemDriveBadge', 'pjItemDriveLabel', 'syncing', 'Actualizando...', link.fileName);
+          setBadgeStatus(cfg.badgeId, cfg.labelId, 'syncing', 'Actualizando...', link.fileName);
           const fileResp = await driveApiFetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(link.fileId)}?alt=media`);
           const rawText = await fileResp.text();
-          const parsedChar = parseCharacterJson(JSON.parse(rawText));
+          const parsedChar = parseCharacterJson(JSON.parse(rawText), char.type);
           if (!parsedChar) throw new Error('Formato de ficha no válido.');
-          characters[activeId] = { name: parsedChar.name, type: parsedChar.type, data: parsedChar.data };
+          characters[activeId] = { name: parsedChar.name, type: char.type, data: parsedChar.data };
           saveCharactersStorage();
           renderPjList();
           selectCharacter(activeId);
@@ -3371,18 +3452,19 @@
           showToast(`Actualizada ficha "${link.fileName}" desde Drive.`);
         } catch (err) {
           console.error(err);
-          setBadgeStatus('pjItemDriveBadge', 'pjItemDriveLabel', 'error', 'Error al actualizar', err.message || 'No se pudo actualizar');
+          setBadgeStatus(cfg.badgeId, cfg.labelId, 'error', 'Error al actualizar', err.message || 'No se pudo actualizar');
           showToast(`No se pudo actualizar desde Drive: ${err.message}`);
         }
       } else if (activeMapId && maps[activeMapId]) {
-        const meta = readDriveMeta(MAP_DRIVE_META_KEY);
+        const cfg = getDriveScopeConfig('map');
+        const meta = readDriveMeta(cfg.metaKey);
         const link = meta.byId && meta.byId[activeMapId] ? meta.byId[activeMapId] : null;
         if (!link || !link.fileId) {
           await openDriveExplorer('map');
           return;
         }
         try {
-          setBadgeStatus('mapItemDriveBadge', 'mapItemDriveLabel', 'syncing', 'Actualizando...', link.fileName);
+          setBadgeStatus(cfg.badgeId, cfg.labelId, 'syncing', 'Actualizando...', link.fileName);
           const fileResp = await driveApiFetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(link.fileId)}?alt=media`);
           const rawText = await fileResp.text();
           const parsedJson = JSON.parse(rawText);
@@ -3401,7 +3483,7 @@
           showToast(`Actualizado mapa "${link.fileName}" desde Drive.`);
         } catch (err) {
           console.error(err);
-          setBadgeStatus('mapItemDriveBadge', 'mapItemDriveLabel', 'error', 'Error al actualizar', err.message || 'No se pudo actualizar');
+          setBadgeStatus(cfg.badgeId, cfg.labelId, 'error', 'Error al actualizar', err.message || 'No se pudo actualizar');
           showToast(`No se pudo actualizar desde Drive: ${err.message}`);
         }
       }
@@ -3413,8 +3495,9 @@
 
       const titleMap = {
         panel: 'EXPLORADOR DRIVE · PANEL DEL DIRECTOR',
-        pj: 'EXPLORADOR DRIVE · FICHAS PJ / PNJ',
-        map: 'EXPLORADOR DRIVE · MAPAS TÁCTICOS'
+        pj: 'EXPLORADOR DRIVE · PJ',
+        pnj: 'EXPLORADOR DRIVE · PNJ',
+        map: 'EXPLORADOR DRIVE · MAPAS'
       };
 
       document.getElementById('driveExplorerTitle').textContent = titleMap[currentExplorerScope] || 'EXPLORADOR DRIVE';
@@ -3539,13 +3622,14 @@
         const rawText = await fileResp.text();
         const parsed = JSON.parse(rawText);
 
-        if (currentExplorerScope === 'pj') {
-          const parsedChar = parseCharacterJson(parsed);
+        if (currentExplorerScope === 'pj' || currentExplorerScope === 'pnj') {
+          const forcedType = currentExplorerScope === 'pnj' ? 'PNJ' : 'PJ';
+          const parsedChar = parseCharacterJson(parsed, forcedType);
           if (!parsedChar) throw new Error('El archivo JSON no tiene un formato de ficha válido.');
           addImportedCharacterRecord(parsedChar, { fileId, fileName });
           closeModal('modalDriveExplorer');
           updateActiveItemDriveStatus('Cargado');
-          showToast(`Cargada ficha "${fileName}" desde Drive.`);
+          showToast(`Cargado ${forcedType} "${fileName}" desde Drive.`);
         } else if (currentExplorerScope === 'map') {
           const payload = extractMapPayload(parsed);
           if (!payload) throw new Error('El archivo JSON no tiene un formato de mapa válido.');
