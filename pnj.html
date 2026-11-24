@@ -120,6 +120,14 @@
       transform: translateY(-1px);
     }
 
+    button.btn-new-sheet {
+      background: #dc2626;
+    }
+
+    button.btn-new-sheet:hover {
+      background: #b91c1c;
+    }
+
     button.btn-drive {
       background: #0f766e;
     }
@@ -136,6 +144,14 @@
       background: #0369a1;
     }
 
+    button.btn-drive-refresh {
+      background: #475569;
+    }
+
+    button.btn-drive-refresh:hover {
+      background: #334155;
+    }
+
     button.btn-reset {
       background: #ef4444;
     }
@@ -144,7 +160,8 @@
       background: #dc2626;
     }
 
-    /* --- MODALES FLOTANTES DE GESTIÓN DE DRIVE --- */
+    /* --- MODALES FLOTANTES DE GESTIÓN DE DRIVE Y NUEVA FICHA --- */
+    #newSheetConfirmModal,
     #driveExplorerModal,
     #driveRenameModal,
     #driveDeleteConfirmModal {
@@ -159,6 +176,7 @@
     }
 
     #driveExplorerModal { z-index: 1250; }
+    #newSheetConfirmModal { z-index: 1300; }
     #driveRenameModal { z-index: 1320; }
     #driveDeleteConfirmModal { z-index: 1350; }
 
@@ -832,7 +850,7 @@
         background: white;
         padding: 0;
       }
-      .action-bar, #floatingToolbar, .gemini-btn, .help-btn, .modal-backdrop, .toast-msg, #driveExplorerModal, #driveRenameModal, #driveDeleteConfirmModal {
+      .action-bar, #floatingToolbar, .gemini-btn, .help-btn, .modal-backdrop, .toast-msg, #newSheetConfirmModal, #driveExplorerModal, #driveRenameModal, #driveDeleteConfirmModal {
         display: none !important;
       }
       .sheet-container {
@@ -920,6 +938,23 @@
     <button onmousedown="toggleStrike(event)"><s>S</s> Tachar / Limpiar</button>
   </div>
 
+  <!-- MODAL FLOTANTE DE CONFIRMACIÓN PARA NUEVA FICHA -->
+  <div id="newSheetConfirmModal" onclick="closeNewSheetConfirmModal(event)">
+    <div class="drive-action-modal-card" onclick="event.stopPropagation()">
+      <div class="drive-action-modal-header">
+        <span>NUEVA FICHA DE PNJ</span>
+        <button type="button" class="modal-close" style="color: #94a3b8;" onclick="closeNewSheetConfirmModal(event)" title="Cerrar">✕</button>
+      </div>
+      <div class="drive-action-modal-body">
+        <div class="drive-action-modal-text">Se borrará la información en pantalla para comenzar de cero</div>
+        <div class="drive-action-modal-actions">
+          <button type="button" class="btn-confirm-yes" onclick="confirmNewSheet()">Sí</button>
+          <button type="button" class="btn-confirm-no" onclick="closeNewSheetConfirmModal(event)">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL FLOTANTE PARA RENOMBRAR ARCHIVO EN DRIVE -->
   <div id="driveRenameModal" onclick="closeDriveRenameModal(event)">
     <div class="drive-action-modal-card" onclick="event.stopPropagation()">
@@ -981,8 +1016,10 @@
       </div>
     </div>
     <div class="btn-group">
+      <button type="button" class="btn-new-sheet" onclick="openNewSheetConfirmModal()">🆕 Nueva ficha</button>
       <button type="button" class="btn-drive-save" onclick="saveToGoogleDrive()">☁️ Guardar en Drive</button>
       <button type="button" class="btn-drive" onclick="openPnjDriveExplorer()">📥 Cargar / Gestionar fichas</button>
+      <button type="button" class="btn-drive-refresh" onclick="refreshPnjFromDrive()">🔄 Actualizar</button>
       <button type="button" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
       <button type="button" onclick="exportData()">💾 Guardar JSON</button>
       <label class="btn">
@@ -1548,11 +1585,58 @@
       reader.readAsText(file);
     }
 
-    function resetForm() {
-      if (confirm('¿Estás seguro de que quieres borrar todos los datos de la ficha de PNJ?')) {
-        localStorage.removeItem('pbta_pnj_sheet_data');
-        location.reload();
+    // --- NUEVA FICHA CON CONFIRMACIÓN FLOTANTE ---
+    function openNewSheetConfirmModal() {
+      const modal = document.getElementById('newSheetConfirmModal');
+      if (modal) {
+        modal.style.display = 'flex';
       }
+    }
+
+    function closeNewSheetConfirmModal(event) {
+      if (event) event.stopPropagation();
+      const modal = document.getElementById('newSheetConfirmModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    function confirmNewSheet() {
+      document.querySelectorAll('.editable').forEach(el => {
+        el.innerHTML = '';
+      });
+
+      healthLevel = 0;
+
+      const portraitImg = document.getElementById('portraitImg');
+      const portraitPlaceholder = document.getElementById('portraitPlaceholder');
+      const portraitInput = document.getElementById('portraitInput');
+      if (portraitImg) {
+        portraitImg.src = '';
+        portraitImg.style.display = 'none';
+      }
+      if (portraitPlaceholder) {
+        portraitPlaceholder.style.display = 'block';
+      }
+      if (portraitInput) {
+        portraitInput.value = '';
+      }
+
+      const msgEl = document.getElementById('pnjBienestarMsg');
+      const heartsRow = document.getElementById('pnjHeartsRow');
+      if (msgEl) msgEl.style.display = 'none';
+      if (heartsRow) heartsRow.innerHTML = '';
+
+      const meta = readDriveLinkMeta();
+      delete meta.__activeFileId;
+      delete meta.__activeFileName;
+      writeDriveLinkMeta(meta);
+
+      localStorage.removeItem('pbta_pnj_sheet_data');
+      autoSave();
+      updateDriveStatusFromMeta('Ficha nueva en blanco');
+      closeNewSheetConfirmModal();
+      showToast('Ficha de PNJ limpiada para empezar de cero.');
     }
 
     // --- INTEGRACIÓN GOOGLE DRIVE (TMS PBTA / PNJ) ---
@@ -1811,6 +1895,37 @@
         console.error(err);
         setDriveStatus('error', 'Error al guardar', err.message || 'No se pudo guardar en Drive');
         showToast(`No se pudo guardar en Drive: ${err.message}`);
+      }
+    }
+
+    async function refreshPnjFromDrive() {
+      const meta = readDriveLinkMeta();
+      const activeId = meta.__activeFileId || null;
+      const activeName = meta.__activeFileName || 'pnj.json';
+
+      if (!activeId) {
+        await openPnjDriveExplorer();
+        return;
+      }
+
+      try {
+        setDriveStatus('syncing', 'Actualizando...', activeName);
+        const fileResp = await driveApiFetch(
+          `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(activeId)}?alt=media`
+        );
+        const rawText = await fileResp.text();
+        JSON.parse(rawText);
+
+        localStorage.setItem('pbta_pnj_sheet_data', rawText);
+        loadAutoSave();
+
+        const hora = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        updateDriveStatusFromMeta(`Actualizado ${hora}`);
+        showToast(`Actualizado "${activeName}" desde Google Drive.`);
+      } catch (err) {
+        console.error(err);
+        setDriveStatus('error', 'Error al actualizar', err.message || 'No se pudo refrescar');
+        showToast(`No se pudo actualizar desde Drive: ${err.message}`);
       }
     }
 
