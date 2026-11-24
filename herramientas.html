@@ -1414,7 +1414,7 @@
     <!-- ÁREA DE VISUALIZACIÓN VACÍA O ACTIVA -->
     <div id="emptyNotice" class="empty-notice">
       <h3>Selecciona un PJ, PNJ o mapa de la barra lateral</h3>
-      <p style="font-size: 0.8rem; margin-top: 8px;">Sube archivos JSON desde el disco o cárgalos desde sus carpetas de Google Drive (PJ, PNJ, MAPAS).</p>
+      <p style="font-size: 0.8rem; margin-top: 8px;">Sube archivos JSON desde el disco o cárgalos desde sus carpetas en TMS PBTA (PJ, PNJ, MAPAS).</p>
     </div>
 
     <!-- CONTENEDOR DE FICHA DE PERSONAJE -->
@@ -1424,7 +1424,7 @@
           <span style="font-weight: 700; font-size: 0.85rem; color: var(--accent-color);" id="activePjIndicator">FICHA ACTIVA</span>
           <div class="drive-status-line" style="color: var(--text-muted);">
             <span id="pjItemDriveBadge" class="drive-badge">Drive: local</span>
-            <span id="pjItemDriveLabel">Sin archivo individual vinculado en TMS PBTA / DIRECTOR</span>
+            <span id="pjItemDriveLabel">Sin archivo individual vinculado en TMS PBTA</span>
           </div>
         </div>
         <div class="item-drive-actions">
@@ -1445,7 +1445,7 @@
           <span style="font-weight: 700; font-size: 0.85rem; color: var(--accent-color);" id="activeMapIndicator">MAPA ACTIVO</span>
           <div class="drive-status-line" style="color: var(--text-muted);">
             <span id="mapItemDriveBadge" class="drive-badge">Drive: local</span>
-            <span id="mapItemDriveLabel">Sin archivo individual vinculado en TMS PBTA / DIRECTOR / MAPAS</span>
+            <span id="mapItemDriveLabel">Sin archivo individual vinculado en TMS PBTA / MAPAS</span>
           </div>
         </div>
         <div class="item-drive-actions">
@@ -1490,7 +1490,7 @@
     let snapshotDamageHealth = null;
     let snapshotHealingHealth = null;
 
-    // --- CONFIGURACIÓN Y ESTADO DE GOOGLE DRIVE (TMS PBTA / DIRECTOR / PJ, PNJ, MAPAS) ---
+    // --- CONFIGURACIÓN Y ESTADO DE GOOGLE DRIVE (TMS PBTA / DIRECTOR y TMS PBTA / PJ, PNJ, MAPAS) ---
     const DRIVE_CONFIG = {
       clientId: '3720906139-udra1unbra3vjpuogv200hgipur8dcrv.apps.googleusercontent.com',
       rootFolderId: '',
@@ -1503,9 +1503,9 @@
     };
 
     const DRIVE_META_STORAGE_KEY = 'pbta_director_drive_link_v1';
-    const PJ_DRIVE_META_KEY = 'pbta_director_pj_drive_link_v2';
-    const PNJ_DRIVE_META_KEY = 'pbta_director_pnj_drive_link_v2';
-    const MAP_DRIVE_META_KEY = 'pbta_director_map_drive_link_v2';
+    const PJ_DRIVE_META_KEY = 'pbta_director_pj_drive_link_v3';
+    const PNJ_DRIVE_META_KEY = 'pbta_director_pnj_drive_link_v3';
+    const MAP_DRIVE_META_KEY = 'pbta_director_map_drive_link_v3';
 
     let driveAccessToken = null;
     let driveTokenExpiresAt = 0;
@@ -1552,7 +1552,7 @@
 
     function getCharFolderPathByType(charType) {
       const sub = charType === 'PNJ' ? DRIVE_CONFIG.pnjFolderName : DRIVE_CONFIG.pjFolderName;
-      return `${DRIVE_CONFIG.rootFolderName} / ${DRIVE_CONFIG.subFolderName} / ${sub}`;
+      return `${DRIVE_CONFIG.rootFolderName} / ${sub}`;
     }
 
     function updatePanelDriveStatus(customNote) {
@@ -1588,7 +1588,7 @@
           const notePart = customNote ? ` · ${customNote}` : '';
           setBadgeStatus('mapItemDriveBadge', 'mapItemDriveLabel', 'online', 'Drive vinculado', `Archivo: ${fileName}${notePart}`);
         } else {
-          setBadgeStatus('mapItemDriveBadge', 'mapItemDriveLabel', '', 'Drive: local', customNote || 'Sin archivo vinculado en TMS PBTA / DIRECTOR / MAPAS');
+          setBadgeStatus('mapItemDriveBadge', 'mapItemDriveLabel', '', 'Drive: local', customNote || 'Sin archivo vinculado en TMS PBTA / MAPAS');
         }
       }
     }
@@ -3000,7 +3000,7 @@
       event.target.value = '';
     }
 
-    // --- INTEGRACIÓN GOOGLE DRIVE (TMS PBTA / DIRECTOR / PJ, PNJ, MAPAS) ---
+    // --- INTEGRACIÓN GOOGLE DRIVE (TMS PBTA / DIRECTOR y TMS PBTA / PJ, PNJ, MAPAS) ---
     function loadGoogleIdentityScript() {
       return new Promise((resolve, reject) => {
         if (window.google && window.google.accounts && window.google.accounts.oauth2) {
@@ -3133,34 +3133,37 @@
       return createdJson.id;
     }
 
+    async function ensureRootFolderId() {
+      if (cachedRootFolderId) return cachedRootFolderId;
+      cachedRootFolderId = await findOrCreateFolder(DRIVE_CONFIG.rootFolderName, null);
+      return cachedRootFolderId;
+    }
+
     async function ensureDirectorFolderId() {
       if (cachedDirectorFolderId) return cachedDirectorFolderId;
-
-      if (!cachedRootFolderId) {
-        cachedRootFolderId = await findOrCreateFolder(DRIVE_CONFIG.rootFolderName, null);
-      }
-      cachedDirectorFolderId = await findOrCreateFolder(DRIVE_CONFIG.subFolderName, cachedRootFolderId);
+      const rootId = await ensureRootFolderId();
+      cachedDirectorFolderId = await findOrCreateFolder(DRIVE_CONFIG.subFolderName, rootId);
       return cachedDirectorFolderId;
     }
 
     async function ensurePjFolderId() {
       if (cachedPjFolderId) return cachedPjFolderId;
-      const dirId = await ensureDirectorFolderId();
-      cachedPjFolderId = await findOrCreateFolder(DRIVE_CONFIG.pjFolderName, dirId);
+      const rootId = await ensureRootFolderId();
+      cachedPjFolderId = await findOrCreateFolder(DRIVE_CONFIG.pjFolderName, rootId);
       return cachedPjFolderId;
     }
 
     async function ensurePnjFolderId() {
       if (cachedPnjFolderId) return cachedPnjFolderId;
-      const dirId = await ensureDirectorFolderId();
-      cachedPnjFolderId = await findOrCreateFolder(DRIVE_CONFIG.pnjFolderName, dirId);
+      const rootId = await ensureRootFolderId();
+      cachedPnjFolderId = await findOrCreateFolder(DRIVE_CONFIG.pnjFolderName, rootId);
       return cachedPnjFolderId;
     }
 
     async function ensureMapasFolderId() {
       if (cachedMapasFolderId) return cachedMapasFolderId;
-      const dirId = await ensureDirectorFolderId();
-      cachedMapasFolderId = await findOrCreateFolder(DRIVE_CONFIG.mapasFolderName, dirId);
+      const rootId = await ensureRootFolderId();
+      cachedMapasFolderId = await findOrCreateFolder(DRIVE_CONFIG.mapasFolderName, rootId);
       return cachedMapasFolderId;
     }
 
@@ -3190,7 +3193,7 @@
       if (scope === 'pj') {
         return {
           scope: 'pj',
-          folderPathLabel: `${DRIVE_CONFIG.rootFolderName} / ${DRIVE_CONFIG.subFolderName} / ${DRIVE_CONFIG.pjFolderName}`,
+          folderPathLabel: `${DRIVE_CONFIG.rootFolderName} / ${DRIVE_CONFIG.pjFolderName}`,
           metaKey: PJ_DRIVE_META_KEY,
           ensureFolder: ensurePjFolderId,
           badgeId: 'pjItemDriveBadge',
@@ -3201,7 +3204,7 @@
       if (scope === 'pnj') {
         return {
           scope: 'pnj',
-          folderPathLabel: `${DRIVE_CONFIG.rootFolderName} / ${DRIVE_CONFIG.subFolderName} / ${DRIVE_CONFIG.pnjFolderName}`,
+          folderPathLabel: `${DRIVE_CONFIG.rootFolderName} / ${DRIVE_CONFIG.pnjFolderName}`,
           metaKey: PNJ_DRIVE_META_KEY,
           ensureFolder: ensurePnjFolderId,
           badgeId: 'pjItemDriveBadge',
@@ -3212,7 +3215,7 @@
       if (scope === 'map') {
         return {
           scope: 'map',
-          folderPathLabel: `${DRIVE_CONFIG.rootFolderName} / ${DRIVE_CONFIG.subFolderName} / ${DRIVE_CONFIG.mapasFolderName}`,
+          folderPathLabel: `${DRIVE_CONFIG.rootFolderName} / ${DRIVE_CONFIG.mapasFolderName}`,
           metaKey: MAP_DRIVE_META_KEY,
           ensureFolder: ensureMapasFolderId,
           badgeId: 'mapItemDriveBadge',
