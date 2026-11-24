@@ -35,14 +35,14 @@
 
     /* BARRA LATERAL DE CRÓNICAS */
     .sidebar {
-      width: 280px;
+      width: 295px;
       background: #1e293b;
       color: white;
       border-radius: var(--radius);
       padding: 15px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       flex-shrink: 0;
       position: sticky;
       top: 15px;
@@ -55,17 +55,36 @@
       text-align: center;
       color: #38bdf8;
       border-bottom: 1px solid #334155;
-      padding-bottom: 10px;
+      padding-bottom: 8px;
+    }
+
+    .list-drive-status {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 4px;
+      padding: 6px 8px;
+      font-size: 0.68rem;
+      color: #cbd5e1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .list-drive-status-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
     }
 
     .btn-side {
       background: #0284c7;
       color: white;
       border: none;
-      padding: 10px;
+      padding: 9px;
       border-radius: 4px;
       font-weight: 600;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       cursor: pointer;
       text-align: center;
       display: block;
@@ -84,10 +103,10 @@
       background: #334155;
       color: white;
       border: none;
-      padding: 8px 6px;
+      padding: 7px 6px;
       border-radius: 4px;
       font-weight: 600;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       cursor: pointer;
       text-align: center;
       display: inline-flex;
@@ -105,12 +124,19 @@
       background: #115e59;
     }
 
+    .btn-side-new-list {
+      background: #dc2626;
+    }
+    .btn-side-new-list:hover {
+      background: #b91c1c;
+    }
+
     .cronica-list {
       display: flex;
       flex-direction: column;
       gap: 6px;
       overflow-y: auto;
-      max-height: calc(100vh - 275px);
+      max-height: calc(100vh - 335px);
       padding-right: 4px;
     }
 
@@ -195,11 +221,19 @@
     .editor-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
       border-bottom: 2px solid var(--accent-color);
       padding-bottom: 10px;
       gap: 10px;
       flex-wrap: wrap;
+    }
+
+    .editor-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+      min-width: 220px;
     }
 
     .editor-title-input {
@@ -210,8 +244,42 @@
       border: none;
       outline: none;
       background: transparent;
-      flex-grow: 1;
-      min-width: 200px;
+      width: 100%;
+    }
+
+    .doc-drive-status {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .drive-badge {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .drive-badge.online {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .drive-badge.syncing {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .drive-badge.error {
+      background: #fee2e2;
+      color: #991b1b;
     }
 
     .editor-actions {
@@ -238,11 +306,32 @@
       background: var(--accent-active);
     }
 
+    .editor-actions button.btn-new-doc {
+      background: #dc2626;
+    }
+    .editor-actions button.btn-new-doc:hover {
+      background: #b91c1c;
+    }
+
     .editor-actions button.btn-drive {
       background: #0f766e;
     }
     .editor-actions button.btn-drive:hover {
       background: #115e59;
+    }
+
+    .editor-actions button.btn-drive-save {
+      background: #0284c7;
+    }
+    .editor-actions button.btn-drive-save:hover {
+      background: #0369a1;
+    }
+
+    .editor-actions button.btn-drive-refresh {
+      background: #475569;
+    }
+    .editor-actions button.btn-drive-refresh:hover {
+      background: #334155;
     }
 
     /* BARRA DE HERRAMIENTAS DE TEXTO */
@@ -353,24 +442,150 @@
       justify-content: center;
       align-items: center;
       z-index: 2000;
+      padding: 16px;
     }
     .modal-box {
       background: #1e293b;
       color: white;
-      padding: 25px;
+      padding: 22px;
       border-radius: var(--radius);
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
       box-shadow: 0 15px 30px rgba(0,0,0,0.5);
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 14px;
       border: 1px solid #334155;
+    }
+    .modal-box.explorer-box {
+      max-width: 540px;
+      max-height: 82vh;
+      padding: 0;
+      overflow: hidden;
+      border-color: #38bdf8;
+    }
+    .explorer-header {
+      background: #0f172a;
+      padding: 11px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+    }
+    .explorer-header h3 {
+      font-family: 'Cinzel', serif;
+      color: #38bdf8;
+      font-size: 0.86rem;
+    }
+    .explorer-subbar {
+      padding: 8px 15px;
+      background: rgba(15, 23, 42, 0.6);
+      border-bottom: 1px solid #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.74rem;
+      color: #cbd5e1;
+    }
+    .explorer-list {
+      padding: 12px 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+    .explorer-file-item {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.15s;
+    }
+    .explorer-file-item:hover {
+      border-color: #38bdf8;
+      background: #172554;
+    }
+    .explorer-file-info {
+      flex: 1;
+      min-width: 0;
+      cursor: pointer;
+    }
+    .explorer-file-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #f8fafc;
+      word-break: break-word;
+    }
+    .explorer-file-meta {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    .explorer-file-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .explorer-load-btn {
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 5px 9px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .explorer-load-btn:hover { background: #0369a1; }
+    .explorer-rename-btn {
+      background: #334155;
+      color: #f8fafc;
+      border: 1px solid #64748b;
+      padding: 5px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .explorer-rename-btn:hover {
+      background: #475569;
+      border-color: #38bdf8;
+    }
+    .explorer-delete-btn {
+      background: #991b1b;
+      color: #ffffff;
+      border: 1px solid #ef4444;
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .explorer-delete-btn:hover {
+      background: #dc2626;
+      border-color: #fca5a5;
+    }
+    .explorer-empty {
+      text-align: center;
+      padding: 24px 12px;
+      color: #94a3b8;
+      font-size: 0.84rem;
     }
     .modal-box h3 {
       font-family: 'Cinzel', serif;
       color: #38bdf8;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
     }
     .modal-box input {
       width: 100%;
@@ -387,6 +602,7 @@
       display: flex;
       justify-content: flex-end;
       gap: 8px;
+      flex-wrap: wrap;
     }
     .modal-buttons button {
       padding: 8px 14px;
@@ -430,7 +646,7 @@
 
     @media print {
       body { background: white; padding: 0; display: block; }
-      .sidebar, .toolbar, .toc-sidebar, .toast-msg { display: none !important; }
+      .sidebar, .toolbar, .toc-sidebar, .toast-msg, .modal-overlay { display: none !important; }
       .editor-container { box-shadow: none; border: none; padding: 0; width: 100%; display: flex !important; }
       .editor-layout { display: block; }
     }
@@ -503,9 +719,10 @@
   <a href="cronicas.html">Lista de crónicas</a>
   <a href="mapas.html">Generador de mapas</a>
 </nav>
+
   <!-- VENTANA MODAL PARA NUEVA CRÓNICA -->
-  <div class="modal-overlay" id="modalNewCronica">
-    <div class="modal-box">
+  <div class="modal-overlay" id="modalNewCronica" onclick="handleOverlayClose(event, 'modalNewCronica')">
+    <div class="modal-box" onclick="event.stopPropagation()">
       <h3>Crear Nueva Crónica</h3>
       <div>
         <label style="font-size:0.75rem; color:#94a3b8; display:block; margin-bottom:4px;">TÍTULO DE LA CRÓNICA:</label>
@@ -522,12 +739,36 @@
     </div>
   </div>
 
+  <!-- VENTANA MODAL DE CONFIRMACIÓN PARA NUEVA FICHA / LIMPIAR CRÓNICA -->
+  <div class="modal-overlay" id="modalNewDocConfirm" onclick="handleOverlayClose(event, 'modalNewDocConfirm')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h3>Nueva Ficha de Crónica</h3>
+      <p style="font-size: 0.85rem; color: #cbd5e1;">Se vaciará el contenido de la crónica activa para comenzar de cero y se desvinculará su archivo en Drive.</p>
+      <div class="modal-buttons">
+        <button class="btn-cancel" onclick="closeModal('modalNewDocConfirm')">No</button>
+        <button class="btn-confirm btn-danger" onclick="confirmNewDoc()">Sí, empezar de cero</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VENTANA MODAL DE CONFIRMACIÓN PARA NUEVA LISTA -->
+  <div class="modal-overlay" id="modalNewListConfirm" onclick="handleOverlayClose(event, 'modalNewListConfirm')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h3>Nueva Lista de Crónicas</h3>
+      <p style="font-size: 0.85rem; color: #cbd5e1;">Se borrará el listado actual en pantalla para empezar una lista vacía y se desvinculará el archivo de lista en Drive.</p>
+      <div class="modal-buttons">
+        <button class="btn-cancel" onclick="closeModal('modalNewListConfirm')">No</button>
+        <button class="btn-confirm btn-danger" onclick="confirmNewList()">Sí, crear lista vacía</button>
+      </div>
+    </div>
+  </div>
+
   <!-- VENTANA MODAL PARA CONTRASEÑA DE ACCESO -->
-  <div class="modal-overlay" id="modalPassword">
-    <div class="modal-box">
+  <div class="modal-overlay" id="modalPassword" onclick="handleOverlayClose(event, 'modalPassword')">
+    <div class="modal-box" onclick="event.stopPropagation()">
       <h3>Crónica Protegida 🔒</h3>
       <p style="font-size: 0.85rem; color: #cbd5e1;" id="modalPassPromptText">Introduce la contraseña para acceder:</p>
-      <input type="password" id="inputAccessPass" placeholder="Contraseña...">
+      <input type="password" id="inputAccessPass" placeholder="Contraseña..." onkeydown="handlePasswordKeydown(event)">
       <div class="modal-buttons">
         <button class="btn-cancel" onclick="closeModal('modalPassword')">Cancelar</button>
         <button class="btn-confirm" onclick="confirmPassword()">Acceder</button>
@@ -535,9 +776,9 @@
     </div>
   </div>
 
-  <!-- VENTANA MODAL DE CONFIRMACIÓN DE BORRADO -->
-  <div class="modal-overlay" id="modalDeleteCronica">
-    <div class="modal-box">
+  <!-- VENTANA MODAL DE CONFIRMACIÓN DE BORRADO LOCAL -->
+  <div class="modal-overlay" id="modalDeleteCronica" onclick="handleOverlayClose(event, 'modalDeleteCronica')">
+    <div class="modal-box" onclick="event.stopPropagation()">
       <h3>⚠️ Confirmar Borrado</h3>
       <p style="font-size: 0.85rem; color: #cbd5e1;" id="deleteModalText">¿Estás seguro de que deseas eliminar esta crónica permanentemente?</p>
       <div class="modal-buttons">
@@ -547,19 +788,72 @@
     </div>
   </div>
 
+  <!-- VENTANA MODAL EXPLORADOR GOOGLE DRIVE (CRÓNICAS / LISTAS) -->
+  <div class="modal-overlay" id="modalDriveExplorer" onclick="handleOverlayClose(event, 'modalDriveExplorer')">
+    <div class="modal-box explorer-box" onclick="event.stopPropagation()">
+      <div class="explorer-header">
+        <h3 id="driveExplorerTitle">EXPLORADOR DRIVE</h3>
+        <button class="btn-cancel" style="padding: 4px 9px; font-size: 0.78rem;" onclick="closeModal('modalDriveExplorer')">✕</button>
+      </div>
+      <div class="explorer-subbar">
+        <span id="driveExplorerSubtitle">Carpeta: TMS PBTA</span>
+        <button class="btn-cancel" style="padding: 5px 10px; font-size: 0.72rem;" onclick="refreshCurrentDriveExplorer()">🔄 Refrescar lista</button>
+      </div>
+      <div class="explorer-list" id="driveExplorerList">
+        <div class="explorer-empty">Cargando archivos...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VENTANA MODAL RENOMBRAR ARCHIVO EN DRIVE -->
+  <div class="modal-overlay" id="modalDriveRename" onclick="handleOverlayClose(event, 'modalDriveRename')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h3>✏️ Renombrar en Drive</h3>
+      <p style="font-size: 0.85rem; color: #cbd5e1;" id="driveRenamePromptText">Nuevo nombre del archivo:</p>
+      <input type="text" id="inputDriveRename" placeholder="Nombre del archivo..." onkeydown="handleDriveRenameKeydown(event)">
+      <div class="modal-buttons">
+        <button class="btn-cancel" onclick="closeModal('modalDriveRename')">Cancelar</button>
+        <button class="btn-confirm" onclick="confirmDriveRename()">💾 Guardar nombre</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VENTANA MODAL CONFIRMAR BORRAR ARCHIVO EN DRIVE -->
+  <div class="modal-overlay" id="modalDriveDelete" onclick="handleOverlayClose(event, 'modalDriveDelete')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h3>⚠️ Borrar de Google Drive</h3>
+      <p style="font-size: 0.85rem; color: #cbd5e1;" id="driveDeletePromptText">¿Seguro que deseas borrar este archivo de Google Drive?</p>
+      <div class="modal-buttons">
+        <button class="btn-cancel" onclick="closeModal('modalDriveDelete')">No</button>
+        <button class="btn-confirm btn-danger" onclick="confirmDriveDelete()">Sí, borrar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- BARRA LATERAL DE CRÓNICAS -->
   <div class="sidebar">
     <h2>📜 CRÓNICAS</h2>
+
+    <div class="list-drive-status">
+      <div class="list-drive-status-top">
+        <strong>Listado general</strong>
+        <span id="listDriveBadge" class="drive-badge">Drive: local</span>
+      </div>
+      <span id="listDriveLabel">Sin lista vinculada en TMS PBTA / LISTA CRONICAS</span>
+    </div>
+
     <button class="btn-side" onclick="openNewCronicaModal()">＋ Nueva Crónica</button>
     
     <div class="sidebar-actions-grid">
-      <button class="btn-side-small" onclick="exportAllCronicasJson()">💾 Guardar Todas</button>
+      <button class="btn-side-small btn-side-new-list" onclick="openNewListConfirmModal()">🆕 Nueva lista</button>
+      <button class="btn-side-small btn-side-drive" onclick="refreshListFromGoogleDrive()">🔄 Actualizar lista</button>
+      <button class="btn-side-small btn-side-drive" onclick="saveListToGoogleDrive()">☁️ Guardar lista</button>
+      <button class="btn-side-small btn-side-drive" onclick="openDriveExplorer('list')">📥 Gestionar listas</button>
+      <button class="btn-side-small" onclick="exportAllCronicasJson()">💾 JSON lista</button>
       <label class="btn-side-small" style="cursor:pointer;">
-        📂 Cargar Todas
+        📂 Cargar JSON
         <input type="file" id="importAllCronicasFile" accept=".json" style="display:none;" onchange="importAllCronicasJson(event)">
       </label>
-      <button class="btn-side-small btn-side-drive" onclick="saveListToGoogleDrive()">☁️ Lista a Drive</button>
-      <button class="btn-side-small btn-side-drive" onclick="loadListFromGoogleDrive()">📥 Lista de Drive</button>
     </div>
 
     <div style="font-size: 0.7rem; color: #94a3b8; text-align: center; margin-top: 2px;">LISTA DE SESIONES:</div>
@@ -571,17 +865,25 @@
     
     <div id="emptyNotice" class="empty-notice">
       <h3>Selecciona una crónica de la lista o crea una nueva</h3>
-      <p style="font-size: 0.8rem; margin-top: 8px;">Las crónicas protegidas con contraseña solicitarán la clave para poder ser leídas.</p>
+      <p style="font-size: 0.8rem; margin-top: 8px;">Las crónicas protegidas con contraseña solicitarán la clave para poder ser leídas. Los cambios se autoguardan localmente al escribir.</p>
     </div>
 
     <!-- CONTENEDOR DE EDICIÓN -->
     <div class="editor-container" id="editorContainer">
       <div class="editor-header">
-        <input type="text" class="editor-title-input" id="cronicaTitle" placeholder="Título de la Crónica..." oninput="updateActiveTitle()">
+        <div class="editor-title-block">
+          <input type="text" class="editor-title-input" id="cronicaTitle" placeholder="Título de la Crónica..." oninput="updateActiveTitle()">
+          <div class="doc-drive-status">
+            <span id="docDriveBadge" class="drive-badge">Drive: local</span>
+            <span id="docDriveLabel">Sin archivo vinculado en TMS PBTA / CRONICAS</span>
+          </div>
+        </div>
         
         <div class="editor-actions">
-          <button class="btn-drive" onclick="saveCronicaToGoogleDrive()">☁️ Guardar en Drive</button>
-          <button class="btn-drive" onclick="loadCronicaFromGoogleDrive()">📥 Cargar de Drive</button>
+          <button class="btn-new-doc" onclick="openNewDocConfirmModal()">🆕 Nueva ficha</button>
+          <button class="btn-drive-save" onclick="saveCronicaToGoogleDrive()">☁️ Guardar en Drive</button>
+          <button class="btn-drive" onclick="openDriveExplorer('cronica')">📥 Cargar / Gestionar fichas</button>
+          <button class="btn-drive-refresh" onclick="refreshCronicaFromGoogleDrive()">🔄 Actualizar</button>
           <button onclick="exportCronicaJson()">💾 Guardar JSON</button>
           <label class="btn-upload">
             📂 Cargar JSON
@@ -610,7 +912,7 @@
 
       <!-- EDITOR Y TOC -->
       <div class="editor-layout">
-        <div class="text-editor" contenteditable="true" id="cronicaBody" oninput="handleEditorInput()"></div>
+        <div class="text-editor" contenteditable="true" id="cronicaBody" oninput="handleEditorInput()" onblur="flushActiveCronicaChanges()"></div>
         
         <div class="toc-sidebar">
           <div class="toc-title">Índice</div>
@@ -653,6 +955,10 @@
     let cachedCronicasFolderId = null;
     let cachedListaFolderId = null;
 
+    let currentExplorerScope = 'cronica'; // 'cronica' | 'list'
+    let pendingRenameTarget = null;     // { scope, fileId, currentName }
+    let pendingDeleteTarget = null;     // { scope, fileId, fileName }
+
     function showToast(message) {
       const toast = document.getElementById('toastMsg');
       if (!toast) return;
@@ -662,6 +968,42 @@
       window.__toastTimer = setTimeout(() => {
         toast.classList.remove('show');
       }, 3600);
+    }
+
+    function setBadgeStatus(badgeId, labelId, mode, badgeText, detailText) {
+      const badgeEl = document.getElementById(badgeId);
+      const labelEl = document.getElementById(labelId);
+      if (badgeEl) {
+        badgeEl.className = 'drive-badge' + (mode ? ' ' + mode : '');
+        badgeEl.textContent = badgeText;
+      }
+      if (labelEl && detailText !== undefined) {
+        labelEl.textContent = detailText;
+      }
+    }
+
+    function updateDocDriveStatus(customNote) {
+      const meta = readDriveMeta(CRONICA_DRIVE_META_KEY);
+      const docLink = activeId && meta.byId && meta.byId[activeId] ? meta.byId[activeId] : null;
+      const fileName = docLink ? docLink.fileName : (meta.__activeFileName || null);
+
+      if (fileName) {
+        const notePart = customNote ? ` · ${customNote}` : '';
+        setBadgeStatus('docDriveBadge', 'docDriveLabel', 'online', 'Drive vinculado', `Archivo: ${fileName}${notePart}`);
+      } else {
+        setBadgeStatus('docDriveBadge', 'docDriveLabel', '', 'Drive: local', customNote || 'Sin archivo vinculado en TMS PBTA / CRONICAS');
+      }
+    }
+
+    function updateListDriveStatus(customNote) {
+      const meta = readDriveMeta(LISTA_DRIVE_META_KEY);
+      const fileName = meta.__activeFileName || null;
+      if (fileName) {
+        const notePart = customNote ? ` · ${customNote}` : '';
+        setBadgeStatus('listDriveBadge', 'listDriveLabel', 'online', 'Drive vinculado', `Archivo: ${fileName}${notePart}`);
+      } else {
+        setBadgeStatus('listDriveBadge', 'listDriveLabel', '', 'Drive: local', customNote || 'Sin lista vinculada en TMS PBTA / LISTA CRONICAS');
+      }
     }
 
     function saveStorage() {
@@ -674,6 +1016,8 @@
         try { cronicas = JSON.parse(saved); } catch (e) { cronicas = {}; }
       }
       renderList();
+      updateListDriveStatus();
+      updateDocDriveStatus();
     }
 
     function openNewCronicaModal() {
@@ -683,8 +1027,71 @@
       document.getElementById('inputNewTitle').focus();
     }
 
+    function openNewDocConfirmModal() {
+      if (!activeId || !cronicas[activeId]) {
+        showToast('Selecciona o crea una crónica primero.');
+        return;
+      }
+      document.getElementById('modalNewDocConfirm').style.display = 'flex';
+    }
+
+    function confirmNewDoc() {
+      if (!activeId || !cronicas[activeId]) {
+        closeModal('modalNewDocConfirm');
+        return;
+      }
+      cronicas[activeId].content = '<p></p>';
+      document.getElementById('cronicaBody').innerHTML = '<p></p>';
+      saveStorage();
+      generateTOC();
+
+      const meta = readDriveMeta(CRONICA_DRIVE_META_KEY);
+      if (meta.byId && meta.byId[activeId]) {
+        delete meta.byId[activeId];
+      }
+      if (meta.__activeCronicaId === activeId) {
+        delete meta.__activeFileId;
+        delete meta.__activeFileName;
+        delete meta.__activeCronicaId;
+      }
+      writeDriveMeta(CRONICA_DRIVE_META_KEY, meta);
+
+      updateDocDriveStatus('Ficha vacía en blanco');
+      closeModal('modalNewDocConfirm');
+      showToast('Contenido de la crónica limpiado para empezar de cero.');
+    }
+
+    function openNewListConfirmModal() {
+      document.getElementById('modalNewListConfirm').style.display = 'flex';
+    }
+
+    function confirmNewList() {
+      cronicas = {};
+      activeId = null;
+      saveStorage();
+      renderList();
+      document.getElementById('editorContainer').style.display = 'none';
+      document.getElementById('emptyNotice').style.display = 'block';
+
+      const listMeta = readDriveMeta(LISTA_DRIVE_META_KEY);
+      delete listMeta.__activeFileId;
+      delete listMeta.__activeFileName;
+      writeDriveMeta(LISTA_DRIVE_META_KEY, listMeta);
+
+      updateListDriveStatus('Lista nueva en blanco');
+      updateDocDriveStatus();
+      closeModal('modalNewListConfirm');
+      showToast('Listado de crónicas limpiado para empezar de cero.');
+    }
+
     function closeModal(modalId) {
       document.getElementById(modalId).style.display = 'none';
+    }
+
+    function handleOverlayClose(event, modalId) {
+      if (event && event.target && event.target.id === modalId) {
+        closeModal(modalId);
+      }
     }
 
     function confirmNewCronica() {
@@ -706,6 +1113,7 @@
       renderList();
       closeModal('modalNewCronica');
       selectCronica(id);
+      showToast('Nueva crónica creada y autoguardada.');
     }
 
     function renderList() {
@@ -747,6 +1155,7 @@
     function requestOpenCronica(id) {
       const itemData = cronicas[id];
       if (!itemData) return;
+      flushActiveCronicaChanges();
 
       if (itemData.password && itemData.password.length > 0) {
         pendingOpenId = id;
@@ -756,6 +1165,16 @@
         document.getElementById('inputAccessPass').focus();
       } else {
         selectCronica(id);
+      }
+    }
+
+    function handlePasswordKeydown(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        confirmPassword();
+      } else if (event.key === 'Escape') {
+        event.preventDefault();
+        closeModal('modalPassword');
       }
     }
 
@@ -783,6 +1202,7 @@
       document.getElementById('cronicaTitle').value = itemData.title;
       document.getElementById('cronicaBody').innerHTML = itemData.content || '';
       generateTOC();
+      updateDocDriveStatus();
     }
 
     function requestDeleteCronica(id) {
@@ -804,6 +1224,7 @@
       
       saveStorage();
       renderList();
+      updateDocDriveStatus();
       closeModal('modalDeleteCronica');
       pendingDeleteId = null;
     }
@@ -840,7 +1261,7 @@
       
       saveTimeout = setTimeout(() => {
         flushActiveCronicaChanges();
-      }, 500);
+      }, 300);
     }
 
     function generateTOC() {
@@ -901,7 +1322,7 @@
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
-    function addImportedCronicaToList(data) {
+    function addImportedCronicaToList(data, driveFileInfo = null) {
       if (!data || !data.title || data.content === undefined) {
         throw new Error('El archivo JSON no tiene el formato correcto de crónica.');
       }
@@ -913,6 +1334,18 @@
       };
       saveStorage();
       renderList();
+
+      if (driveFileInfo && driveFileInfo.fileId && driveFileInfo.fileName) {
+        const meta = readDriveMeta(CRONICA_DRIVE_META_KEY);
+        meta.byId = meta.byId || {};
+        meta.byId[id] = { fileId: driveFileInfo.fileId, fileName: driveFileInfo.fileName };
+        meta[driveFileInfo.fileName] = driveFileInfo.fileId;
+        meta.__activeFileId = driveFileInfo.fileId;
+        meta.__activeFileName = driveFileInfo.fileName;
+        meta.__activeCronicaId = id;
+        writeDriveMeta(CRONICA_DRIVE_META_KEY, meta);
+      }
+
       selectCronica(id);
       return id;
     }
@@ -963,6 +1396,7 @@
       } else if (activeId && cronicas[activeId]) {
         selectCronica(activeId);
       }
+      updateDocDriveStatus();
     }
 
     function importAllCronicasJson(event) {
@@ -1148,9 +1582,32 @@
       localStorage.setItem(storageKey, JSON.stringify(meta));
     }
 
-    async function upsertJsonInDriveFolder(folderId, folderLabel, fileName, payloadString, metaStorageKey) {
+    function getScopeConfig(scope) {
+      if (scope === 'list') {
+        return {
+          scope: 'list',
+          folderLabel: DRIVE_CONFIG.listaFolderName,
+          metaKey: LISTA_DRIVE_META_KEY,
+          ensureFolder: ensureListaFolderId,
+          badgeId: 'listDriveBadge',
+          labelId: 'listDriveLabel',
+          updateStatus: updateListDriveStatus
+        };
+      }
+      return {
+        scope: 'cronica',
+        folderLabel: DRIVE_CONFIG.cronicasFolderName,
+        metaKey: CRONICA_DRIVE_META_KEY,
+        ensureFolder: ensureCronicasFolderId,
+        badgeId: 'docDriveBadge',
+        labelId: 'docDriveLabel',
+        updateStatus: updateDocDriveStatus
+      };
+    }
+
+    async function upsertJsonInDriveFolder(folderId, folderLabel, fileName, payloadString, metaStorageKey, cronicaId = null) {
       const meta = readDriveMeta(metaStorageKey);
-      let targetFileId = meta[fileName] || null;
+      let targetFileId = (cronicaId && meta.byId && meta.byId[cronicaId] ? meta.byId[cronicaId].fileId : null) || meta[fileName] || null;
 
       if (!targetFileId) {
         const q = encodeURIComponent(
@@ -1167,6 +1624,7 @@
       const delimiter = `\r\n--${boundary}\r\n`;
       const closeDelimiter = `\r\n--${boundary}--`;
 
+      let savedJson;
       if (targetFileId) {
         const updateMetadata = { name: fileName, mimeType: 'application/json' };
         const body =
@@ -1186,10 +1644,7 @@
             body
           }
         );
-        const updJson = await updResp.json();
-        meta[fileName] = updJson.id;
-        writeDriveMeta(metaStorageKey, meta);
-        showToast(`Actualizado en Drive (${DRIVE_CONFIG.rootFolderName}/${folderLabel}/${fileName}).`);
+        savedJson = await updResp.json();
       } else {
         const createMetadata = {
           name: fileName,
@@ -1213,55 +1668,21 @@
             body
           }
         );
-        const crtJson = await crtResp.json();
-        meta[fileName] = crtJson.id;
-        writeDriveMeta(metaStorageKey, meta);
-        showToast(`Guardado en Drive (${DRIVE_CONFIG.rootFolderName}/${folderLabel}/${fileName}).`);
-      }
-    }
-
-    async function pickAndDownloadJsonFromFolder(folderId, folderLabel, promptHeader, metaStorageKey) {
-      const q = encodeURIComponent(
-        `'${escapeDriveQueryValue(folderId)}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`
-      );
-      const listResp = await driveApiFetch(
-        `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime)&orderBy=modifiedTime desc&pageSize=30`
-      );
-      const listJson = await listResp.json();
-      const files = listJson.files || [];
-
-      if (files.length === 0) {
-        showToast(`No hay archivos en ${DRIVE_CONFIG.rootFolderName}/${folderLabel}.`);
-        return null;
+        savedJson = await crtResp.json();
       }
 
-      const opciones = files
-        .map((f, idx) => `${idx + 1}. ${f.name}`)
-        .join('\n');
-      const selection = prompt(
-        `${promptHeader} en ${DRIVE_CONFIG.rootFolderName}/${folderLabel}:\n\n${opciones}`,
-        '1'
-      );
-      if (!selection) return null;
-
-      const chosenIndex = parseInt(selection.trim(), 10) - 1;
-      if (isNaN(chosenIndex) || chosenIndex < 0 || chosenIndex >= files.length) {
-        showToast('Selección no válida.');
-        return null;
+      const finalName = savedJson.name || fileName;
+      meta[finalName] = savedJson.id;
+      meta.__activeFileId = savedJson.id;
+      meta.__activeFileName = finalName;
+      if (cronicaId) {
+        meta.byId = meta.byId || {};
+        meta.byId[cronicaId] = { fileId: savedJson.id, fileName: finalName };
+        meta.__activeCronicaId = cronicaId;
       }
-
-      const chosenFile = files[chosenIndex];
-      const fileResp = await driveApiFetch(
-        `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(chosenFile.id)}?alt=media`
-      );
-      const rawText = await fileResp.text();
-      const parsed = JSON.parse(rawText);
-
-      const meta = readDriveMeta(metaStorageKey);
-      meta[chosenFile.name] = chosenFile.id;
       writeDriveMeta(metaStorageKey, meta);
-
-      return { file: chosenFile, data: parsed };
+      showToast(`Guardado en Drive (${DRIVE_CONFIG.rootFolderName}/${folderLabel}/${finalName}).`);
+      return savedJson;
     }
 
     // Crónica individual -> subcarpeta CRONICAS
@@ -1272,6 +1693,7 @@
           return;
         }
         flushActiveCronicaChanges();
+        setBadgeStatus('docDriveBadge', 'docDriveLabel', 'syncing', 'Guardando en Drive...', 'Conectando con TMS PBTA / CRONICAS');
         showToast('Guardando crónica en Google Drive...');
         const folderId = await ensureCronicasFolderId();
         const cronicaData = cronicas[activeId];
@@ -1281,31 +1703,59 @@
           DRIVE_CONFIG.cronicasFolderName,
           fileName,
           JSON.stringify(cronicaData, null, 2),
-          CRONICA_DRIVE_META_KEY
+          CRONICA_DRIVE_META_KEY,
+          activeId
         );
+        updateDocDriveStatus('Guardado');
       } catch (err) {
         console.error(err);
+        setBadgeStatus('docDriveBadge', 'docDriveLabel', 'error', 'Error al guardar', err.message || 'No se pudo guardar');
         showToast(`No se pudo guardar la crónica en Drive: ${err.message}`);
       }
     }
 
-    async function loadCronicaFromGoogleDrive() {
-      try {
-        showToast('Buscando crónicas en Drive...');
-        const folderId = await ensureCronicasFolderId();
-        const result = await pickAndDownloadJsonFromFolder(
-          folderId,
-          DRIVE_CONFIG.cronicasFolderName,
-          'Selecciona el número de la crónica a cargar',
-          CRONICA_DRIVE_META_KEY
-        );
-        if (!result) return;
+    async function refreshCronicaFromGoogleDrive() {
+      if (!activeId || !cronicas[activeId]) {
+        await openDriveExplorer('cronica');
+        return;
+      }
+      const meta = readDriveMeta(CRONICA_DRIVE_META_KEY);
+      const docLink = meta.byId && meta.byId[activeId] ? meta.byId[activeId] : null;
+      const targetId = (docLink && docLink.fileId) || (meta.__activeCronicaId === activeId ? meta.__activeFileId : null);
+      const targetName = (docLink && docLink.fileName) || (meta.__activeCronicaId === activeId ? meta.__activeFileName : null) || getSanitizedCronicaFilename(cronicas[activeId].title);
 
-        addImportedCronicaToList(result.data);
-        showToast(`Cargada "${result.file.name}" desde ${DRIVE_CONFIG.cronicasFolderName}.`);
+      if (!targetId) {
+        await openDriveExplorer('cronica');
+        return;
+      }
+
+      try {
+        setBadgeStatus('docDriveBadge', 'docDriveLabel', 'syncing', 'Actualizando...', targetName);
+        const fileResp = await driveApiFetch(
+          `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(targetId)}?alt=media`
+        );
+        const rawText = await fileResp.text();
+        const parsed = JSON.parse(rawText);
+        if (!parsed || parsed.content === undefined) {
+          throw new Error('Formato de crónica no válido.');
+        }
+
+        cronicas[activeId] = {
+          title: parsed.title !== undefined ? parsed.title : cronicas[activeId].title,
+          password: parsed.password !== undefined ? parsed.password : cronicas[activeId].password,
+          content: parsed.content
+        };
+        saveStorage();
+        renderList();
+        selectCronica(activeId);
+
+        const hora = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        updateDocDriveStatus(`Actualizado ${hora}`);
+        showToast(`Actualizada "${targetName}" desde Google Drive.`);
       } catch (err) {
         console.error(err);
-        showToast(`No se pudo cargar la crónica desde Drive: ${err.message}`);
+        setBadgeStatus('docDriveBadge', 'docDriveLabel', 'error', 'Error al actualizar', err.message || 'No se pudo actualizar');
+        showToast(`No se pudo actualizar desde Drive: ${err.message}`);
       }
     }
 
@@ -1313,6 +1763,7 @@
     async function saveListToGoogleDrive() {
       try {
         flushActiveCronicaChanges();
+        setBadgeStatus('listDriveBadge', 'listDriveLabel', 'syncing', 'Guardando lista...', 'Conectando con TMS PBTA / LISTA CRONICAS');
         showToast('Guardando lista completa en Google Drive...');
         const folderId = await ensureListaFolderId();
         const fileName = 'todas_las_cronicas_pbta.json';
@@ -1321,31 +1772,327 @@
           DRIVE_CONFIG.listaFolderName,
           fileName,
           JSON.stringify(cronicas, null, 2),
-          LISTA_DRIVE_META_KEY
+          LISTA_DRIVE_META_KEY,
+          null
         );
+        updateListDriveStatus('Guardada');
       } catch (err) {
         console.error(err);
+        setBadgeStatus('listDriveBadge', 'listDriveLabel', 'error', 'Error al guardar', err.message || 'No se pudo guardar');
         showToast(`No se pudo guardar la lista en Drive: ${err.message}`);
       }
     }
 
-    async function loadListFromGoogleDrive() {
-      try {
-        showToast('Buscando listas de crónicas en Drive...');
-        const folderId = await ensureListaFolderId();
-        const result = await pickAndDownloadJsonFromFolder(
-          folderId,
-          DRIVE_CONFIG.listaFolderName,
-          'Selecciona el número de la lista de crónicas a cargar',
-          LISTA_DRIVE_META_KEY
-        );
-        if (!result) return;
+    async function refreshListFromGoogleDrive() {
+      const meta = readDriveMeta(LISTA_DRIVE_META_KEY);
+      const activeIdFile = meta.__activeFileId || null;
+      const activeNameFile = meta.__activeFileName || 'todas_las_cronicas_pbta.json';
 
-        applyImportedCronicasList(result.data);
-        showToast(`Cargada lista "${result.file.name}" desde ${DRIVE_CONFIG.listaFolderName}.`);
+      if (!activeIdFile) {
+        await openDriveExplorer('list');
+        return;
+      }
+
+      try {
+        setBadgeStatus('listDriveBadge', 'listDriveLabel', 'syncing', 'Actualizando lista...', activeNameFile);
+        const fileResp = await driveApiFetch(
+          `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(activeIdFile)}?alt=media`
+        );
+        const rawText = await fileResp.text();
+        const parsed = JSON.parse(rawText);
+        applyImportedCronicasList(parsed);
+
+        const hora = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        updateListDriveStatus(`Actualizada ${hora}`);
+        showToast(`Actualizada lista "${activeNameFile}" desde Google Drive.`);
       } catch (err) {
         console.error(err);
-        showToast(`No se pudo cargar la lista desde Drive: ${err.message}`);
+        setBadgeStatus('listDriveBadge', 'listDriveLabel', 'error', 'Error al actualizar', err.message || 'No se pudo actualizar');
+        showToast(`No se pudo actualizar la lista desde Drive: ${err.message}`);
+      }
+    }
+
+    // --- EXPLORADOR VISUAL DE DRIVE CON CARGAR, RENOMBRAR Y BORRAR ---
+    async function openDriveExplorer(scope) {
+      currentExplorerScope = scope === 'list' ? 'list' : 'cronica';
+      const cfg = getScopeConfig(currentExplorerScope);
+
+      document.getElementById('driveExplorerTitle').textContent =
+        currentExplorerScope === 'list'
+          ? 'EXPLORADOR DRIVE · LISTAS DE CRÓNICAS'
+          : 'EXPLORADOR DRIVE · FICHAS DE CRÓNICAS';
+      document.getElementById('driveExplorerSubtitle').textContent =
+        `Carpeta: ${DRIVE_CONFIG.rootFolderName} / ${cfg.folderLabel}`;
+      document.getElementById('driveExplorerList').innerHTML =
+        '<div class="explorer-empty">Conectando con Google Drive...</div>';
+      document.getElementById('modalDriveExplorer').style.display = 'flex';
+
+      try {
+        await getDriveAccessToken('');
+        await refreshCurrentDriveExplorer();
+      } catch (err) {
+        console.error(err);
+        cfg.updateStatus('Error de acceso');
+        document.getElementById('driveExplorerList').innerHTML =
+          `<div class="explorer-empty">No se pudo conectar con Google Drive: ${err.message || err}</div>`;
+      }
+    }
+
+    async function refreshCurrentDriveExplorer() {
+      const cfg = getScopeConfig(currentExplorerScope);
+      const listEl = document.getElementById('driveExplorerList');
+      listEl.innerHTML = `<div class="explorer-empty">Cargando archivos de ${DRIVE_CONFIG.rootFolderName} / ${cfg.folderLabel}...</div>`;
+
+      try {
+        setBadgeStatus(cfg.badgeId, cfg.labelId, 'syncing', 'Consultando Drive...', `Buscando en ${cfg.folderLabel}`);
+        const folderId = await cfg.ensureFolder();
+        const q = encodeURIComponent(
+          `'${escapeDriveQueryValue(folderId)}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`
+        );
+        const listResp = await driveApiFetch(
+          `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime,mimeType)&orderBy=modifiedTime%20desc&pageSize=100`
+        );
+        const listJson = await listResp.json();
+        const files = (listJson.files || []).filter(f =>
+          f.name.toLowerCase().endsWith('.json') || f.mimeType === 'application/json'
+        );
+
+        cfg.updateStatus();
+
+        if (files.length === 0) {
+          listEl.innerHTML = `<div class="explorer-empty">No hay archivos JSON en <strong>${DRIVE_CONFIG.rootFolderName} / ${cfg.folderLabel}</strong> todavía.</div>`;
+          return;
+        }
+
+        listEl.innerHTML = '';
+        files.forEach(file => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'explorer-file-item';
+
+          const infoDiv = document.createElement('div');
+          infoDiv.className = 'explorer-file-info';
+          infoDiv.onclick = () => selectFileFromDriveExplorer(file.id, file.name);
+
+          const nameDiv = document.createElement('div');
+          nameDiv.className = 'explorer-file-name';
+          nameDiv.textContent = file.name;
+
+          const metaDiv = document.createElement('div');
+          metaDiv.className = 'explorer-file-meta';
+          const fechaText = file.modifiedTime
+            ? new Date(file.modifiedTime).toLocaleString('es-ES')
+            : 'Sin fecha';
+          metaDiv.textContent = `Actualizado: ${fechaText}`;
+
+          infoDiv.appendChild(nameDiv);
+          infoDiv.appendChild(metaDiv);
+
+          const actionsDiv = document.createElement('div');
+          actionsDiv.className = 'explorer-file-actions';
+
+          const loadBtn = document.createElement('button');
+          loadBtn.type = 'button';
+          loadBtn.className = 'explorer-load-btn';
+          loadBtn.textContent = 'Cargar';
+          loadBtn.onclick = (ev) => {
+            ev.stopPropagation();
+            selectFileFromDriveExplorer(file.id, file.name);
+          };
+
+          const renameBtn = document.createElement('button');
+          renameBtn.type = 'button';
+          renameBtn.className = 'explorer-rename-btn';
+          renameBtn.title = `Renombrar ${file.name}`;
+          renameBtn.textContent = '✏️ Renombrar';
+          renameBtn.onclick = (ev) => {
+            ev.stopPropagation();
+            openDriveRenameModal(currentExplorerScope, file.id, file.name);
+          };
+
+          const delBtn = document.createElement('button');
+          delBtn.type = 'button';
+          delBtn.className = 'explorer-delete-btn';
+          delBtn.title = `Borrar ${file.name} de Drive`;
+          delBtn.textContent = '✕';
+          delBtn.onclick = (ev) => {
+            ev.stopPropagation();
+            openDriveDeleteModal(currentExplorerScope, file.id, file.name);
+          };
+
+          actionsDiv.appendChild(loadBtn);
+          actionsDiv.appendChild(renameBtn);
+          actionsDiv.appendChild(delBtn);
+
+          itemDiv.appendChild(infoDiv);
+          itemDiv.appendChild(actionsDiv);
+          listEl.appendChild(itemDiv);
+        });
+      } catch (err) {
+        console.error(err);
+        setBadgeStatus(cfg.badgeId, cfg.labelId, 'error', 'Error en Drive', err.message || 'No se pudo listar');
+        listEl.innerHTML = `<div class="explorer-empty">Error al cargar la carpeta: ${err.message || err}</div>`;
+      }
+    }
+
+    async function selectFileFromDriveExplorer(fileId, fileName) {
+      const cfg = getScopeConfig(currentExplorerScope);
+      try {
+        setBadgeStatus(cfg.badgeId, cfg.labelId, 'syncing', 'Cargando...', fileName);
+        const fileResp = await driveApiFetch(
+          `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}?alt=media`
+        );
+        const rawText = await fileResp.text();
+        const parsed = JSON.parse(rawText);
+
+        if (currentExplorerScope === 'list') {
+          applyImportedCronicasList(parsed);
+          const meta = readDriveMeta(LISTA_DRIVE_META_KEY);
+          meta[fileName] = fileId;
+          meta.__activeFileId = fileId;
+          meta.__activeFileName = fileName;
+          writeDriveMeta(LISTA_DRIVE_META_KEY, meta);
+          closeModal('modalDriveExplorer');
+          updateListDriveStatus('Cargada');
+          showToast(`Cargada lista "${fileName}" desde Google Drive.`);
+        } else {
+          addImportedCronicaToList(parsed, { fileId, fileName });
+          closeModal('modalDriveExplorer');
+          updateDocDriveStatus('Cargado');
+          showToast(`Cargada crónica "${fileName}" desde Google Drive.`);
+        }
+      } catch (err) {
+        console.error(err);
+        setBadgeStatus(cfg.badgeId, cfg.labelId, 'error', 'Error al cargar', err.message || 'No se pudo leer el JSON');
+        showToast(`No se pudo cargar desde Drive: ${err.message}`);
+      }
+    }
+
+    function openDriveRenameModal(scope, fileId, currentName) {
+      pendingRenameTarget = { scope, fileId, currentName };
+      document.getElementById('driveRenamePromptText').textContent = `Renombrar "${currentName}":`;
+      const inputEl = document.getElementById('inputDriveRename');
+      inputEl.value = currentName;
+      document.getElementById('modalDriveRename').style.display = 'flex';
+      setTimeout(() => {
+        inputEl.focus();
+        const dotIdx = currentName.lastIndexOf('.');
+        inputEl.setSelectionRange(0, dotIdx > 0 ? dotIdx : currentName.length);
+      }, 30);
+    }
+
+    function handleDriveRenameKeydown(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        confirmDriveRename();
+      } else if (event.key === 'Escape') {
+        event.preventDefault();
+        closeModal('modalDriveRename');
+      }
+    }
+
+    async function confirmDriveRename() {
+      if (!pendingRenameTarget) return;
+      const inputEl = document.getElementById('inputDriveRename');
+      let newName = inputEl ? inputEl.value.trim() : '';
+      if (!newName) {
+        showToast('Escribe un nombre válido para el archivo.');
+        return;
+      }
+
+      if (pendingRenameTarget.currentName.toLowerCase().endsWith('.json') && !newName.toLowerCase().endsWith('.json')) {
+        newName += '.json';
+      }
+
+      const { scope, fileId, currentName } = pendingRenameTarget;
+      const cfg = getScopeConfig(scope);
+      pendingRenameTarget = null;
+      closeModal('modalDriveRename');
+
+      try {
+        setBadgeStatus(cfg.badgeId, cfg.labelId, 'syncing', 'Renombrando...', `${currentName} → ${newName}`);
+        const resp = await driveApiFetch(
+          `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}?fields=id,name`,
+          {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: newName })
+          }
+        );
+        const updated = await resp.json();
+        const finalName = updated.name || newName;
+
+        const meta = readDriveMeta(cfg.metaKey);
+        if (meta[currentName] === fileId) {
+          delete meta[currentName];
+        }
+        meta[finalName] = fileId;
+        if (meta.__activeFileId === fileId) {
+          meta.__activeFileName = finalName;
+        }
+        if (meta.byId) {
+          Object.keys(meta.byId).forEach(cid => {
+            if (meta.byId[cid] && meta.byId[cid].fileId === fileId) {
+              meta.byId[cid].fileName = finalName;
+            }
+          });
+        }
+        writeDriveMeta(cfg.metaKey, meta);
+
+        cfg.updateStatus('Renombrado');
+        showToast(`Renombrado a "${finalName}".`);
+        await refreshCurrentDriveExplorer();
+      } catch (err) {
+        console.error(err);
+        setBadgeStatus(cfg.badgeId, cfg.labelId, 'error', 'Error al renombrar', err.message || 'No se pudo renombrar');
+        showToast(`No se pudo renombrar en Drive: ${err.message}`);
+      }
+    }
+
+    function openDriveDeleteModal(scope, fileId, fileName) {
+      pendingDeleteTarget = { scope, fileId, fileName };
+      document.getElementById('driveDeletePromptText').textContent =
+        `Se borrará permanentemente "${fileName}" de Google Drive. ¿Continuar?`;
+      document.getElementById('modalDriveDelete').style.display = 'flex';
+    }
+
+    async function confirmDriveDelete() {
+      if (!pendingDeleteTarget) return;
+      const { scope, fileId, fileName } = pendingDeleteTarget;
+      const cfg = getScopeConfig(scope);
+      pendingDeleteTarget = null;
+      closeModal('modalDriveDelete');
+
+      try {
+        setBadgeStatus(cfg.badgeId, cfg.labelId, 'syncing', 'Borrando en Drive...', fileName);
+        await driveApiFetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}`, {
+          method: 'DELETE'
+        });
+
+        const meta = readDriveMeta(cfg.metaKey);
+        if (meta[fileName] === fileId) {
+          delete meta[fileName];
+        }
+        if (meta.__activeFileId === fileId) {
+          delete meta.__activeFileId;
+          delete meta.__activeFileName;
+          delete meta.__activeCronicaId;
+        }
+        if (meta.byId) {
+          Object.keys(meta.byId).forEach(cid => {
+            if (meta.byId[cid] && meta.byId[cid].fileId === fileId) {
+              delete meta.byId[cid];
+            }
+          });
+        }
+        writeDriveMeta(cfg.metaKey, meta);
+
+        cfg.updateStatus(`Borrado ${fileName}`);
+        showToast(`Borrado "${fileName}" de Google Drive.`);
+        await refreshCurrentDriveExplorer();
+      } catch (err) {
+        console.error(err);
+        setBadgeStatus(cfg.badgeId, cfg.labelId, 'error', 'Error al borrar', err.message || 'No se pudo borrar');
+        showToast(`No se pudo borrar de Drive: ${err.message}`);
       }
     }
 
