@@ -148,18 +148,29 @@
       background: #334155;
     }
 
+    button.btn-drive-delete {
+      background: #991b1b;
+    }
+
+    button.btn-drive-delete:hover {
+      background: #b91c1c;
+    }
+
     /* --- MODAL FLOTANTE DE CONFIRMACIÓN PARA NUEVA FICHA --- */
-    #newSheetConfirmModal {
+    #newSheetConfirmModal,
+    #driveDeleteConfirmModal {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.72);
+      background: rgba(15, 23, 42, 0.75);
       display: none;
       align-items: center;
       justify-content: center;
       padding: 16px;
-      z-index: 1300;
       user-select: none;
     }
+
+    #newSheetConfirmModal { z-index: 1300; }
+    #driveDeleteConfirmModal { z-index: 1350; }
 
     .confirm-modal-card {
       width: 400px;
@@ -171,6 +182,10 @@
       box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
       overflow: hidden;
       font-family: 'Inter', sans-serif;
+    }
+
+    #driveDeleteConfirmModal .confirm-modal-card {
+      border-color: #f87171;
     }
 
     .confirm-modal-header {
@@ -190,6 +205,10 @@
       letter-spacing: 0.04em;
     }
 
+    #driveDeleteConfirmModal .confirm-modal-header span {
+      color: #fca5a5;
+    }
+
     .confirm-modal-body {
       padding: 16px;
       display: flex;
@@ -203,6 +222,7 @@
       font-weight: 600;
       line-height: 1.45;
       color: #f8fafc;
+      word-break: break-word;
     }
 
     .confirm-modal-actions {
@@ -245,7 +265,7 @@
     }
 
     .drive-explorer-card {
-      width: 480px;
+      width: 500px;
       max-width: 100%;
       max-height: 82vh;
       background: #1e293b;
@@ -329,14 +349,41 @@
       margin-top: 2px;
     }
 
+    .drive-file-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
     .drive-file-load-tag {
       background: #0284c7;
       color: #ffffff;
-      padding: 4px 9px;
+      padding: 5px 9px;
       border-radius: 4px;
       font-size: 0.72rem;
       font-weight: 600;
       flex-shrink: 0;
+    }
+
+    .drive-file-delete-btn {
+      background: #991b1b;
+      color: #ffffff;
+      border: 1px solid #ef4444;
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      line-height: 1;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .drive-file-delete-btn:hover {
+      background: #dc2626;
+      transform: translateY(-1px);
     }
 
     .drive-empty-state {
@@ -1208,7 +1255,7 @@
 
     @media print {
       body { background: white; padding: 0; }
-      .action-bar, #floatingToolbar, #floatingDiceLauncher, #diceWidgetModal, #conceptRandomizerModal, #geminiPromptOverlay, #driveExplorerModal, #newSheetConfirmModal, .concept-random-btn, .concept-sheet-actions { display: none !important; }
+      .action-bar, #floatingToolbar, #floatingDiceLauncher, #diceWidgetModal, #conceptRandomizerModal, #geminiPromptOverlay, #driveExplorerModal, #newSheetConfirmModal, #driveDeleteConfirmModal, .concept-random-btn, .concept-sheet-actions { display: none !important; }
       .sheet-container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
       .editable:focus { background: transparent; border-color: transparent; }
     }
@@ -1299,6 +1346,23 @@
     </div>
   </div>
 
+  <!-- MODAL FLOTANTE DE CONFIRMACIÓN PARA BORRAR ARCHIVO EN DRIVE -->
+  <div id="driveDeleteConfirmModal" onclick="closeDriveDeleteConfirmModal(event)">
+    <div class="confirm-modal-card" onclick="event.stopPropagation()">
+      <div class="confirm-modal-header">
+        <span>CONFIRMAR BORRADO EN DRIVE</span>
+        <button type="button" class="concept-modal-close" onclick="closeDriveDeleteConfirmModal(event)" title="Cerrar">×</button>
+      </div>
+      <div class="confirm-modal-body">
+        <div class="confirm-modal-text" id="driveDeleteConfirmText">¿Seguro que quieres borrar esta ficha de Google Drive?</div>
+        <div class="confirm-modal-actions">
+          <button type="button" class="btn-confirm-yes" onclick="confirmDeletePjFromDrive()">Sí, borrar</button>
+          <button type="button" class="btn-confirm-no" onclick="closeDriveDeleteConfirmModal(event)">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- VENTANA FLOTANTE DE EXPLORADOR DE GOOGLE DRIVE (SUBCARPETA PJ) -->
   <div id="driveExplorerModal" onclick="closeDriveExplorer(event)">
     <div class="drive-explorer-card" onclick="event.stopPropagation()">
@@ -1311,7 +1375,7 @@
         <button type="button" class="roll-btn" style="background: #334155;" onclick="refreshDriveExplorerList()">🔄 Refrescar lista</button>
       </div>
       <div class="drive-explorer-list" id="driveExplorerList">
-        <div class="drive-empty-state">Pulsa «Cargar ficha online» para listar los personajes en Drive.</div>
+        <div class="drive-empty-state">Pulsa «Cargar ficha online» o «Borrar de Drive» para listar los personajes en Drive.</div>
       </div>
     </div>
   </div>
@@ -1492,6 +1556,7 @@
       <button type="button" class="btn-new-sheet" onclick="openNewSheetConfirmModal()">🆕 Nueva ficha</button>
       <button type="button" class="btn-drive-save" onclick="savePjToDrive()">☁️ Guardar online</button>
       <button type="button" class="btn-drive-load" onclick="openPjDriveExplorer()">📥 Cargar ficha online</button>
+      <button type="button" class="btn-drive-delete" onclick="openPjDriveExplorer()">🗑️ Borrar de Drive</button>
       <button type="button" class="btn-drive-refresh" onclick="refreshPjFromDrive()">🔄 Actualizar</button>
       <button type="button" onclick="printSheet()">🖨️ Imprimir / Guardar PDF</button>
       <button type="button" onclick="exportData()">💾 Guardar JSON</button>
@@ -1925,6 +1990,8 @@
       autoSync: false
     };
 
+    let pendingDeleteDriveFile = null;
+
     let localAutoSaveTimer = null;
     let driveAutoSaveTimer = null;
     let isApplyingRemoteDriveData = false;
@@ -2343,6 +2410,62 @@
       }
     }
 
+    function openDriveDeleteConfirmModal(fileId, fileName, event) {
+      if (event) event.stopPropagation();
+      pendingDeleteDriveFile = { fileId, fileName };
+      const textEl = document.getElementById('driveDeleteConfirmText');
+      if (textEl) {
+        textEl.textContent = `Se borrará permanentemente "${fileName}" de Google Drive. ¿Continuar?`;
+      }
+      const modal = document.getElementById('driveDeleteConfirmModal');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+    }
+
+    function closeDriveDeleteConfirmModal(event) {
+      if (event) event.stopPropagation();
+      pendingDeleteDriveFile = null;
+      const modal = document.getElementById('driveDeleteConfirmModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    async function confirmDeletePjFromDrive() {
+      if (!pendingDeleteDriveFile) return;
+      const { fileId, fileName } = pendingDeleteDriveFile;
+      closeDriveDeleteConfirmModal();
+
+      try {
+        setDriveStatus('syncing', 'Borrando en Drive...', fileName);
+        await driveFetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}`, {
+          method: 'DELETE'
+        });
+
+        if (linkedDriveFile.fileId === fileId) {
+          if (driveAutoSaveTimer) {
+            clearTimeout(driveAutoSaveTimer);
+            driveAutoSaveTimer = null;
+          }
+          linkedDriveFile = {
+            fileId: null,
+            fileName: null,
+            autoSync: false
+          };
+          saveDriveLinkMeta();
+        }
+
+        const hora = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        updateDriveStatusSummary(`Borrado ${fileName} (${hora})`);
+        await refreshDriveExplorerList();
+      } catch (err) {
+        console.error('Error al borrar archivo en Drive:', err);
+        setDriveStatus('error', 'Error al borrar', err.message || 'No se pudo eliminar el archivo');
+        alert('No se pudo borrar el archivo de Google Drive: ' + (err.message || err));
+      }
+    }
+
     async function refreshDriveExplorerList() {
       const listEl = document.getElementById('driveExplorerList');
       if (listEl) {
@@ -2391,12 +2514,25 @@
           infoDiv.appendChild(nameDiv);
           infoDiv.appendChild(metaDiv);
 
+          const actionsDiv = document.createElement('div');
+          actionsDiv.className = 'drive-file-actions';
+
           const tagSpan = document.createElement('span');
           tagSpan.className = 'drive-file-load-tag';
           tagSpan.textContent = 'Cargar';
 
+          const delBtn = document.createElement('button');
+          delBtn.type = 'button';
+          delBtn.className = 'drive-file-delete-btn';
+          delBtn.title = `Borrar ${file.name} de Drive`;
+          delBtn.textContent = '✕';
+          delBtn.onclick = (ev) => openDriveDeleteConfirmModal(file.id, file.name, ev);
+
+          actionsDiv.appendChild(tagSpan);
+          actionsDiv.appendChild(delBtn);
+
           itemBtn.appendChild(infoDiv);
-          itemBtn.appendChild(tagSpan);
+          itemBtn.appendChild(actionsDiv);
           listEl.appendChild(itemBtn);
         });
       } catch (err) {
