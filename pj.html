@@ -148,15 +148,6 @@
       background: #334155;
     }
 
-    button.btn-drive-delete {
-      background: #7c2d12;
-      border: 1px solid #fdba74;
-    }
-
-    button.btn-drive-delete:hover {
-      background: #9a3412;
-    }
-
     /* --- MODALES FLOTANTES DE CONFIRMACIÓN Y RENOMBRADO --- */
     #newSheetConfirmModal,
     #driveDeleteConfirmModal,
@@ -341,13 +332,6 @@
       color: #cbd5e1;
     }
 
-    .drive-explorer-subbar.manage-mode {
-      background: rgba(30, 58, 138, 0.35);
-      border-bottom-color: #38bdf8;
-      color: #e0f2fe;
-      font-weight: 600;
-    }
-
     .drive-explorer-list {
       padding: 12px 15px;
       overflow-y: auto;
@@ -421,11 +405,9 @@
       flex-shrink: 0;
     }
 
-    .drive-file-rename-btn:hover,
-    .drive-file-rename-btn.highlighted {
+    .drive-file-rename-btn:hover {
       background: #2563eb;
       border-color: #93c5fd;
-      box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.45);
       transform: translateY(-1px);
     }
 
@@ -444,11 +426,9 @@
       flex-shrink: 0;
     }
 
-    .drive-file-delete-btn:hover,
-    .drive-file-delete-btn.highlighted {
+    .drive-file-delete-btn:hover {
       background: #dc2626;
       border-color: #fca5a5;
-      box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.55);
       transform: translateY(-1px);
     }
 
@@ -1455,11 +1435,11 @@
         <button class="concept-modal-close" onclick="closeDriveExplorer(event)" title="Cerrar">×</button>
       </div>
       <div class="drive-explorer-subbar" id="driveExplorerSubbar">
-        <span id="driveExplorerPath">Carpeta: TMS PBTA / PJ</span>
+        <span id="driveExplorerPath">Carpeta: TMS PBTA / PJ · Cargar, ✏️ renombrar o ✕ borrar</span>
         <button type="button" class="roll-btn" style="background: #334155;" onclick="refreshDriveExplorerList()">🔄 Refrescar lista</button>
       </div>
       <div class="drive-explorer-list" id="driveExplorerList">
-        <div class="drive-empty-state">Pulsa «Cargar ficha online» o «Renombrar / Borrar Drive» para listar los personajes en Drive.</div>
+        <div class="drive-empty-state">Pulsa «Cargar / Gestionar fichas» para listar los personajes en Drive.</div>
       </div>
     </div>
   </div>
@@ -1639,8 +1619,7 @@
     <div class="btn-group">
       <button type="button" class="btn-new-sheet" onclick="openNewSheetConfirmModal()">🆕 Nueva ficha</button>
       <button type="button" class="btn-drive-save" onclick="savePjToDrive()">☁️ Guardar online</button>
-      <button type="button" class="btn-drive-load" onclick="openPjDriveExplorer('load')">📥 Cargar ficha online</button>
-      <button type="button" class="btn-drive-delete" onclick="openPjDriveExplorer('manage')">✏️🗑️ Renombrar / Borrar Drive</button>
+      <button type="button" class="btn-drive-load" onclick="openPjDriveExplorer('manage')">📥 Cargar / Gestionar fichas</button>
       <button type="button" class="btn-drive-refresh" onclick="refreshPjFromDrive()">🔄 Actualizar</button>
       <button type="button" onclick="printSheet()">🖨️ Imprimir / Guardar PDF</button>
       <button type="button" onclick="exportData()">💾 Guardar JSON</button>
@@ -2076,7 +2055,7 @@
 
     let pendingRenameDriveFile = null;
     let pendingDeleteDriveFile = null;
-    let driveExplorerMode = 'load';
+    let driveExplorerMode = 'manage';
 
     let localAutoSaveTimer = null;
     let driveAutoSaveTimer = null;
@@ -2467,33 +2446,14 @@
       }
     }
 
-    function applyExplorerModeVisuals() {
-      const pathEl = document.getElementById('driveExplorerPath');
-      const subbarEl = document.getElementById('driveExplorerSubbar');
-      const isManage = driveExplorerMode === 'manage';
-
-      if (subbarEl) {
-        subbarEl.classList.toggle('manage-mode', isManage);
-      }
-      if (pathEl) {
-        pathEl.textContent = isManage
-          ? 'Carpeta: TMS PBTA / PJ · Gestionar (✏️ renombrar · ✕ borrar)'
-          : 'Carpeta: TMS PBTA / PJ';
-      }
-
-      document.querySelectorAll('.drive-file-rename-btn').forEach(btn => {
-        btn.classList.toggle('highlighted', isManage);
-      });
-      document.querySelectorAll('.drive-file-delete-btn').forEach(btn => {
-        btn.classList.toggle('highlighted', isManage);
-      });
-    }
-
-    async function openPjDriveExplorer(mode = 'load') {
-      driveExplorerMode = mode === 'manage' ? 'manage' : 'load';
+    async function openPjDriveExplorer(mode = 'manage') {
+      driveExplorerMode = mode;
       const modal = document.getElementById('driveExplorerModal');
       const listEl = document.getElementById('driveExplorerList');
-      applyExplorerModeVisuals();
+      const pathEl = document.getElementById('driveExplorerPath');
+      if (pathEl) {
+        pathEl.textContent = 'Carpeta: TMS PBTA / PJ · Cargar, ✏️ renombrar o ✕ borrar';
+      }
 
       if (listEl) {
         listEl.innerHTML = '<div class="drive-empty-state">Solicitando acceso a Google Drive...</div>';
@@ -2515,7 +2475,6 @@
 
     function closeDriveExplorer(event) {
       if (event) event.stopPropagation();
-      driveExplorerMode = 'load';
       const modal = document.getElementById('driveExplorerModal');
       if (modal) {
         modal.style.display = 'none';
@@ -2736,14 +2695,14 @@
 
           const renameBtn = document.createElement('button');
           renameBtn.type = 'button';
-          renameBtn.className = 'drive-file-rename-btn' + (driveExplorerMode === 'manage' ? ' highlighted' : '');
+          renameBtn.className = 'drive-file-rename-btn';
           renameBtn.title = `Renombrar ${file.name} en Drive`;
           renameBtn.textContent = '✏️';
           renameBtn.onclick = (ev) => openDriveRenameModal(file.id, file.name, ev);
 
           const delBtn = document.createElement('button');
           delBtn.type = 'button';
-          delBtn.className = 'drive-file-delete-btn' + (driveExplorerMode === 'manage' ? ' highlighted' : '');
+          delBtn.className = 'drive-file-delete-btn';
           delBtn.title = `Borrar ${file.name} de Drive`;
           delBtn.textContent = '✕';
           delBtn.onclick = (ev) => openDriveDeleteConfirmModal(file.id, file.name, ev);
@@ -2756,8 +2715,6 @@
           itemBtn.appendChild(actionsDiv);
           listEl.appendChild(itemBtn);
         });
-
-        applyExplorerModeVisuals();
       } catch (err) {
         console.error('Error al listar PJ en Drive:', err);
         setDriveStatus('error', 'Error en Drive', err.message || 'No se pudo listar PJ');
@@ -2795,7 +2752,7 @@
     async function refreshPjFromDrive() {
       try {
         if (!linkedDriveFile.fileId) {
-          await openPjDriveExplorer('load');
+          await openPjDriveExplorer('manage');
           return;
         }
         if (driveAutoSaveTimer) {
