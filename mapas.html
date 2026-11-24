@@ -54,12 +54,19 @@
       gap: 8px;
     }
 
+    .editor-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+      min-width: 240px;
+    }
+
     .editor-title-group {
       display: flex;
       align-items: center;
       gap: 10px;
       flex-wrap: wrap;
-      flex-grow: 1;
     }
 
     .editor-title {
@@ -78,6 +85,41 @@
       min-width: 180px;
       color: var(--text-main);
       background: #f8fafc;
+    }
+
+    .drive-status-bar {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .drive-badge {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .drive-badge.online {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .drive-badge.syncing {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .drive-badge.error {
+      background: #fee2e2;
+      color: #991b1b;
     }
 
     .toolbar {
@@ -108,12 +150,308 @@
       transform: translateY(-1px);
     }
 
+    button.btn-new-sheet {
+      background: #dc2626;
+    }
+
+    button.btn-new-sheet:hover {
+      background: #b91c1c;
+    }
+
     button.btn-drive {
       background: #0f766e;
     }
 
     button.btn-drive:hover {
       background: #115e59;
+    }
+
+    button.btn-drive-save {
+      background: #0284c7;
+    }
+
+    button.btn-drive-save:hover {
+      background: #0369a1;
+    }
+
+    button.btn-drive-refresh {
+      background: #475569;
+    }
+
+    button.btn-drive-refresh:hover {
+      background: #334155;
+    }
+
+    /* --- MODALES FLOTANTES DE GESTIÓN DE DRIVE Y NUEVO MAPA --- */
+    #newMapConfirmModal,
+    #driveExplorerModal,
+    #driveRenameModal,
+    #driveDeleteConfirmModal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      user-select: none;
+    }
+
+    #driveExplorerModal { z-index: 1650; }
+    #newMapConfirmModal { z-index: 1700; }
+    #driveRenameModal { z-index: 1720; }
+    #driveDeleteConfirmModal { z-index: 1750; }
+
+    .drive-explorer-card,
+    .drive-action-modal-card {
+      width: 520px;
+      max-width: 100%;
+      background: #1e293b;
+      color: #f8fafc;
+      border-radius: 10px;
+      border: 1.5px solid #38bdf8;
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .drive-explorer-card {
+      max-height: 82vh;
+    }
+
+    .drive-action-modal-card {
+      width: 420px;
+    }
+
+    #driveDeleteConfirmModal .drive-action-modal-card {
+      border-color: #f87171;
+    }
+
+    .drive-explorer-header,
+    .drive-action-modal-header {
+      background: #0f172a;
+      padding: 11px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+    }
+
+    .drive-explorer-header span,
+    .drive-action-modal-header span {
+      font-family: 'Cinzel', serif;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #38bdf8;
+      letter-spacing: 0.04em;
+    }
+
+    #driveDeleteConfirmModal .drive-action-modal-header span {
+      color: #fca5a5;
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      color: #94a3b8;
+      padding: 4px 8px;
+      font-size: 1rem;
+    }
+
+    .modal-close-btn:hover {
+      background: #1e293b;
+      color: #f8fafc;
+      transform: none;
+    }
+
+    .drive-explorer-subbar {
+      padding: 8px 15px;
+      background: rgba(15, 23, 42, 0.6);
+      border-bottom: 1px solid #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: #cbd5e1;
+    }
+
+    .drive-explorer-list {
+      padding: 12px 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .drive-file-item {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.15s;
+      text-align: left;
+    }
+
+    .drive-file-item:hover {
+      border-color: #38bdf8;
+      background: #172554;
+    }
+
+    .drive-file-info {
+      flex: 1;
+      min-width: 0;
+      cursor: pointer;
+    }
+
+    .drive-file-name {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: #f8fafc;
+      word-break: break-word;
+    }
+
+    .drive-file-meta {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    .drive-file-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .drive-file-load-tag {
+      background: #0284c7;
+      color: #ffffff;
+      padding: 5px 9px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .drive-file-load-tag:hover {
+      background: #0369a1;
+    }
+
+    .drive-file-rename-btn {
+      background: #334155;
+      color: #f8fafc;
+      border: 1px solid #64748b;
+      padding: 5px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .drive-file-rename-btn:hover {
+      background: #475569;
+      border-color: #38bdf8;
+    }
+
+    .drive-file-delete-btn {
+      background: #991b1b;
+      color: #ffffff;
+      border: 1px solid #ef4444;
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      line-height: 1;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .drive-file-delete-btn:hover {
+      background: #dc2626;
+      border-color: #fca5a5;
+      transform: translateY(-1px);
+    }
+
+    .drive-empty-state {
+      text-align: center;
+      padding: 24px 12px;
+      color: #94a3b8;
+      font-size: 0.84rem;
+    }
+
+    .drive-action-modal-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-align: center;
+    }
+
+    .drive-action-modal-text {
+      font-size: 0.9rem;
+      font-weight: 600;
+      line-height: 1.45;
+      color: #f8fafc;
+      word-break: break-word;
+    }
+
+    .drive-rename-input {
+      width: 100%;
+      background: #0f172a;
+      color: #f8fafc;
+      border: 1px solid #38bdf8;
+      border-radius: 6px;
+      padding: 9px 11px;
+      font-size: 0.88rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+    }
+
+    .drive-action-modal-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-confirm-yes {
+      background: #dc2626;
+      color: #ffffff;
+      padding: 8px 16px;
+    }
+
+    .btn-confirm-yes:hover {
+      background: #b91c1c;
+    }
+
+    .btn-confirm-save {
+      background: #0284c7;
+      color: #ffffff;
+      padding: 8px 16px;
+    }
+
+    .btn-confirm-save:hover {
+      background: #0369a1;
+    }
+
+    .btn-confirm-no {
+      background: #475569;
+      color: #ffffff;
+      padding: 8px 16px;
+    }
+
+    .btn-confirm-no:hover {
+      background: #334155;
     }
 
     /* PALETA DE HERRAMIENTAS Y PINTURA */
@@ -246,7 +584,7 @@
 
     @media print {
       body { background: white; padding: 0; }
-      .action-bar, .palette-section, .text-tool-bar, .toolbar, .toast-msg { display: none !important; }
+      .action-bar, .palette-section, .text-tool-bar, .toolbar, .toast-msg, #newMapConfirmModal, #driveExplorerModal, #driveRenameModal, #driveDeleteConfirmModal { display: none !important; }
       .editor-container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
     }
   </style>
@@ -318,17 +656,95 @@
   <a href="cronicas.html">Lista de crónicas</a>
   <a href="mapas.html">Generador de mapas</a>
 </nav>
+
+  <!-- MODAL FLOTANTE DE CONFIRMACIÓN PARA NUEVA FICHA / MAPA -->
+  <div id="newMapConfirmModal" onclick="closeNewMapConfirmModal(event)">
+    <div class="drive-action-modal-card" onclick="event.stopPropagation()">
+      <div class="drive-action-modal-header">
+        <span>NUEVA FICHA / MAPA</span>
+        <button type="button" class="modal-close-btn" onclick="closeNewMapConfirmModal(event)" title="Cerrar">✕</button>
+      </div>
+      <div class="drive-action-modal-body">
+        <div class="drive-action-modal-text">Se borrará la información del mapa en pantalla para comenzar de cero</div>
+        <div class="drive-action-modal-actions">
+          <button type="button" class="btn-confirm-yes" onclick="confirmNewMap()">Sí</button>
+          <button type="button" class="btn-confirm-no" onclick="closeNewMapConfirmModal(event)">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL FLOTANTE PARA RENOMBRAR ARCHIVO EN DRIVE -->
+  <div id="driveRenameModal" onclick="closeDriveRenameModal(event)">
+    <div class="drive-action-modal-card" onclick="event.stopPropagation()">
+      <div class="drive-action-modal-header">
+        <span>RENOMBRAR ARCHIVO EN DRIVE</span>
+        <button type="button" class="modal-close-btn" onclick="closeDriveRenameModal(event)" title="Cerrar">✕</button>
+      </div>
+      <div class="drive-action-modal-body">
+        <div class="drive-action-modal-text" id="driveRenameCurrentLabel">Nuevo nombre para el mapa:</div>
+        <input type="text" id="driveRenameInput" class="drive-rename-input" onkeydown="handleRenameInputKeydown(event)" placeholder="Nombre del archivo...">
+        <div class="drive-action-modal-actions">
+          <button type="button" class="btn-confirm-save" onclick="confirmRenameMapInDrive()">💾 Guardar nombre</button>
+          <button type="button" class="btn-confirm-no" onclick="closeDriveRenameModal(event)">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL FLOTANTE DE CONFIRMACIÓN PARA BORRAR ARCHIVO EN DRIVE -->
+  <div id="driveDeleteConfirmModal" onclick="closeDriveDeleteConfirmModal(event)">
+    <div class="drive-action-modal-card" onclick="event.stopPropagation()">
+      <div class="drive-action-modal-header">
+        <span>CONFIRMAR BORRADO EN DRIVE</span>
+        <button type="button" class="modal-close-btn" style="color: #fca5a5;" onclick="closeDriveDeleteConfirmModal(event)" title="Cerrar">✕</button>
+      </div>
+      <div class="drive-action-modal-body">
+        <div class="drive-action-modal-text" id="driveDeleteConfirmText">¿Seguro que quieres borrar este mapa de Google Drive?</div>
+        <div class="drive-action-modal-actions">
+          <button type="button" class="btn-confirm-yes" onclick="confirmDeleteMapFromDrive()">Sí, borrar</button>
+          <button type="button" class="btn-confirm-no" onclick="closeDriveDeleteConfirmModal(event)">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VENTANA FLOTANTE DE EXPLORADOR DE GOOGLE DRIVE (SUBCARPETA MAPAS) -->
+  <div id="driveExplorerModal" onclick="closeDriveExplorer(event)">
+    <div class="drive-explorer-card" onclick="event.stopPropagation()">
+      <div class="drive-explorer-header">
+        <span>EXPLORADOR DRIVE · TMS PBTA / MAPAS</span>
+        <button type="button" class="modal-close-btn" onclick="closeDriveExplorer(event)" title="Cerrar">✕</button>
+      </div>
+      <div class="drive-explorer-subbar">
+        <span>Carpeta: TMS PBTA / MAPAS</span>
+        <button type="button" style="padding: 5px 10px; font-size: 0.74rem; background: #334155;" onclick="refreshDriveExplorerList()">🔄 Refrescar lista</button>
+      </div>
+      <div class="drive-explorer-list" id="driveExplorerList">
+        <div class="drive-empty-state">Pulsa «Cargar / Gestionar mapas» para listar los mapas en Drive.</div>
+      </div>
+    </div>
+  </div>
+
   <div class="editor-container">
     <div class="editor-header">
-      <div class="editor-title-group">
-        <div class="editor-title">🗺️ Editor Táctico PbtA</div>
-        <input type="text" id="mapNameInput" class="map-name-input" placeholder="Nombre del mapa (opcional)..." oninput="saveLocalMapState()">
+      <div class="editor-title-block">
+        <div class="editor-title-group">
+          <div class="editor-title">🗺️ Editor Táctico PbtA</div>
+          <input type="text" id="mapNameInput" class="map-name-input" placeholder="Nombre del mapa (opcional)..." oninput="saveLocalMapState()">
+        </div>
+        <div class="drive-status-bar">
+          <span id="driveStatusBadge" class="drive-badge">Drive: local</span>
+          <span id="driveLinkedFileLabel">Sin archivo en TMS PBTA / MAPAS</span>
+        </div>
       </div>
       <div class="toolbar">
-        <button class="btn-drive" onclick="saveMapToGoogleDrive()">☁️ Guardar en Drive</button>
-        <button class="btn-drive" onclick="loadMapFromGoogleDrive()">📥 Cargar de Drive</button>
-        <button onclick="printMap()">🖨️ Imprimir</button>
-        <button onclick="exportMapJson()">💾 Guardar</button>
+        <button type="button" class="btn-new-sheet" onclick="openNewMapConfirmModal()">🆕 Nueva ficha</button>
+        <button type="button" class="btn-drive-save" onclick="saveMapToGoogleDrive()">☁️ Guardar en Drive</button>
+        <button type="button" class="btn-drive" onclick="openMapasDriveExplorer()">📥 Cargar / Gestionar mapas</button>
+        <button type="button" class="btn-drive-refresh" onclick="refreshMapFromDrive()">🔄 Actualizar</button>
+        <button type="button" onclick="printMap()">🖨️ Imprimir</button>
+        <button type="button" onclick="exportMapJson()">💾 Guardar</button>
         <label class="btn">
           📂 Cargar
           <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importMapJson(event)">
@@ -340,25 +756,25 @@
     <div class="palette-section">
       <div class="palette-row">
         <span class="palette-label">Terreno:</span>
-        <button class="tool-btn active" id="tool-floor" onclick="setTool('floor')">🟩 Suelo</button>
-        <button class="tool-btn" id="tool-wall" onclick="setTool('wall')">⬛ Muro</button>
-        <button class="tool-btn" id="tool-water" onclick="setTool('water')">🟦 Agua</button>
-        <button class="tool-btn" id="tool-lava" onclick="setTool('lava')">🟥 Lava</button>
+        <button type="button" class="tool-btn active" id="tool-floor" onclick="setTool('floor')">🟩 Suelo</button>
+        <button type="button" class="tool-btn" id="tool-wall" onclick="setTool('wall')">⬛ Muro</button>
+        <button type="button" class="tool-btn" id="tool-water" onclick="setTool('water')">🟦 Agua</button>
+        <button type="button" class="tool-btn" id="tool-lava" onclick="setTool('lava')">🟥 Lava</button>
       </div>
       <div class="palette-row">
         <span class="palette-label">Objetos:</span>
-        <button class="tool-btn" id="tool-door1" onclick="setTool('door1')">🚪 Puerta A</button>
-        <button class="tool-btn" id="tool-door2" onclick="setTool('door2')">🚪 Puerta B</button>
-        <button class="tool-btn" id="tool-obj" onclick="setTool('obj')">📦 Tesoro</button>
-        <button class="tool-btn" id="tool-magic_obj" onclick="setTool('magic_obj')">🔮 Objeto mágico</button>
+        <button type="button" class="tool-btn" id="tool-door1" onclick="setTool('door1')">🚪 Puerta A</button>
+        <button type="button" class="tool-btn" id="tool-door2" onclick="setTool('door2')">🚪 Puerta B</button>
+        <button type="button" class="tool-btn" id="tool-obj" onclick="setTool('obj')">📦 Tesoro</button>
+        <button type="button" class="tool-btn" id="tool-magic_obj" onclick="setTool('magic_obj')">🔮 Objeto mágico</button>
       </div>
       <div class="palette-row">
         <span class="palette-label">Entidades:</span>
-        <button class="tool-btn" id="tool-pnj_neutral" onclick="setTool('pnj_neutral')">🟡 Neutral</button>
-        <button class="tool-btn" id="tool-pnj_enemy" onclick="setTool('pnj_enemy')">🔴 Enemigo</button>
-        <button class="tool-btn" id="tool-animal" onclick="setTool('animal')">🐾 Animal</button>
-        <button class="tool-btn" id="tool-boss" onclick="setTool('boss')">👑 Boss</button>
-        <button class="tool-btn" id="tool-erase" onclick="setTool('erase')">❌ Borrar</button>
+        <button type="button" class="tool-btn" id="tool-pnj_neutral" onclick="setTool('pnj_neutral')">🟡 Neutral</button>
+        <button type="button" class="tool-btn" id="tool-pnj_enemy" onclick="setTool('pnj_enemy')">🔴 Enemigo</button>
+        <button type="button" class="tool-btn" id="tool-animal" onclick="setTool('animal')">🐾 Animal</button>
+        <button type="button" class="tool-btn" id="tool-boss" onclick="setTool('boss')">👑 Boss</button>
+        <button type="button" class="tool-btn" id="tool-erase" onclick="setTool('erase')">❌ Borrar</button>
       </div>
     </div>
 
@@ -366,8 +782,8 @@
     <div class="text-tool-bar">
       <span class="palette-label">Texto:</span>
       <input type="text" id="floatingTextInput" placeholder="Ej. Sala del Trono..." maxlength="25">
-      <button onclick="setTool('text')">📍 Poner</button>
-      <button onclick="clearTexts()" style="background:#64748b;">Limpiar</button>
+      <button type="button" onclick="setTool('text')">📍 Poner</button>
+      <button type="button" onclick="clearTexts()" style="background:#64748b;">Limpiar</button>
     </div>
 
     <!-- CONTENEDOR ADAPTADO -->
@@ -419,6 +835,9 @@
     let cachedRootFolderId = DRIVE_CONFIG.rootFolderId || null;
     let cachedMapasFolderId = null;
 
+    let pendingRenameDriveFile = null;
+    let pendingDeleteDriveFile = null;
+
     const terrainColors = {
       0: '#0f172a',
       1: '#334155',
@@ -443,6 +862,18 @@
       window.__toastTimer = setTimeout(() => {
         toast.classList.remove('show');
       }, 3600);
+    }
+
+    function setDriveStatus(mode, badgeText, detailText) {
+      const badgeEl = document.getElementById('driveStatusBadge');
+      const labelEl = document.getElementById('driveLinkedFileLabel');
+      if (badgeEl) {
+        badgeEl.className = 'drive-badge' + (mode ? ' ' + mode : '');
+        badgeEl.textContent = badgeText;
+      }
+      if (labelEl && detailText !== undefined) {
+        labelEl.textContent = detailText;
+      }
     }
 
     function getMapNameInputValue() {
@@ -631,27 +1062,34 @@
     }
 
     function buildMapPayloadString() {
-      const saveData = { mapData: mapData, textLabels: textLabels };
+      const saveData = {
+        name: getMapNameInputValue(),
+        mapData: mapData,
+        textLabels: textLabels
+      };
       return JSON.stringify(saveData);
     }
 
-    function applyParsedMapData(parsed, fallbackName = '') {
+    function applyParsedMapData(parsed, fallbackName = '', overwriteName = false) {
       if (!parsed || !parsed.mapData || !parsed.textLabels) {
         throw new Error('Formato de mapa no válido.');
       }
       mapData = parsed.mapData;
       textLabels = parsed.textLabels;
       const nameEl = document.getElementById('mapNameInput');
-      if (nameEl && fallbackName && !nameEl.value.trim()) {
-        nameEl.value = fallbackName.replace(/\.json$/i, '').replace(/^mapa_/i, '').replace(/_/g, ' ');
+      if (nameEl) {
+        if (typeof parsed.name === 'string' && (overwriteName || !nameEl.value.trim())) {
+          nameEl.value = parsed.name;
+        } else if (fallbackName && (overwriteName || !nameEl.value.trim())) {
+          nameEl.value = fallbackName.replace(/\.json$/i, '').replace(/^mapa_/i, '').replace(/_/g, ' ');
+        }
       }
       drawMap();
       saveLocalMapState();
     }
 
     function exportMapJson() {
-      const saveData = { mapData: mapData, textLabels: textLabels };
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(saveData));
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(buildMapPayloadString());
       const a = document.createElement('a');
       a.href = dataStr;
       a.download = getSanitizedMapFilename();
@@ -665,13 +1103,52 @@
       reader.onload = function(e) {
         try {
           const parsed = JSON.parse(e.target.result);
-          applyParsedMapData(parsed, file.name);
+          applyParsedMapData(parsed, file.name, true);
         } catch (err) {
           alert(err.message || 'Error al leer el archivo JSON.');
         }
       };
       reader.readAsText(file);
       event.target.value = '';
+    }
+
+    // --- NUEVA FICHA / MAPA CON CONFIRMACIÓN FLOTANTE ---
+    function openNewMapConfirmModal() {
+      const modal = document.getElementById('newMapConfirmModal');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+    }
+
+    function closeNewMapConfirmModal(event) {
+      if (event) event.stopPropagation();
+      const modal = document.getElementById('newMapConfirmModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    function confirmNewMap() {
+      mapData = Array(rows).fill().map(() => Array(cols).fill(0));
+      textLabels = [];
+
+      const nameEl = document.getElementById('mapNameInput');
+      if (nameEl) nameEl.value = '';
+
+      const textInputEl = document.getElementById('floatingTextInput');
+      if (textInputEl) textInputEl.value = '';
+
+      const meta = readDriveLinkMeta();
+      delete meta.__activeFileId;
+      delete meta.__activeFileName;
+      writeDriveLinkMeta(meta);
+
+      localStorage.removeItem(LOCAL_MAP_STORAGE_KEY);
+      drawMap();
+      saveLocalMapState();
+      updateDriveStatusFromMeta('Mapa nuevo en blanco');
+      closeNewMapConfirmModal();
+      showToast('Mapa limpiado para empezar de cero.');
     }
 
     // --- INTEGRACIÓN GOOGLE DRIVE (TMS PBTA / MAPAS) ---
@@ -829,9 +1306,23 @@
       localStorage.setItem(DRIVE_META_STORAGE_KEY, JSON.stringify(meta));
     }
 
+    function updateDriveStatusFromMeta(customNote) {
+      const meta = readDriveLinkMeta();
+      const activeFileName = meta.__activeFileName || null;
+      if (activeFileName) {
+        const notePart = customNote ? ` · ${customNote}` : '';
+        setDriveStatus('online', 'Drive vinculado', `Archivo: ${activeFileName}${notePart}`);
+      } else if (driveAccessToken && Date.now() < driveTokenExpiresAt) {
+        setDriveStatus('online', 'Drive conectado', customNote || 'Sin archivo vinculado · TMS PBTA / MAPAS');
+      } else {
+        setDriveStatus('', 'Drive: local', customNote || 'Sin archivo en TMS PBTA / MAPAS');
+      }
+    }
+
     async function saveMapToGoogleDrive() {
       try {
         saveLocalMapState();
+        setDriveStatus('syncing', 'Guardando en Drive...', 'Conectando con TMS PBTA / MAPAS');
         showToast('Conectando con Google Drive...');
         const folderId = await ensureMapasFolderId();
         const fileName = getSanitizedMapFilename();
@@ -876,7 +1367,10 @@
           );
           const updJson = await updResp.json();
           meta[fileName] = updJson.id;
+          meta.__activeFileId = updJson.id;
+          meta.__activeFileName = updJson.name || fileName;
           writeDriveLinkMeta(meta);
+          updateDriveStatusFromMeta('Guardado');
           showToast(`Actualizado en Drive (${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}/${fileName}).`);
         } else {
           const createMetadata = {
@@ -903,64 +1397,338 @@
           );
           const crtJson = await crtResp.json();
           meta[fileName] = crtJson.id;
+          meta.__activeFileId = crtJson.id;
+          meta.__activeFileName = crtJson.name || fileName;
           writeDriveLinkMeta(meta);
+          updateDriveStatusFromMeta('Creado y guardado');
           showToast(`Guardado en Drive (${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}/${fileName}).`);
         }
       } catch (err) {
         console.error(err);
+        setDriveStatus('error', 'Error al guardar', err.message || 'No se pudo guardar en Drive');
         showToast(`No se pudo guardar en Drive: ${err.message}`);
       }
     }
 
-    async function loadMapFromGoogleDrive() {
+    async function refreshMapFromDrive() {
+      const meta = readDriveLinkMeta();
+      const activeId = meta.__activeFileId || null;
+      const activeName = meta.__activeFileName || getSanitizedMapFilename();
+
+      if (!activeId) {
+        await openMapasDriveExplorer();
+        return;
+      }
+
       try {
-        showToast('Buscando mapas en Drive...');
+        setDriveStatus('syncing', 'Actualizando...', activeName);
+        const fileResp = await driveApiFetch(
+          `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(activeId)}?alt=media`
+        );
+        const rawText = await fileResp.text();
+        const parsed = JSON.parse(rawText);
+        applyParsedMapData(parsed, activeName, true);
+
+        const hora = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        updateDriveStatusFromMeta(`Actualizado ${hora}`);
+        showToast(`Actualizado "${activeName}" desde Google Drive.`);
+      } catch (err) {
+        console.error(err);
+        setDriveStatus('error', 'Error al actualizar', err.message || 'No se pudo refrescar');
+        showToast(`No se pudo actualizar desde Drive: ${err.message}`);
+      }
+    }
+
+    async function openMapasDriveExplorer() {
+      const modal = document.getElementById('driveExplorerModal');
+      const listEl = document.getElementById('driveExplorerList');
+      if (listEl) {
+        listEl.innerHTML = '<div class="drive-empty-state">Conectando con Google Drive...</div>';
+      }
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+
+      try {
+        await getDriveAccessToken('');
+        await refreshDriveExplorerList();
+      } catch (err) {
+        console.error(err);
+        setDriveStatus('error', 'Error de acceso', err.message || 'Autenticación cancelada o fallida');
+        if (listEl) {
+          listEl.innerHTML = `<div class="drive-empty-state">No se pudo conectar con Google Drive: ${err.message || err}</div>`;
+        }
+      }
+    }
+
+    function closeDriveExplorer(event) {
+      if (event) event.stopPropagation();
+      const modal = document.getElementById('driveExplorerModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    async function refreshDriveExplorerList() {
+      const listEl = document.getElementById('driveExplorerList');
+      if (listEl) {
+        listEl.innerHTML = '<div class="drive-empty-state">Cargando mapas en TMS PBTA / MAPAS...</div>';
+      }
+
+      try {
+        setDriveStatus('syncing', 'Consultando Drive...', 'Buscando JSON en TMS PBTA / MAPAS');
         const folderId = await ensureMapasFolderId();
         const q = encodeURIComponent(
           `'${escapeDriveQueryValue(folderId)}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`
         );
         const listResp = await driveApiFetch(
-          `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime)&orderBy=modifiedTime desc&pageSize=30`
+          `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime,mimeType)&orderBy=modifiedTime%20desc&pageSize=100`
         );
         const listJson = await listResp.json();
-        const files = listJson.files || [];
-
-        if (files.length === 0) {
-          showToast(`No hay mapas en ${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}.`);
-          return;
-        }
-
-        const opciones = files
-          .map((f, idx) => `${idx + 1}. ${f.name}`)
-          .join('\n');
-        const selection = prompt(
-          `Selecciona el número del mapa a cargar desde ${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}:\n\n${opciones}`,
-          '1'
+        const files = (listJson.files || []).filter(f =>
+          f.name.toLowerCase().endsWith('.json') || f.mimeType === 'application/json'
         );
-        if (!selection) return;
 
-        const chosenIndex = parseInt(selection.trim(), 10) - 1;
-        if (isNaN(chosenIndex) || chosenIndex < 0 || chosenIndex >= files.length) {
-          showToast('Selección no válida.');
+        updateDriveStatusFromMeta();
+
+        if (!listEl) return;
+        if (files.length === 0) {
+          listEl.innerHTML = `<div class="drive-empty-state">No hay archivos JSON de mapas en <strong>${DRIVE_CONFIG.rootFolderName} / ${DRIVE_CONFIG.subFolderName}</strong> todavía.</div>`;
           return;
         }
 
-        const chosenFile = files[chosenIndex];
+        listEl.innerHTML = '';
+        files.forEach(file => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'drive-file-item';
+
+          const infoDiv = document.createElement('div');
+          infoDiv.className = 'drive-file-info';
+          infoDiv.onclick = () => selectMapFromDriveExplorer(file.id, file.name);
+
+          const nameDiv = document.createElement('div');
+          nameDiv.className = 'drive-file-name';
+          nameDiv.textContent = file.name;
+
+          const metaDiv = document.createElement('div');
+          metaDiv.className = 'drive-file-meta';
+          const fechaText = file.modifiedTime
+            ? new Date(file.modifiedTime).toLocaleString('es-ES')
+            : 'Sin fecha';
+          metaDiv.textContent = `Actualizado: ${fechaText}`;
+
+          infoDiv.appendChild(nameDiv);
+          infoDiv.appendChild(metaDiv);
+
+          const actionsDiv = document.createElement('div');
+          actionsDiv.className = 'drive-file-actions';
+
+          const loadBtn = document.createElement('button');
+          loadBtn.type = 'button';
+          loadBtn.className = 'drive-file-load-tag';
+          loadBtn.textContent = 'Cargar';
+          loadBtn.onclick = (ev) => {
+            ev.stopPropagation();
+            selectMapFromDriveExplorer(file.id, file.name);
+          };
+
+          const renameBtn = document.createElement('button');
+          renameBtn.type = 'button';
+          renameBtn.className = 'drive-file-rename-btn';
+          renameBtn.title = `Renombrar ${file.name}`;
+          renameBtn.textContent = '✏️ Renombrar';
+          renameBtn.onclick = (ev) => openDriveRenameModal(file.id, file.name, ev);
+
+          const delBtn = document.createElement('button');
+          delBtn.type = 'button';
+          delBtn.className = 'drive-file-delete-btn';
+          delBtn.title = `Borrar ${file.name} de Drive`;
+          delBtn.textContent = '✕';
+          delBtn.onclick = (ev) => openDriveDeleteConfirmModal(file.id, file.name, ev);
+
+          actionsDiv.appendChild(loadBtn);
+          actionsDiv.appendChild(renameBtn);
+          actionsDiv.appendChild(delBtn);
+
+          itemDiv.appendChild(infoDiv);
+          itemDiv.appendChild(actionsDiv);
+          listEl.appendChild(itemDiv);
+        });
+      } catch (err) {
+        console.error(err);
+        setDriveStatus('error', 'Error en Drive', err.message || 'No se pudo listar MAPAS');
+        if (listEl) {
+          listEl.innerHTML = `<div class="drive-empty-state">Error al cargar la carpeta MAPAS: ${err.message || err}</div>`;
+        }
+      }
+    }
+
+    async function selectMapFromDriveExplorer(fileId, fileName) {
+      try {
+        setDriveStatus('syncing', 'Cargando mapa...', fileName);
         const fileResp = await driveApiFetch(
-          `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(chosenFile.id)}?alt=media`
+          `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}?alt=media`
         );
         const rawText = await fileResp.text();
         const parsed = JSON.parse(rawText);
-        applyParsedMapData(parsed, chosenFile.name);
+        applyParsedMapData(parsed, fileName, true);
 
         const meta = readDriveLinkMeta();
-        meta[chosenFile.name] = chosenFile.id;
+        meta[fileName] = fileId;
+        meta.__activeFileId = fileId;
+        meta.__activeFileName = fileName;
         writeDriveLinkMeta(meta);
 
-        showToast(`Cargado "${chosenFile.name}" desde Google Drive.`);
+        closeDriveExplorer();
+        updateDriveStatusFromMeta('Cargado');
+        showToast(`Cargado "${fileName}" desde Google Drive.`);
       } catch (err) {
         console.error(err);
+        setDriveStatus('error', 'Error al cargar', err.message || 'No se pudo leer el JSON');
         showToast(`No se pudo cargar desde Drive: ${err.message}`);
+      }
+    }
+
+    function openDriveRenameModal(fileId, currentName, event) {
+      if (event) event.stopPropagation();
+      pendingRenameDriveFile = { fileId, currentName };
+      const labelEl = document.getElementById('driveRenameCurrentLabel');
+      const inputEl = document.getElementById('driveRenameInput');
+      if (labelEl) {
+        labelEl.textContent = `Renombrar "${currentName}":`;
+      }
+      if (inputEl) {
+        inputEl.value = currentName;
+        setTimeout(() => {
+          inputEl.focus();
+          const dotIdx = currentName.lastIndexOf('.');
+          inputEl.setSelectionRange(0, dotIdx > 0 ? dotIdx : currentName.length);
+        }, 30);
+      }
+      const modal = document.getElementById('driveRenameModal');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+    }
+
+    function closeDriveRenameModal(event) {
+      if (event) event.stopPropagation();
+      pendingRenameDriveFile = null;
+      const modal = document.getElementById('driveRenameModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    function handleRenameInputKeydown(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        confirmRenameMapInDrive();
+      } else if (event.key === 'Escape') {
+        event.preventDefault();
+        closeDriveRenameModal();
+      }
+    }
+
+    async function confirmRenameMapInDrive() {
+      if (!pendingRenameDriveFile) return;
+      const inputEl = document.getElementById('driveRenameInput');
+      let newName = inputEl ? inputEl.value.trim() : '';
+      if (!newName) {
+        showToast('Escribe un nombre válido para el archivo.');
+        return;
+      }
+
+      if (pendingRenameDriveFile.currentName.toLowerCase().endsWith('.json') && !newName.toLowerCase().endsWith('.json')) {
+        newName += '.json';
+      }
+
+      const { fileId, currentName } = pendingRenameDriveFile;
+      closeDriveRenameModal();
+
+      try {
+        setDriveStatus('syncing', 'Renombrando...', `${currentName} → ${newName}`);
+        const resp = await driveApiFetch(
+          `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}?fields=id,name`,
+          {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: newName })
+          }
+        );
+        const updated = await resp.json();
+        const finalName = updated.name || newName;
+
+        const meta = readDriveLinkMeta();
+        if (meta[currentName] === fileId) {
+          delete meta[currentName];
+        }
+        meta[finalName] = fileId;
+        if (meta.__activeFileId === fileId) {
+          meta.__activeFileName = finalName;
+        }
+        writeDriveLinkMeta(meta);
+
+        updateDriveStatusFromMeta('Renombrado');
+        showToast(`Renombrado a "${finalName}".`);
+        await refreshDriveExplorerList();
+      } catch (err) {
+        console.error(err);
+        setDriveStatus('error', 'Error al renombrar', err.message || 'No se pudo renombrar');
+        showToast(`No se pudo renombrar en Drive: ${err.message}`);
+      }
+    }
+
+    function openDriveDeleteConfirmModal(fileId, fileName, event) {
+      if (event) event.stopPropagation();
+      pendingDeleteDriveFile = { fileId, fileName };
+      const textEl = document.getElementById('driveDeleteConfirmText');
+      if (textEl) {
+        textEl.textContent = `Se borrará permanentemente "${fileName}" de Google Drive. ¿Continuar?`;
+      }
+      const modal = document.getElementById('driveDeleteConfirmModal');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+    }
+
+    function closeDriveDeleteConfirmModal(event) {
+      if (event) event.stopPropagation();
+      pendingDeleteDriveFile = null;
+      const modal = document.getElementById('driveDeleteConfirmModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    async function confirmDeleteMapFromDrive() {
+      if (!pendingDeleteDriveFile) return;
+      const { fileId, fileName } = pendingDeleteDriveFile;
+      closeDriveDeleteConfirmModal();
+
+      try {
+        setDriveStatus('syncing', 'Borrando en Drive...', fileName);
+        await driveApiFetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}`, {
+          method: 'DELETE'
+        });
+
+        const meta = readDriveLinkMeta();
+        if (meta[fileName] === fileId) {
+          delete meta[fileName];
+        }
+        if (meta.__activeFileId === fileId) {
+          delete meta.__activeFileId;
+          delete meta.__activeFileName;
+        }
+        writeDriveLinkMeta(meta);
+
+        updateDriveStatusFromMeta(`Borrado ${fileName}`);
+        showToast(`Borrado "${fileName}" de Google Drive.`);
+        await refreshDriveExplorerList();
+      } catch (err) {
+        console.error(err);
+        setDriveStatus('error', 'Error al borrar', err.message || 'No se pudo borrar el archivo');
+        showToast(`No se pudo borrar de Drive: ${err.message}`);
       }
     }
 
@@ -985,6 +1753,7 @@
     }
 
     loadLocalMapState();
+    updateDriveStatusFromMeta();
     drawMap();
   </script>
 </body>
