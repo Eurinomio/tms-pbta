@@ -1405,19 +1405,65 @@
     let pendingRenameDriveFile = null;
     let pendingDeleteDriveFile = null;
 
-    const PNJ_RANDOM_CONCEPTS = [
-      'Archivero ciego que intercambia secretos de la ciudad a cambio de recuerdos olvidados.',
-      'Capitán de guardia cansado de las intrigas nobles, leal solo a los barrios bajos.',
-      'Herborista errante que cultiva plantas que reaccionan a la mentira y al miedo.',
-      'Mercader de reliquias rotas cuya sonrisa nunca llega a los ojos.',
-      'Mensajero veloz con un brazo mecánico y una deuda que nadie sabe quién cobra.',
-      'Juez local incorruptible hasta que amenazan a su única hija.',
-      'Espectro atado a una posada que solo ayuda a quienes pagan con una historia real.',
-      'Ingeniero excéntrico obsesionado con encender un faro en mitad de tierra firme.',
-      'Espía infiltrado en una facción rival que empieza a simpatizar con los PJ.',
-      'Guardián de un paso fronterizo que cobra peaje en favores futuros.',
-      'Bardo cínico que convierte los rumores de taberna en presión política.',
-      'Cazador de bestias retirado que conoce las rutas seguras cuando cae la noche.'
+    // --- RANDOMIZADOR DE CONCEPTO DE PNJ (SUSTANTIVO + ADJ. NO PROFESIONAL + ADJ. PROFESIONAL + INTERACCIÓN CON LA HISTORIA) ---
+    const PNJ_SUSTANTIVOS = [
+      'Homúnculo',
+      'Campana viviente',
+      'Gólem',
+      'Espectro',
+      'Autómata',
+      'Quimera',
+      'Sombra',
+      'Cíclope',
+      'Relicario andante',
+      'Duende',
+      'Esfinge',
+      'Arconte'
+    ];
+
+    const PNJ_ADJ_NO_PROFESIONAL = [
+      'vibrante',
+      'infernal',
+      'melancólico',
+      'chispeante',
+      'sombrío',
+      'caprichoso',
+      'oxidado',
+      'espectral',
+      'descarado',
+      'ancestral',
+      'bullicioso',
+      'frágil'
+    ];
+
+    const PNJ_ADJ_PROFESIONAL = [
+      'exorcista',
+      'nigromante',
+      'alquimista',
+      'cartógrafo',
+      'verdugo',
+      'archivero',
+      'mercader',
+      'inquisidor',
+      'bardo',
+      'cerrajero',
+      'herborista',
+      'cazarrecompensas'
+    ];
+
+    const PNJ_INTERACCIONES_HISTORIA = [
+      'comercia con el grupo',
+      'guarda un gran secreto',
+      'traiciona al grupo en el momento clave',
+      'guía al grupo por rutas ocultas',
+      'exige un tributo antes de dejar pasar al grupo',
+      'debe un favor de vida al grupo',
+      'vigila cada paso del grupo para una facción rival',
+      'ofrece información falsa a cambio de oro',
+      'protege una reliquia que necesita la historia',
+      'arrastra al grupo hacia una trampa política',
+      'cura las heridas del grupo a cambio de recuerdos',
+      'busca vengarse de un error pasado del grupo'
     ];
 
     let currentRandomConcept = '';
@@ -1476,10 +1522,31 @@
       }
     }
 
+    function randomItem(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function composePnjConcept(sustantivo, adjNoProf, adjProf, interaccion) {
+      const cleanInteraccion = String(interaccion || '')
+        .trim()
+        .replace(/^que\s+/i, '');
+      return `${sustantivo} ${adjNoProf} ${adjProf} que ${cleanInteraccion}`;
+    }
+
     function pickRandomConcept() {
-      const pool = PNJ_RANDOM_CONCEPTS.filter(c => c !== currentRandomConcept);
-      const list = pool.length > 0 ? pool : PNJ_RANDOM_CONCEPTS;
-      currentRandomConcept = list[Math.floor(Math.random() * list.length)];
+      let candidate = '';
+      let guard = 0;
+
+      do {
+        const sustantivo = randomItem(PNJ_SUSTANTIVOS);
+        const adjNoProf = randomItem(PNJ_ADJ_NO_PROFESIONAL);
+        const adjProf = randomItem(PNJ_ADJ_PROFESIONAL);
+        const interaccion = randomItem(PNJ_INTERACCIONES_HISTORIA);
+        candidate = composePnjConcept(sustantivo, adjNoProf, adjProf, interaccion);
+        guard++;
+      } while (candidate === currentRandomConcept && guard < 15);
+
+      currentRandomConcept = candidate;
       document.getElementById('randomConceptText').textContent = currentRandomConcept;
     }
 
