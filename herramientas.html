@@ -165,11 +165,99 @@
       gap: 10px;
     }
 
+    .gm-topbar-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
     .gm-topbar h1 {
       font-family: 'Cinzel', serif;
       font-size: 1rem;
       color: #38bdf8;
     }
+
+    .drive-status-line {
+      font-size: 0.72rem;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .drive-badge {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 999px;
+      font-size: 0.66rem;
+      font-weight: 600;
+      background: #334155;
+      color: #e2e8f0;
+    }
+
+    .drive-badge.online {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .drive-badge.syncing {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .drive-badge.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .item-drive-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      background: #f8fafc;
+      padding: 8px 12px;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .item-drive-left {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .item-drive-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .item-btn {
+      padding: 5px 10px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      background: var(--accent-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .item-btn:hover { background: var(--accent-active); }
+    .item-btn.btn-drive { background: #0f766e; }
+    .item-btn.btn-drive:hover { background: #115e59; }
+    .item-btn.btn-save { background: #0284c7; }
+    .item-btn.btn-save:hover { background: #0369a1; }
+    .item-btn.btn-new { background: #dc2626; }
+    .item-btn.btn-new:hover { background: #b91c1c; }
 
     .gm-buttons {
       display: flex;
@@ -197,6 +285,13 @@
     }
     .gm-buttons button.btn-drive:hover {
       background: #115e59;
+    }
+
+    .gm-buttons button.btn-new-panel {
+      background: #dc2626;
+    }
+    .gm-buttons button.btn-new-panel:hover {
+      background: #b91c1c;
     }
 
     .scene-panel {
@@ -704,6 +799,7 @@
       justify-content: center;
       align-items: center;
       z-index: 2000;
+      padding: 16px;
     }
     .modal-box {
       background: #1e293b;
@@ -711,14 +807,155 @@
       padding: 20px;
       border-radius: var(--radius);
       border: 1.5px solid #38bdf8;
-      width: 320px;
+      width: 100%;
+      max-width: 360px;
       text-align: center;
       font-family: 'Inter', sans-serif;
       box-shadow: 0 10px 25px rgba(0,0,0,0.5);
     }
+    .modal-box.explorer-box {
+      max-width: 540px;
+      max-height: 82vh;
+      padding: 0;
+      overflow: hidden;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+    }
+    .explorer-header {
+      background: #0f172a;
+      padding: 11px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+    }
+    .explorer-header h3 {
+      font-family: 'Cinzel', serif;
+      color: #38bdf8;
+      font-size: 0.86rem;
+      margin: 0;
+    }
+    .explorer-subbar {
+      padding: 8px 15px;
+      background: rgba(15, 23, 42, 0.6);
+      border-bottom: 1px solid #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.74rem;
+      color: #cbd5e1;
+    }
+    .explorer-list {
+      padding: 12px 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+    .explorer-file-item {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.15s;
+    }
+    .explorer-file-item:hover {
+      border-color: #38bdf8;
+      background: #172554;
+    }
+    .explorer-file-info {
+      flex: 1;
+      min-width: 0;
+      cursor: pointer;
+    }
+    .explorer-file-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #f8fafc;
+      word-break: break-word;
+    }
+    .explorer-file-meta {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    .explorer-file-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .explorer-load-btn {
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 5px 9px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .explorer-load-btn:hover { background: #0369a1; }
+    .explorer-rename-btn {
+      background: #334155;
+      color: #f8fafc;
+      border: 1px solid #64748b;
+      padding: 5px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .explorer-rename-btn:hover {
+      background: #475569;
+      border-color: #38bdf8;
+    }
+    .explorer-delete-btn {
+      background: #991b1b;
+      color: #ffffff;
+      border: 1px solid #ef4444;
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .explorer-delete-btn:hover {
+      background: #dc2626;
+      border-color: #fca5a5;
+    }
+    .explorer-empty {
+      text-align: center;
+      padding: 24px 12px;
+      color: #94a3b8;
+      font-size: 0.84rem;
+    }
     .modal-box h3 { font-family: 'Cinzel', serif; color: #38bdf8; margin-bottom: 10px; font-size: 1rem; }
     .modal-box p { font-size: 0.85rem; color: #cbd5e1; margin-bottom: 15px; }
-    .modal-buttons { display: flex; justify-content: center; gap: 10px; }
+    .modal-box input {
+      width: 100%;
+      padding: 9px 10px;
+      border-radius: 4px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: white;
+      font-size: 0.88rem;
+      outline: none;
+      margin-bottom: 12px;
+    }
+    .modal-box input:focus { border-color: #38bdf8; }
+    .modal-buttons { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
     .modal-buttons button {
       padding: 6px 14px;
       border-radius: 4px;
@@ -731,6 +968,8 @@
     .btn-modal-cancel:hover { background: #475569; }
     .btn-modal-confirm { background: #e11d48; color: white; }
     .btn-modal-confirm:hover { background: #be123c; }
+    .btn-modal-primary { background: #0284c7; color: white; }
+    .btn-modal-primary:hover { background: #0369a1; }
 
     #floatingToolbar {
       position: absolute;
@@ -782,7 +1021,7 @@
 
     @media print {
       body { background: white; padding: 0; display: block; }
-      .sidebar, .gm-topbar, #floatingToolbar, .modal-overlay, #floatingDiceLauncher, #diceWidgetModal, .toast-msg { display: none !important; }
+      .sidebar, .gm-topbar, .item-drive-bar, #floatingToolbar, .modal-overlay, #floatingDiceLauncher, #diceWidgetModal, .toast-msg { display: none !important; }
       .scene-panel { border: none; box-shadow: none; padding: 0; margin-bottom: 20px; }
       .sheet-container, .map-viewer-container { box-shadow: none; border: none; padding: 0; width: 100%; }
     }
@@ -990,13 +1229,55 @@
   </div>
 
   <!-- MODAL FLOTANTE DE CONFIRMACIÓN -->
-  <div class="modal-overlay" id="confirmModal">
-    <div class="modal-box">
+  <div class="modal-overlay" id="confirmModal" onclick="handleBackdropClose(event, 'confirmModal')">
+    <div class="modal-box" onclick="event.stopPropagation()">
       <h3 id="modalTitle">¿Eliminar elemento?</h3>
       <p id="modalDesc">Esta acción eliminará el ítem seleccionado.</p>
       <div class="modal-buttons">
         <button class="btn-modal-cancel" onclick="closeModal()">Cancelar</button>
         <button class="btn-modal-confirm" id="modalConfirmBtn">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL EXPLORADOR GOOGLE DRIVE -->
+  <div class="modal-overlay" id="modalDriveExplorer" onclick="handleBackdropClose(event, 'modalDriveExplorer')">
+    <div class="modal-box explorer-box" onclick="event.stopPropagation()">
+      <div class="explorer-header">
+        <h3 id="driveExplorerTitle">EXPLORADOR DRIVE</h3>
+        <button class="btn-modal-cancel" style="padding: 4px 9px; font-size: 0.78rem;" onclick="closeModal('modalDriveExplorer')">✕</button>
+      </div>
+      <div class="explorer-subbar">
+        <span id="driveExplorerSubtitle">Carpeta: TMS PBTA / DIRECTOR</span>
+        <button class="btn-modal-cancel" style="padding: 5px 10px; font-size: 0.72rem;" onclick="refreshCurrentDriveExplorer()">🔄 Refrescar lista</button>
+      </div>
+      <div class="explorer-list" id="driveExplorerList">
+        <div class="explorer-empty">Cargando archivos...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL RENOMBRAR ARCHIVO EN DRIVE -->
+  <div class="modal-overlay" id="modalDriveRename" onclick="handleBackdropClose(event, 'modalDriveRename')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h3>✏️ Renombrar en Drive</h3>
+      <p id="driveRenamePromptText">Nuevo nombre del archivo:</p>
+      <input type="text" id="inputDriveRename" placeholder="Nombre del archivo..." onkeydown="handleDriveRenameKeydown(event)">
+      <div class="modal-buttons">
+        <button class="btn-modal-cancel" onclick="closeModal('modalDriveRename')">Cancelar</button>
+        <button class="btn-modal-primary" onclick="confirmDriveRename()">💾 Guardar nombre</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CONFIRMAR BORRAR ARCHIVO EN DRIVE -->
+  <div class="modal-overlay" id="modalDriveDelete" onclick="handleBackdropClose(event, 'modalDriveDelete')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h3>⚠️ Borrar de Google Drive</h3>
+      <p id="driveDeletePromptText">¿Seguro que deseas borrar este archivo de Google Drive?</p>
+      <div class="modal-buttons">
+        <button class="btn-modal-cancel" onclick="closeModal('modalDriveDelete')">No</button>
+        <button class="btn-modal-confirm" onclick="confirmDriveDelete()">Sí, borrar</button>
       </div>
     </div>
   </div>
@@ -1034,10 +1315,18 @@
     
     <!-- BARRA SUPERIOR GM -->
     <div class="gm-topbar">
-      <h1>Herramientas del Director</h1>
+      <div class="gm-topbar-title-group">
+        <h1>Herramientas del Director</h1>
+        <div class="drive-status-line">
+          <span id="panelDriveBadge" class="drive-badge">Drive: local</span>
+          <span id="panelDriveLabel">Sin panel vinculado en TMS PBTA / DIRECTOR</span>
+        </div>
+      </div>
       <div class="gm-buttons">
+        <button class="btn-new-panel" onclick="requestNewPanel()">🆕 Nuevo panel</button>
         <button class="btn-drive" onclick="saveToGoogleDrive()">☁️ Guardar en Drive</button>
-        <button class="btn-drive" onclick="loadFromGoogleDrive()">📥 Cargar de Drive</button>
+        <button class="btn-drive" onclick="openDriveExplorer('panel')">📥 Cargar / Gestionar</button>
+        <button class="btn-drive" onclick="refreshPanelFromGoogleDrive()">🔄 Actualizar</button>
         <button onclick="exportAllMasterData()">💾 Guardar Todo</button>
         <label class="btn-top">
           📂 Cargar Todo
@@ -1103,18 +1392,42 @@
 
     <!-- CONTENEDOR DE FICHA DE PERSONAJE -->
     <div class="sheet-container" id="sheetArea" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #f8fafc; padding: 8px 12px; border-radius: 4px;">
-        <span style="font-weight: 700; font-size: 0.85rem; color: var(--accent-color);" id="activePjIndicator">FICHA ACTIVA</span>
-        <button onclick="window.print()" style="padding: 4px 10px; font-size: 0.75rem; background: var(--accent-color); color: white; border: none; border-radius: 3px; cursor: pointer;">🖨️ Imprimir Ficha</button>
+      <div class="item-drive-bar">
+        <div class="item-drive-left">
+          <span style="font-weight: 700; font-size: 0.85rem; color: var(--accent-color);" id="activePjIndicator">FICHA ACTIVA</span>
+          <div class="drive-status-line" style="color: var(--text-muted);">
+            <span id="pjItemDriveBadge" class="drive-badge">Drive: local</span>
+            <span id="pjItemDriveLabel">Sin archivo individual vinculado en TMS PBTA / DIRECTOR / FICHAS</span>
+          </div>
+        </div>
+        <div class="item-drive-actions">
+          <button type="button" class="item-btn btn-new" onclick="requestNewActiveItem()">🆕 Nuevo</button>
+          <button type="button" class="item-btn btn-save" onclick="saveActiveItemToGoogleDrive()">☁️ Guardar en Drive</button>
+          <button type="button" class="item-btn btn-drive" onclick="openDriveExplorer('pj')">📥 Cargar / Gestionar</button>
+          <button type="button" class="item-btn" onclick="refreshActiveItemFromGoogleDrive()">🔄 Actualizar</button>
+          <button type="button" class="item-btn" onclick="window.print()">🖨️ Imprimir Ficha</button>
+        </div>
       </div>
       <div id="sheetDynamicContent"></div>
     </div>
 
     <!-- CONTENEDOR DE VISOR DE MAPA -->
     <div class="map-viewer-container" id="mapViewerArea" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 8px 12px; border-radius: 4px;">
-        <span style="font-weight: 700; font-size: 0.85rem; color: var(--accent-color);" id="activeMapIndicator">MAPA ACTIVO</span>
-        <button onclick="printActiveMap()" style="padding: 4px 10px; font-size: 0.75rem; background: var(--accent-color); color: white; border: none; border-radius: 3px; cursor: pointer;">🖨️ Imprimir Mapa</button>
+      <div class="item-drive-bar" style="margin-bottom: 0;">
+        <div class="item-drive-left">
+          <span style="font-weight: 700; font-size: 0.85rem; color: var(--accent-color);" id="activeMapIndicator">MAPA ACTIVO</span>
+          <div class="drive-status-line" style="color: var(--text-muted);">
+            <span id="mapItemDriveBadge" class="drive-badge">Drive: local</span>
+            <span id="mapItemDriveLabel">Sin archivo individual vinculado en TMS PBTA / DIRECTOR / MAPAS</span>
+          </div>
+        </div>
+        <div class="item-drive-actions">
+          <button type="button" class="item-btn btn-new" onclick="requestNewActiveItem()">🆕 Nuevo</button>
+          <button type="button" class="item-btn btn-save" onclick="saveActiveItemToGoogleDrive()">☁️ Guardar en Drive</button>
+          <button type="button" class="item-btn btn-drive" onclick="openDriveExplorer('map')">📥 Cargar / Gestionar</button>
+          <button type="button" class="item-btn" onclick="refreshActiveItemFromGoogleDrive()">🔄 Actualizar</button>
+          <button type="button" class="item-btn" onclick="printActiveMap()">🖨️ Imprimir Mapa</button>
+        </div>
       </div>
       <div class="map-canvas-wrapper">
         <canvas id="viewerCanvas" width="640" height="400"></canvas>
@@ -1156,10 +1469,14 @@
       rootFolderId: '',
       rootFolderName: 'TMS PBTA',
       subFolderName: 'DIRECTOR',
+      fichasFolderName: 'FICHAS',
+      mapasFolderName: 'MAPAS',
       scope: 'https://www.googleapis.com/auth/drive.file'
     };
 
     const DRIVE_META_STORAGE_KEY = 'pbta_director_drive_link_v1';
+    const PJ_DRIVE_META_KEY = 'pbta_director_pj_drive_link_v1';
+    const MAP_DRIVE_META_KEY = 'pbta_director_map_drive_link_v1';
 
     let driveAccessToken = null;
     let driveTokenExpiresAt = 0;
@@ -1169,6 +1486,12 @@
 
     let cachedRootFolderId = DRIVE_CONFIG.rootFolderId || null;
     let cachedDirectorFolderId = null;
+    let cachedFichasFolderId = null;
+    let cachedMapasFolderId = null;
+
+    let currentExplorerScope = 'panel'; // 'panel' | 'pj' | 'map'
+    let pendingRenameTarget = null;     // { scope, fileId, currentName }
+    let pendingDeleteTarget = null;     // { scope, fileId, fileName }
 
     function showToast(message) {
       const toast = document.getElementById('toastMsg');
@@ -1179,6 +1502,53 @@
       window.__toastTimer = setTimeout(() => {
         toast.classList.remove('show');
       }, 3600);
+    }
+
+    function setBadgeStatus(badgeId, labelId, mode, badgeText, detailText) {
+      const badgeEl = document.getElementById(badgeId);
+      const labelEl = document.getElementById(labelId);
+      if (badgeEl) {
+        badgeEl.className = 'drive-badge' + (mode ? ' ' + mode : '');
+        badgeEl.textContent = badgeText;
+      }
+      if (labelEl && detailText !== undefined) {
+        labelEl.textContent = detailText;
+      }
+    }
+
+    function updatePanelDriveStatus(customNote) {
+      const meta = readDriveLinkMeta();
+      const fileName = meta.__activeFileName || null;
+      if (fileName) {
+        const notePart = customNote ? ` · ${customNote}` : '';
+        setBadgeStatus('panelDriveBadge', 'panelDriveLabel', 'online', 'Drive vinculado', `Panel: ${fileName}${notePart}`);
+      } else {
+        setBadgeStatus('panelDriveBadge', 'panelDriveLabel', '', 'Drive: local', customNote || 'Sin panel vinculado en TMS PBTA / DIRECTOR');
+      }
+    }
+
+    function updateActiveItemDriveStatus(customNote) {
+      if (activeId && characters[activeId]) {
+        const meta = readDriveMeta(PJ_DRIVE_META_KEY);
+        const link = meta.byId && meta.byId[activeId] ? meta.byId[activeId] : null;
+        const fileName = link ? link.fileName : null;
+        if (fileName) {
+          const notePart = customNote ? ` · ${customNote}` : '';
+          setBadgeStatus('pjItemDriveBadge', 'pjItemDriveLabel', 'online', 'Drive vinculado', `Archivo: ${fileName}${notePart}`);
+        } else {
+          setBadgeStatus('pjItemDriveBadge', 'pjItemDriveLabel', '', 'Drive: local', customNote || 'Sin archivo individual vinculado en TMS PBTA / DIRECTOR / FICHAS');
+        }
+      } else if (activeMapId && maps[activeMapId]) {
+        const meta = readDriveMeta(MAP_DRIVE_META_KEY);
+        const link = meta.byId && meta.byId[activeMapId] ? meta.byId[activeMapId] : null;
+        const fileName = link ? link.fileName : null;
+        if (fileName) {
+          const notePart = customNote ? ` · ${customNote}` : '';
+          setBadgeStatus('mapItemDriveBadge', 'mapItemDriveLabel', 'online', 'Drive vinculado', `Archivo: ${fileName}${notePart}`);
+        } else {
+          setBadgeStatus('mapItemDriveBadge', 'mapItemDriveLabel', '', 'Drive: local', customNote || 'Sin archivo individual vinculado en TMS PBTA / DIRECTOR / MAPAS');
+        }
+      }
     }
 
     function buildMasterPackage() {
@@ -1228,6 +1598,104 @@
         document.getElementById('sheetArea').style.display = 'none';
         document.getElementById('mapViewerArea').style.display = 'none';
         document.getElementById('emptyNotice').style.display = 'block';
+      }
+      updateActiveItemDriveStatus();
+    }
+
+    function requestNewPanel() {
+      openConfirmModal(
+        '🆕 Nuevo panel de Director',
+        'Se vaciará la escena, las notas, el elenco y los mapas en pantalla para empezar de cero y se desvinculará el panel en Drive.',
+        () => {
+          sceneData = {
+            amenaza_marks: [false, false, false, false, false],
+            amenaza_unidades: "0",
+            escena_tags: ["", "", "", "", "", ""],
+            gm_notas_generales: ""
+          };
+          characters = {};
+          maps = {};
+          activeId = null;
+          activeMapId = null;
+
+          saveSceneData();
+          saveCharactersStorage();
+          saveMapsStorage();
+          saveActiveStateSelection();
+
+          renderAmenazaMarks();
+          document.getElementById('amenaza_unidades').value = "0";
+          document.getElementById('gm_notas_generales').innerHTML = "";
+          for (let i = 1; i <= 6; i++) {
+            const tagEl = document.getElementById(`escena_tag_${i}`);
+            if (tagEl) tagEl.innerHTML = "";
+          }
+
+          renderPjList();
+          renderMapList();
+          document.getElementById('sheetArea').style.display = 'none';
+          document.getElementById('mapViewerArea').style.display = 'none';
+          document.getElementById('btnExportJson').style.display = 'none';
+          document.getElementById('emptyNotice').style.display = 'block';
+
+          const panelMeta = readDriveLinkMeta();
+          delete panelMeta.__activeFileId;
+          delete panelMeta.__activeFileName;
+          writeDriveLinkMeta(panelMeta);
+
+          updatePanelDriveStatus('Panel nuevo en blanco');
+          showToast('Panel del Director limpiado para empezar de cero.');
+        },
+        'Sí, empezar de cero'
+      );
+    }
+
+    function requestNewActiveItem() {
+      if (activeId && characters[activeId]) {
+        const char = characters[activeId];
+        openConfirmModal(
+          '🆕 Limpiar ficha activa',
+          `Se vaciarán todos los campos de "${char.name}" para empezar de cero y se desvinculará su archivo en Drive.`,
+          () => {
+            const emptyData = {};
+            characters[activeId].data = emptyData;
+            healthLevel = 0;
+            saveCharactersStorage();
+            selectCharacter(activeId);
+
+            const meta = readDriveMeta(PJ_DRIVE_META_KEY);
+            if (meta.byId && meta.byId[activeId]) {
+              delete meta.byId[activeId];
+              writeDriveMeta(PJ_DRIVE_META_KEY, meta);
+            }
+            updateActiveItemDriveStatus('Ficha vacía en blanco');
+            showToast(`Ficha "${char.name}" limpiada.`);
+          },
+          'Sí, limpiar ficha'
+        );
+      } else if (activeMapId && maps[activeMapId]) {
+        const mapObj = maps[activeMapId];
+        openConfirmModal(
+          '🆕 Limpiar mapa activo',
+          `Se vaciarán las celdas y etiquetas de "${mapObj.name}" para empezar de cero y se desvinculará su archivo en Drive.`,
+          () => {
+            const cols = 40;
+            const rows = 25;
+            maps[activeMapId].mapData = Array.from({ length: rows }, () => Array(cols).fill(0));
+            maps[activeMapId].textLabels = [];
+            saveMapsStorage();
+            drawViewerMap(maps[activeMapId]);
+
+            const meta = readDriveMeta(MAP_DRIVE_META_KEY);
+            if (meta.byId && meta.byId[activeMapId]) {
+              delete meta.byId[activeMapId];
+              writeDriveMeta(MAP_DRIVE_META_KEY, meta);
+            }
+            updateActiveItemDriveStatus('Mapa vacío en blanco');
+            showToast(`Mapa "${mapObj.name}" limpiado.`);
+          },
+          'Sí, limpiar mapa'
+        );
       }
     }
 
@@ -1793,26 +2261,33 @@
       return window.localStorage;
     }
 
-    // --- MODAL FLOTANTE DE CONFIRMACIÓN ---
-    function openConfirmModal(title, desc, onConfirmCallback) {
+    // --- MODALES FLOTANTES ---
+    function openConfirmModal(title, desc, onConfirmCallback, confirmLabel = 'Eliminar') {
       document.getElementById('modalTitle').innerText = title;
       document.getElementById('modalDesc').innerText = desc;
       const confirmBtn = document.getElementById('modalConfirmBtn');
-      confirmBtn.innerText = "Eliminar";
+      confirmBtn.innerText = confirmLabel;
       
       const newBtn = confirmBtn.cloneNode(true);
       confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
 
       newBtn.onclick = function() {
         onConfirmCallback();
-        closeModal();
+        closeModal('confirmModal');
       };
 
       document.getElementById('confirmModal').style.display = 'flex';
     }
 
-    function closeModal() {
-      document.getElementById('confirmModal').style.display = 'none';
+    function closeModal(modalId = 'confirmModal') {
+      const el = document.getElementById(modalId);
+      if (el) el.style.display = 'none';
+    }
+
+    function handleBackdropClose(event, modalId) {
+      if (event && event.target && event.target.id === modalId) {
+        closeModal(modalId);
+      }
     }
 
     document.addEventListener('selectionchange', () => {
@@ -1894,6 +2369,40 @@
     }
 
     // --- GESTIÓN DE MAPAS ---
+    function extractMapPayload(parsed) {
+      if (!parsed || typeof parsed !== 'object') return null;
+      if (parsed.mapData && parsed.textLabels) {
+        return { mapData: parsed.mapData, textLabels: parsed.textLabels };
+      }
+      if (parsed.data && parsed.data.mapData && parsed.data.textLabels) {
+        return { mapData: parsed.data.mapData, textLabels: parsed.data.textLabels };
+      }
+      return null;
+    }
+
+    function addImportedMapRecord(mapPayload, suggestedName, driveFileInfo = null) {
+      const id = 'map_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
+      const cleanName = (suggestedName || 'Mapa táctico').replace(/\.json$/i, '');
+      maps[id] = {
+        name: cleanName,
+        mapData: mapPayload.mapData,
+        textLabels: mapPayload.textLabels
+      };
+      saveMapsStorage();
+      renderMapList();
+
+      if (driveFileInfo && driveFileInfo.fileId && driveFileInfo.fileName) {
+        const meta = readDriveMeta(MAP_DRIVE_META_KEY);
+        meta.byId = meta.byId || {};
+        meta.byId[id] = { fileId: driveFileInfo.fileId, fileName: driveFileInfo.fileName };
+        meta[driveFileInfo.fileName] = driveFileInfo.fileId;
+        writeDriveMeta(MAP_DRIVE_META_KEY, meta);
+      }
+
+      selectMap(id);
+      return id;
+    }
+
     function importMaps(event) {
       const files = event.target.files;
       if (!files.length) return;
@@ -1903,22 +2412,10 @@
         reader.onload = function(e) {
           try {
             const parsed = JSON.parse(e.target.result);
-            if (parsed.mapData && parsed.textLabels) {
-              const id = 'map_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
-              let mapName = file.name.replace(/\.[^/.]+$/, "");
-              
-              maps[id] = {
-                name: mapName,
-                mapData: parsed.mapData,
-                textLabels: parsed.textLabels
-              };
-
-              saveMapsStorage();
-              renderMapList();
-              
-              if (!activeMapId && !activeId) {
-                selectMap(id);
-              }
+            const payload = extractMapPayload(parsed);
+            if (payload) {
+              const mapName = file.name.replace(/\.[^/.]+$/, "");
+              addImportedMapRecord(payload, mapName);
             } else {
               alert(`El archivo ${file.name} no tiene el formato de mapa válido.`);
             }
@@ -2003,6 +2500,7 @@
       document.getElementById('activeMapIndicator').innerText = "MAPA ACTIVO: " + maps[id].name.toUpperCase();
 
       drawViewerMap(maps[id]);
+      updateActiveItemDriveStatus();
     }
 
     function drawViewerMap(mapObj) {
@@ -2136,6 +2634,50 @@
     }
 
     // --- GESTIÓN DE PERSONAJES ---
+    function parseCharacterJson(data) {
+      if (!data || typeof data !== 'object') return null;
+      const sheetPayload = (data.data && typeof data.data === 'object' && !data.nombre && !data.pnj_nombre)
+        ? data.data
+        : data;
+      let name = data.name || "Personaje sin nombre";
+      let type = data.type || "PJ";
+
+      if (sheetPayload['nombre']) {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = sheetPayload['nombre'];
+        name = tmp.textContent || tmp.innerText || name;
+        type = "PJ";
+      } else if (sheetPayload['pnj_nombre']) {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = sheetPayload['pnj_nombre'];
+        name = tmp.textContent || tmp.innerText || name;
+        type = "PNJ";
+      }
+      return { name, type, data: sheetPayload };
+    }
+
+    function addImportedCharacterRecord(parsedChar, driveFileInfo = null) {
+      const id = 'char_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
+      characters[id] = {
+        name: parsedChar.name,
+        type: parsedChar.type,
+        data: parsedChar.data
+      };
+      saveCharactersStorage();
+      renderPjList();
+
+      if (driveFileInfo && driveFileInfo.fileId && driveFileInfo.fileName) {
+        const meta = readDriveMeta(PJ_DRIVE_META_KEY);
+        meta.byId = meta.byId || {};
+        meta.byId[id] = { fileId: driveFileInfo.fileId, fileName: driveFileInfo.fileName };
+        meta[driveFileInfo.fileName] = driveFileInfo.fileId;
+        writeDriveMeta(PJ_DRIVE_META_KEY, meta);
+      }
+
+      selectCharacter(id);
+      return id;
+    }
+
     function importCharacters(event) {
       const files = event.target.files;
       if (!files.length) return;
@@ -2145,28 +2687,12 @@
         reader.onload = function(e) {
           try {
             const data = JSON.parse(e.target.result);
-            const id = 'char_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
-            
-            let name = "Personaje sin nombre";
-            let type = "PJ";
-            
-            if (data['nombre']) {
-              const tmp = document.createElement('div');
-              tmp.innerHTML = data['nombre'];
-              name = tmp.textContent || tmp.innerText || name;
-              type = "PJ";
-            } else if (data['pnj_nombre']) {
-              const tmp = document.createElement('div');
-              tmp.innerHTML = data['pnj_nombre'];
-              name = tmp.textContent || tmp.innerText || name;
-              type = "PNJ";
+            const parsedChar = parseCharacterJson(data);
+            if (!parsedChar) {
+              alert(`El archivo ${file.name} no tiene el formato de ficha válido.`);
+              return;
             }
-
-            characters[id] = { name, type, data };
-            saveCharactersStorage();
-            renderPjList();
-            
-            if (!activeId && !activeMapId) selectCharacter(id);
+            addImportedCharacterRecord(parsedChar);
           } catch (err) {
             alert(`Error al leer el archivo ${file.name}`);
           }
@@ -2257,7 +2783,7 @@
         dynamicContainer.innerHTML = getPnjTemplate();
       }
 
-      const sheetData = char.data;
+      const sheetData = char.data || {};
       Object.keys(sheetData).forEach(key => {
         const el = document.getElementById(key);
         if (el) {
@@ -2295,6 +2821,7 @@
       snapshotDamageHealth = null;
       snapshotHealingHealth = null;
       updateHeartsDisplayActive();
+      updateActiveItemDriveStatus();
 
       const maxEl = document.getElementById('max_bienestar') || document.getElementById('pnj_max_bienestar');
       if (maxEl) {
@@ -2308,6 +2835,11 @@
         maxEl.addEventListener('keyup', handleMaxChange);
         maxEl.addEventListener('blur', handleMaxChange);
       }
+
+      dynamicContainer.querySelectorAll('.editable').forEach(ed => {
+        ed.addEventListener('input', () => autoSaveActive());
+        ed.addEventListener('blur', () => autoSaveActive());
+      });
     }
 
     function autoSaveActive() {
@@ -2420,7 +2952,7 @@
       event.target.value = '';
     }
 
-    // --- INTEGRACIÓN GOOGLE DRIVE (TMS PBTA / DIRECTOR) ---
+    // --- INTEGRACIÓN GOOGLE DRIVE (TMS PBTA / DIRECTOR, FICHAS, MAPAS) ---
     function loadGoogleIdentityScript() {
       return new Promise((resolve, reject) => {
         if (window.google && window.google.accounts && window.google.accounts.oauth2) {
@@ -2563,151 +3095,608 @@
       return cachedDirectorFolderId;
     }
 
-    function readDriveLinkMeta() {
+    async function ensureFichasFolderId() {
+      if (cachedFichasFolderId) return cachedFichasFolderId;
+      const dirId = await ensureDirectorFolderId();
+      cachedFichasFolderId = await findOrCreateFolder(DRIVE_CONFIG.fichasFolderName, dirId);
+      return cachedFichasFolderId;
+    }
+
+    async function ensureMapasFolderId() {
+      if (cachedMapasFolderId) return cachedMapasFolderId;
+      const dirId = await ensureDirectorFolderId();
+      cachedMapasFolderId = await findOrCreateFolder(DRIVE_CONFIG.mapasFolderName, dirId);
+      return cachedMapasFolderId;
+    }
+
+    function readDriveMeta(storageKey) {
       try {
-        return JSON.parse(getStorage().getItem(DRIVE_META_STORAGE_KEY) || '{}');
+        return JSON.parse(getStorage().getItem(storageKey) || '{}');
       } catch (_) {
         return {};
       }
     }
 
-    function writeDriveLinkMeta(meta) {
+    function writeDriveMeta(storageKey, meta) {
       try {
-        getStorage().setItem(DRIVE_META_STORAGE_KEY, JSON.stringify(meta));
+        getStorage().setItem(storageKey, JSON.stringify(meta));
       } catch (_) {}
+    }
+
+    function readDriveLinkMeta() {
+      return readDriveMeta(DRIVE_META_STORAGE_KEY);
+    }
+
+    function writeDriveLinkMeta(meta) {
+      writeDriveMeta(DRIVE_META_STORAGE_KEY, meta);
+    }
+
+    function getDriveScopeConfig(scope) {
+      if (scope === 'pj') {
+        return {
+          scope: 'pj',
+          folderPathLabel: `${DRIVE_CONFIG.rootFolderName} / ${DRIVE_CONFIG.subFolderName} / ${DRIVE_CONFIG.fichasFolderName}`,
+          metaKey: PJ_DRIVE_META_KEY,
+          ensureFolder: ensureFichasFolderId,
+          badgeId: 'pjItemDriveBadge',
+          labelId: 'pjItemDriveLabel',
+          updateStatus: updateActiveItemDriveStatus
+        };
+      }
+      if (scope === 'map') {
+        return {
+          scope: 'map',
+          folderPathLabel: `${DRIVE_CONFIG.rootFolderName} / ${DRIVE_CONFIG.subFolderName} / ${DRIVE_CONFIG.mapasFolderName}`,
+          metaKey: MAP_DRIVE_META_KEY,
+          ensureFolder: ensureMapasFolderId,
+          badgeId: 'mapItemDriveBadge',
+          labelId: 'mapItemDriveLabel',
+          updateStatus: updateActiveItemDriveStatus
+        };
+      }
+      return {
+        scope: 'panel',
+        folderPathLabel: `${DRIVE_CONFIG.rootFolderName} / ${DRIVE_CONFIG.subFolderName}`,
+        metaKey: DRIVE_META_STORAGE_KEY,
+        ensureFolder: ensureDirectorFolderId,
+        badgeId: 'panelDriveBadge',
+        labelId: 'panelDriveLabel',
+        updateStatus: updatePanelDriveStatus
+      };
+    }
+
+    function sanitizeItemFileName(prefix, titleStr) {
+      const base = (titleStr || 'item').trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_-]/g, '') || 'item';
+      return `${prefix}_${base}.json`;
+    }
+
+    async function upsertJsonInDriveFolder(folderId, folderPathLabel, fileName, payloadString, metaStorageKey, itemId = null) {
+      const meta = readDriveMeta(metaStorageKey);
+      let targetFileId = (itemId && meta.byId && meta.byId[itemId] ? meta.byId[itemId].fileId : null) || meta[fileName] || null;
+
+      if (!targetFileId) {
+        const q = encodeURIComponent(
+          `name = '${escapeDriveQueryValue(fileName)}' and '${escapeDriveQueryValue(folderId)}' in parents and trashed = false`
+        );
+        const listResp = await driveApiFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)&pageSize=1`);
+        const listJson = await listResp.json();
+        if (listJson.files && listJson.files.length > 0) {
+          targetFileId = listJson.files[0].id;
+        }
+      }
+
+      const boundary = '-------tms_pbta_boundary_' + Date.now();
+      const delimiter = `\r\n--${boundary}\r\n`;
+      const closeDelimiter = `\r\n--${boundary}--`;
+
+      let savedJson;
+      if (targetFileId) {
+        const updateMetadata = { name: fileName, mimeType: 'application/json' };
+        const body =
+          delimiter +
+          'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+          JSON.stringify(updateMetadata) +
+          delimiter +
+          'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+          payloadString +
+          closeDelimiter;
+
+        const updResp = await driveApiFetch(
+          `https://www.googleapis.com/upload/drive/v3/files/${encodeURIComponent(targetFileId)}?uploadType=multipart&fields=id,name`,
+          {
+            method: 'PATCH',
+            headers: { 'Content-Type': `multipart/related; boundary="${boundary}"` },
+            body
+          }
+        );
+        savedJson = await updResp.json();
+      } else {
+        const createMetadata = {
+          name: fileName,
+          mimeType: 'application/json',
+          parents: [folderId]
+        };
+        const body =
+          delimiter +
+          'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+          JSON.stringify(createMetadata) +
+          delimiter +
+          'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+          payloadString +
+          closeDelimiter;
+
+        const crtResp = await driveApiFetch(
+          'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': `multipart/related; boundary="${boundary}"` },
+            body
+          }
+        );
+        savedJson = await crtResp.json();
+      }
+
+      const finalName = savedJson.name || fileName;
+      meta[finalName] = savedJson.id;
+      meta.__activeFileId = savedJson.id;
+      meta.__activeFileName = finalName;
+      if (itemId) {
+        meta.byId = meta.byId || {};
+        meta.byId[itemId] = { fileId: savedJson.id, fileName: finalName };
+      }
+      writeDriveMeta(metaStorageKey, meta);
+      showToast(`Guardado en Drive (${folderPathLabel}/${finalName}).`);
+      return savedJson;
     }
 
     async function saveToGoogleDrive() {
       try {
+        setBadgeStatus('panelDriveBadge', 'panelDriveLabel', 'syncing', 'Guardando en Drive...', 'Conectando con TMS PBTA / DIRECTOR');
         showToast('Conectando con Google Drive...');
         const folderId = await ensureDirectorFolderId();
         const fileName = 'panel_director_pbta.json';
         const payloadString = JSON.stringify(buildMasterPackage(), null, 2);
-        const meta = readDriveLinkMeta();
-
-        let targetFileId = meta[fileName] || null;
-
-        if (!targetFileId) {
-          const q = encodeURIComponent(
-            `name = '${escapeDriveQueryValue(fileName)}' and '${escapeDriveQueryValue(folderId)}' in parents and trashed = false`
-          );
-          const listResp = await driveApiFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)&pageSize=1`);
-          const listJson = await listResp.json();
-          if (listJson.files && listJson.files.length > 0) {
-            targetFileId = listJson.files[0].id;
-          }
-        }
-
-        const boundary = '-------tms_pbta_boundary_' + Date.now();
-        const delimiter = `\r\n--${boundary}\r\n`;
-        const closeDelimiter = `\r\n--${boundary}--`;
-
-        if (targetFileId) {
-          const updateMetadata = { name: fileName, mimeType: 'application/json' };
-          const body =
-            delimiter +
-            'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
-            JSON.stringify(updateMetadata) +
-            delimiter +
-            'Content-Type: application/json\r\n\r\n' +
-            payloadString +
-            closeDelimiter;
-
-          const updResp = await driveApiFetch(
-            `https://www.googleapis.com/upload/drive/v3/files/${encodeURIComponent(targetFileId)}?uploadType=multipart&fields=id,name`,
-            {
-              method: 'PATCH',
-              headers: { 'Content-Type': `multipart/related; boundary="${boundary}"` },
-              body
-            }
-          );
-          const updJson = await updResp.json();
-          meta[fileName] = updJson.id;
-          writeDriveLinkMeta(meta);
-          showToast(`Actualizado en Drive (${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}/${fileName}).`);
-        } else {
-          const createMetadata = {
-            name: fileName,
-            mimeType: 'application/json',
-            parents: [folderId]
-          };
-          const body =
-            delimiter +
-            'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
-            JSON.stringify(createMetadata) +
-            delimiter +
-            'Content-Type: application/json\r\n\r\n' +
-            payloadString +
-            closeDelimiter;
-
-          const crtResp = await driveApiFetch(
-            'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name',
-            {
-              method: 'POST',
-              headers: { 'Content-Type': `multipart/related; boundary="${boundary}"` },
-              body
-            }
-          );
-          const crtJson = await crtResp.json();
-          meta[fileName] = crtJson.id;
-          writeDriveLinkMeta(meta);
-          showToast(`Guardado en Drive (${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}/${fileName}).`);
-        }
+        await upsertJsonInDriveFolder(
+          folderId,
+          `${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}`,
+          fileName,
+          payloadString,
+          DRIVE_META_STORAGE_KEY,
+          null
+        );
+        updatePanelDriveStatus('Guardado');
       } catch (err) {
         console.error(err);
+        setBadgeStatus('panelDriveBadge', 'panelDriveLabel', 'error', 'Error al guardar', err.message || 'No se pudo guardar');
         showToast(`No se pudo guardar en Drive: ${err.message}`);
       }
     }
 
-    async function loadFromGoogleDrive() {
+    async function refreshPanelFromGoogleDrive() {
+      const meta = readDriveLinkMeta();
+      const targetId = meta.__activeFileId || null;
+      const targetName = meta.__activeFileName || 'panel_director_pbta.json';
+
+      if (!targetId) {
+        await openDriveExplorer('panel');
+        return;
+      }
+
       try {
-        showToast('Buscando respaldos del Director en Drive...');
-        const folderId = await ensureDirectorFolderId();
-        const q = encodeURIComponent(
-          `'${escapeDriveQueryValue(folderId)}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`
-        );
-        const listResp = await driveApiFetch(
-          `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime)&orderBy=modifiedTime desc&pageSize=30`
-        );
-        const listJson = await listResp.json();
-        const files = listJson.files || [];
-
-        if (files.length === 0) {
-          showToast(`No hay archivos en ${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}.`);
-          return;
-        }
-
-        const opciones = files
-          .map((f, idx) => `${idx + 1}. ${f.name}`)
-          .join('\n');
-        const selection = prompt(
-          `Selecciona el número del respaldo del Director a cargar desde ${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}:\n\n${opciones}`,
-          '1'
-        );
-        if (!selection) return;
-
-        const chosenIndex = parseInt(selection.trim(), 10) - 1;
-        if (isNaN(chosenIndex) || chosenIndex < 0 || chosenIndex >= files.length) {
-          showToast('Selección no válida.');
-          return;
-        }
-
-        const chosenFile = files[chosenIndex];
+        setBadgeStatus('panelDriveBadge', 'panelDriveLabel', 'syncing', 'Actualizando...', targetName);
         const fileResp = await driveApiFetch(
-          `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(chosenFile.id)}?alt=media`
+          `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(targetId)}?alt=media`
         );
         const rawText = await fileResp.text();
         const parsedPkg = JSON.parse(rawText);
         applyMasterPackage(parsedPkg);
 
-        const meta = readDriveLinkMeta();
-        meta[chosenFile.name] = chosenFile.id;
-        writeDriveLinkMeta(meta);
-
-        showToast(`Cargado "${chosenFile.name}" desde Google Drive.`);
+        const hora = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        updatePanelDriveStatus(`Actualizado ${hora}`);
+        showToast(`Actualizado "${targetName}" desde Google Drive.`);
       } catch (err) {
         console.error(err);
+        setBadgeStatus('panelDriveBadge', 'panelDriveLabel', 'error', 'Error al actualizar', err.message || 'No se pudo actualizar');
+        showToast(`No se pudo actualizar desde Drive: ${err.message}`);
+      }
+    }
+
+    async function saveActiveItemToGoogleDrive() {
+      if (activeId && characters[activeId]) {
+        try {
+          autoSaveActive();
+          setBadgeStatus('pjItemDriveBadge', 'pjItemDriveLabel', 'syncing', 'Guardando...', 'Conectando con TMS PBTA / DIRECTOR / FICHAS');
+          const folderId = await ensureFichasFolderId();
+          const char = characters[activeId];
+          const fileName = sanitizeItemFileName(char.type === 'PNJ' ? 'pnj' : 'pj', char.name);
+          const payload = JSON.stringify({ name: char.name, type: char.type, data: char.data }, null, 2);
+          await upsertJsonInDriveFolder(
+            folderId,
+            `${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}/${DRIVE_CONFIG.fichasFolderName}`,
+            fileName,
+            payload,
+            PJ_DRIVE_META_KEY,
+            activeId
+          );
+          updateActiveItemDriveStatus('Guardado');
+        } catch (err) {
+          console.error(err);
+          setBadgeStatus('pjItemDriveBadge', 'pjItemDriveLabel', 'error', 'Error al guardar', err.message || 'No se pudo guardar');
+          showToast(`No se pudo guardar la ficha en Drive: ${err.message}`);
+        }
+      } else if (activeMapId && maps[activeMapId]) {
+        try {
+          setBadgeStatus('mapItemDriveBadge', 'mapItemDriveLabel', 'syncing', 'Guardando...', 'Conectando con TMS PBTA / DIRECTOR / MAPAS');
+          const folderId = await ensureMapasFolderId();
+          const mapObj = maps[activeMapId];
+          const fileName = sanitizeItemFileName('mapa', mapObj.name);
+          const payload = JSON.stringify({ name: mapObj.name, mapData: mapObj.mapData, textLabels: mapObj.textLabels }, null, 2);
+          await upsertJsonInDriveFolder(
+            folderId,
+            `${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}/${DRIVE_CONFIG.mapasFolderName}`,
+            fileName,
+            payload,
+            MAP_DRIVE_META_KEY,
+            activeMapId
+          );
+          updateActiveItemDriveStatus('Guardado');
+        } catch (err) {
+          console.error(err);
+          setBadgeStatus('mapItemDriveBadge', 'mapItemDriveLabel', 'error', 'Error al guardar', err.message || 'No se pudo guardar');
+          showToast(`No se pudo guardar el mapa en Drive: ${err.message}`);
+        }
+      }
+    }
+
+    async function refreshActiveItemFromGoogleDrive() {
+      if (activeId && characters[activeId]) {
+        const meta = readDriveMeta(PJ_DRIVE_META_KEY);
+        const link = meta.byId && meta.byId[activeId] ? meta.byId[activeId] : null;
+        if (!link || !link.fileId) {
+          await openDriveExplorer('pj');
+          return;
+        }
+        try {
+          setBadgeStatus('pjItemDriveBadge', 'pjItemDriveLabel', 'syncing', 'Actualizando...', link.fileName);
+          const fileResp = await driveApiFetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(link.fileId)}?alt=media`);
+          const rawText = await fileResp.text();
+          const parsedChar = parseCharacterJson(JSON.parse(rawText));
+          if (!parsedChar) throw new Error('Formato de ficha no válido.');
+          characters[activeId] = { name: parsedChar.name, type: parsedChar.type, data: parsedChar.data };
+          saveCharactersStorage();
+          renderPjList();
+          selectCharacter(activeId);
+          const hora = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          updateActiveItemDriveStatus(`Actualizado ${hora}`);
+          showToast(`Actualizada ficha "${link.fileName}" desde Drive.`);
+        } catch (err) {
+          console.error(err);
+          setBadgeStatus('pjItemDriveBadge', 'pjItemDriveLabel', 'error', 'Error al actualizar', err.message || 'No se pudo actualizar');
+          showToast(`No se pudo actualizar desde Drive: ${err.message}`);
+        }
+      } else if (activeMapId && maps[activeMapId]) {
+        const meta = readDriveMeta(MAP_DRIVE_META_KEY);
+        const link = meta.byId && meta.byId[activeMapId] ? meta.byId[activeMapId] : null;
+        if (!link || !link.fileId) {
+          await openDriveExplorer('map');
+          return;
+        }
+        try {
+          setBadgeStatus('mapItemDriveBadge', 'mapItemDriveLabel', 'syncing', 'Actualizando...', link.fileName);
+          const fileResp = await driveApiFetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(link.fileId)}?alt=media`);
+          const rawText = await fileResp.text();
+          const parsedJson = JSON.parse(rawText);
+          const payload = extractMapPayload(parsedJson);
+          if (!payload) throw new Error('Formato de mapa no válido.');
+          maps[activeMapId] = {
+            name: parsedJson.name || maps[activeMapId].name,
+            mapData: payload.mapData,
+            textLabels: payload.textLabels
+          };
+          saveMapsStorage();
+          renderMapList();
+          selectMap(activeMapId);
+          const hora = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          updateActiveItemDriveStatus(`Actualizado ${hora}`);
+          showToast(`Actualizado mapa "${link.fileName}" desde Drive.`);
+        } catch (err) {
+          console.error(err);
+          setBadgeStatus('mapItemDriveBadge', 'mapItemDriveLabel', 'error', 'Error al actualizar', err.message || 'No se pudo actualizar');
+          showToast(`No se pudo actualizar desde Drive: ${err.message}`);
+        }
+      }
+    }
+
+    async function openDriveExplorer(scope) {
+      currentExplorerScope = scope || 'panel';
+      const cfg = getDriveScopeConfig(currentExplorerScope);
+
+      const titleMap = {
+        panel: 'EXPLORADOR DRIVE · PANEL DEL DIRECTOR',
+        pj: 'EXPLORADOR DRIVE · FICHAS PJ / PNJ',
+        map: 'EXPLORADOR DRIVE · MAPAS TÁCTICOS'
+      };
+
+      document.getElementById('driveExplorerTitle').textContent = titleMap[currentExplorerScope] || 'EXPLORADOR DRIVE';
+      document.getElementById('driveExplorerSubtitle').textContent = `Carpeta: ${cfg.folderPathLabel}`;
+      document.getElementById('driveExplorerList').innerHTML = '<div class="explorer-empty">Conectando con Google Drive...</div>';
+      document.getElementById('modalDriveExplorer').style.display = 'flex';
+
+      try {
+        await getDriveAccessToken('');
+        await refreshCurrentDriveExplorer();
+      } catch (err) {
+        console.error(err);
+        cfg.updateStatus('Error de acceso');
+        document.getElementById('driveExplorerList').innerHTML =
+          `<div class="explorer-empty">No se pudo conectar con Google Drive: ${err.message || err}</div>`;
+      }
+    }
+
+    async function refreshCurrentDriveExplorer() {
+      const cfg = getDriveScopeConfig(currentExplorerScope);
+      const listEl = document.getElementById('driveExplorerList');
+      listEl.innerHTML = `<div class="explorer-empty">Cargando archivos de ${cfg.folderPathLabel}...</div>`;
+
+      try {
+        setBadgeStatus(cfg.badgeId, cfg.labelId, 'syncing', 'Consultando Drive...', `Buscando en ${cfg.folderPathLabel}`);
+        const folderId = await cfg.ensureFolder();
+        document.getElementById('driveExplorerSubtitle').textContent = `Carpeta: ${cfg.folderPathLabel}`;
+
+        const q = encodeURIComponent(
+          `'${escapeDriveQueryValue(folderId)}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`
+        );
+        const listResp = await driveApiFetch(
+          `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime,mimeType)&orderBy=modifiedTime%20desc&pageSize=100`
+        );
+        const listJson = await listResp.json();
+        const files = listJson.files || [];
+
+        cfg.updateStatus();
+
+        if (files.length === 0) {
+          listEl.innerHTML = `<div class="explorer-empty">No hay archivos en <strong>${cfg.folderPathLabel}</strong> todavía.</div>`;
+          return;
+        }
+
+        listEl.innerHTML = '';
+        files.forEach(file => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'explorer-file-item';
+
+          const infoDiv = document.createElement('div');
+          infoDiv.className = 'explorer-file-info';
+          infoDiv.onclick = () => selectFileFromDriveExplorer(file.id, file.name);
+
+          const nameDiv = document.createElement('div');
+          nameDiv.className = 'explorer-file-name';
+          nameDiv.textContent = file.name;
+
+          const metaDiv = document.createElement('div');
+          metaDiv.className = 'explorer-file-meta';
+          const fechaText = file.modifiedTime
+            ? new Date(file.modifiedTime).toLocaleString('es-ES')
+            : 'Sin fecha';
+          metaDiv.textContent = `Actualizado: ${fechaText}`;
+
+          infoDiv.appendChild(nameDiv);
+          infoDiv.appendChild(metaDiv);
+
+          const actionsDiv = document.createElement('div');
+          actionsDiv.className = 'explorer-file-actions';
+
+          const loadBtn = document.createElement('button');
+          loadBtn.type = 'button';
+          loadBtn.className = 'explorer-load-btn';
+          loadBtn.textContent = 'Cargar';
+          loadBtn.onclick = (ev) => {
+            ev.stopPropagation();
+            selectFileFromDriveExplorer(file.id, file.name);
+          };
+
+          const renameBtn = document.createElement('button');
+          renameBtn.type = 'button';
+          renameBtn.className = 'explorer-rename-btn';
+          renameBtn.title = `Renombrar ${file.name}`;
+          renameBtn.textContent = '✏️ Renombrar';
+          renameBtn.onclick = (ev) => {
+            ev.stopPropagation();
+            openDriveRenameModal(currentExplorerScope, file.id, file.name);
+          };
+
+          const delBtn = document.createElement('button');
+          delBtn.type = 'button';
+          delBtn.className = 'explorer-delete-btn';
+          delBtn.title = `Borrar ${file.name} de Drive`;
+          delBtn.textContent = '✕';
+          delBtn.onclick = (ev) => {
+            ev.stopPropagation();
+            openDriveDeleteModal(currentExplorerScope, file.id, file.name);
+          };
+
+          actionsDiv.appendChild(loadBtn);
+          actionsDiv.appendChild(renameBtn);
+          actionsDiv.appendChild(delBtn);
+
+          itemDiv.appendChild(infoDiv);
+          itemDiv.appendChild(actionsDiv);
+          listEl.appendChild(itemDiv);
+        });
+      } catch (err) {
+        console.error(err);
+        setBadgeStatus(cfg.badgeId, cfg.labelId, 'error', 'Error en Drive', err.message || 'No se pudo listar');
+        listEl.innerHTML = `<div class="explorer-empty">Error al cargar la carpeta: ${err.message || err}</div>`;
+      }
+    }
+
+    async function selectFileFromDriveExplorer(fileId, fileName) {
+      const cfg = getDriveScopeConfig(currentExplorerScope);
+      try {
+        setBadgeStatus(cfg.badgeId, cfg.labelId, 'syncing', 'Cargando...', fileName);
+        const fileResp = await driveApiFetch(
+          `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}?alt=media`
+        );
+        const rawText = await fileResp.text();
+        const parsed = JSON.parse(rawText);
+
+        if (currentExplorerScope === 'pj') {
+          const parsedChar = parseCharacterJson(parsed);
+          if (!parsedChar) throw new Error('El archivo JSON no tiene un formato de ficha válido.');
+          addImportedCharacterRecord(parsedChar, { fileId, fileName });
+          closeModal('modalDriveExplorer');
+          updateActiveItemDriveStatus('Cargado');
+          showToast(`Cargada ficha "${fileName}" desde Drive.`);
+        } else if (currentExplorerScope === 'map') {
+          const payload = extractMapPayload(parsed);
+          if (!payload) throw new Error('El archivo JSON no tiene un formato de mapa válido.');
+          const suggested = parsed.name || fileName.replace(/\.json$/i, '');
+          addImportedMapRecord(payload, suggested, { fileId, fileName });
+          closeModal('modalDriveExplorer');
+          updateActiveItemDriveStatus('Cargado');
+          showToast(`Cargado mapa "${fileName}" desde Drive.`);
+        } else {
+          applyMasterPackage(parsed);
+          const meta = readDriveLinkMeta();
+          meta[fileName] = fileId;
+          meta.__activeFileId = fileId;
+          meta.__activeFileName = fileName;
+          writeDriveLinkMeta(meta);
+          closeModal('modalDriveExplorer');
+          updatePanelDriveStatus('Cargado');
+          showToast(`Cargado "${fileName}" desde Google Drive.`);
+        }
+      } catch (err) {
+        console.error(err);
+        setBadgeStatus(cfg.badgeId, cfg.labelId, 'error', 'Error al cargar', err.message || 'No se pudo leer el JSON');
         showToast(`No se pudo cargar desde Drive: ${err.message}`);
+      }
+    }
+
+    function openDriveRenameModal(scope, fileId, currentName) {
+      pendingRenameTarget = { scope, fileId, currentName };
+      document.getElementById('driveRenamePromptText').textContent = `Renombrar "${currentName}":`;
+      const inputEl = document.getElementById('inputDriveRename');
+      inputEl.value = currentName;
+      document.getElementById('modalDriveRename').style.display = 'flex';
+      setTimeout(() => {
+        inputEl.focus();
+        const dotIdx = currentName.lastIndexOf('.');
+        inputEl.setSelectionRange(0, dotIdx > 0 ? dotIdx : currentName.length);
+      }, 30);
+    }
+
+    function handleDriveRenameKeydown(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        confirmDriveRename();
+      } else if (event.key === 'Escape') {
+        event.preventDefault();
+        closeModal('modalDriveRename');
+      }
+    }
+
+    async function confirmDriveRename() {
+      if (!pendingRenameTarget) return;
+      const inputEl = document.getElementById('inputDriveRename');
+      let newName = inputEl ? inputEl.value.trim() : '';
+      if (!newName) {
+        showToast('Escribe un nombre válido para el archivo.');
+        return;
+      }
+
+      if (pendingRenameTarget.currentName.toLowerCase().endsWith('.json') && !newName.toLowerCase().endsWith('.json')) {
+        newName += '.json';
+      }
+
+      const { scope, fileId, currentName } = pendingRenameTarget;
+      const cfg = getDriveScopeConfig(scope);
+      pendingRenameTarget = null;
+      closeModal('modalDriveRename');
+
+      try {
+        setBadgeStatus(cfg.badgeId, cfg.labelId, 'syncing', 'Renombrando...', `${currentName} → ${newName}`);
+        const resp = await driveApiFetch(
+          `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}?fields=id,name`,
+          {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: newName })
+          }
+        );
+        const updated = await resp.json();
+        const finalName = updated.name || newName;
+
+        const meta = readDriveMeta(cfg.metaKey);
+        if (meta[currentName] === fileId) {
+          delete meta[currentName];
+        }
+        meta[finalName] = fileId;
+        if (meta.__activeFileId === fileId) {
+          meta.__activeFileName = finalName;
+        }
+        if (meta.byId) {
+          Object.keys(meta.byId).forEach(k => {
+            if (meta.byId[k] && meta.byId[k].fileId === fileId) {
+              meta.byId[k].fileName = finalName;
+            }
+          });
+        }
+        writeDriveMeta(cfg.metaKey, meta);
+
+        cfg.updateStatus('Renombrado');
+        showToast(`Renombrado a "${finalName}".`);
+        await refreshCurrentDriveExplorer();
+      } catch (err) {
+        console.error(err);
+        setBadgeStatus(cfg.badgeId, cfg.labelId, 'error', 'Error al renombrar', err.message || 'No se pudo renombrar');
+        showToast(`No se pudo renombrar en Drive: ${err.message}`);
+      }
+    }
+
+    function openDriveDeleteModal(scope, fileId, fileName) {
+      pendingDeleteTarget = { scope, fileId, fileName };
+      document.getElementById('driveDeletePromptText').textContent =
+        `Se borrará permanentemente "${fileName}" de Google Drive. ¿Continuar?`;
+      document.getElementById('modalDriveDelete').style.display = 'flex';
+    }
+
+    async function confirmDriveDelete() {
+      if (!pendingDeleteTarget) return;
+      const { scope, fileId, fileName } = pendingDeleteTarget;
+      const cfg = getDriveScopeConfig(scope);
+      pendingDeleteTarget = null;
+      closeModal('modalDriveDelete');
+
+      try {
+        setBadgeStatus(cfg.badgeId, cfg.labelId, 'syncing', 'Borrando en Drive...', fileName);
+        await driveApiFetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}`, {
+          method: 'DELETE'
+        });
+
+        const meta = readDriveMeta(cfg.metaKey);
+        if (meta[fileName] === fileId) {
+          delete meta[fileName];
+        }
+        if (meta.__activeFileId === fileId) {
+          delete meta.__activeFileId;
+          delete meta.__activeFileName;
+        }
+        if (meta.byId) {
+          Object.keys(meta.byId).forEach(k => {
+            if (meta.byId[k] && meta.byId[k].fileId === fileId) {
+              delete meta.byId[k];
+            }
+          });
+        }
+        writeDriveMeta(cfg.metaKey, meta);
+
+        cfg.updateStatus(`Borrado ${fileName}`);
+        showToast(`Borrado "${fileName}" de Google Drive.`);
+        await refreshCurrentDriveExplorer();
+      } catch (err) {
+        console.error(err);
+        setBadgeStatus(cfg.badgeId, cfg.labelId, 'error', 'Error al borrar', err.message || 'No se pudo borrar');
+        showToast(`No se pudo borrar de Drive: ${err.message}`);
       }
     }
 
@@ -2950,6 +3939,8 @@
       loadCharactersStorage();
       loadMapsStorage();
       loadActiveStateSelection();
+      updatePanelDriveStatus();
+      updateActiveItemDriveStatus();
 
       // Inicializar elementos arrastrables
       const launcher = document.getElementById('floatingDiceLauncher');
