@@ -739,10 +739,10 @@
     </div>
   </div>
 
-  <!-- VENTANA MODAL DE CONFIRMACIÓN PARA NUEVA FICHA / LIMPIAR CRÓNICA -->
+  <!-- VENTANA MODAL DE CONFIRMACIÓN PARA NUEVA CRÓNICA / LIMPIAR -->
   <div class="modal-overlay" id="modalNewDocConfirm" onclick="handleOverlayClose(event, 'modalNewDocConfirm')">
     <div class="modal-box" onclick="event.stopPropagation()">
-      <h3>Nueva Ficha de Crónica</h3>
+      <h3>Nueva Crónica</h3>
       <p style="font-size: 0.85rem; color: #cbd5e1;">Se vaciará el contenido de la crónica activa para comenzar de cero y se desvinculará su archivo en Drive.</p>
       <div class="modal-buttons">
         <button class="btn-cancel" onclick="closeModal('modalNewDocConfirm')">No</button>
@@ -880,9 +880,9 @@
         </div>
         
         <div class="editor-actions">
-          <button class="btn-new-doc" onclick="openNewDocConfirmModal()">🆕 Nueva ficha</button>
+          <button class="btn-new-doc" onclick="openNewDocConfirmModal()">🆕 Nueva crónica</button>
           <button class="btn-drive-save" onclick="saveCronicaToGoogleDrive()">☁️ Guardar en Drive</button>
-          <button class="btn-drive" onclick="openDriveExplorer('cronica')">📥 Cargar / Gestionar fichas</button>
+          <button class="btn-drive" onclick="openDriveExplorer('cronica')">📥 Cargar / Gestionar crónicas</button>
           <button class="btn-drive-refresh" onclick="refreshCronicaFromGoogleDrive()">🔄 Actualizar</button>
           <button onclick="exportCronicaJson()">💾 Guardar JSON</button>
           <label class="btn-upload">
@@ -1056,7 +1056,7 @@
       }
       writeDriveMeta(CRONICA_DRIVE_META_KEY, meta);
 
-      updateDocDriveStatus('Ficha vacía en blanco');
+      updateDocDriveStatus('Crónica vacía en blanco');
       closeModal('modalNewDocConfirm');
       showToast('Contenido de la crónica limpiado para empezar de cero.');
     }
@@ -1820,7 +1820,7 @@
       document.getElementById('driveExplorerTitle').textContent =
         currentExplorerScope === 'list'
           ? 'EXPLORADOR DRIVE · LISTAS DE CRÓNICAS'
-          : 'EXPLORADOR DRIVE · FICHAS DE CRÓNICAS';
+          : 'EXPLORADOR DRIVE · CRÓNICAS';
       document.getElementById('driveExplorerSubtitle').textContent =
         `Carpeta: ${DRIVE_CONFIG.rootFolderName} / ${cfg.folderLabel}`;
       document.getElementById('driveExplorerList').innerHTML =
@@ -1853,14 +1853,12 @@
           `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime,mimeType)&orderBy=modifiedTime%20desc&pageSize=100`
         );
         const listJson = await listResp.json();
-        const files = (listJson.files || []).filter(f =>
-          f.name.toLowerCase().endsWith('.json') || f.mimeType === 'application/json'
-        );
+        const files = listJson.files || [];
 
         cfg.updateStatus();
 
         if (files.length === 0) {
-          listEl.innerHTML = `<div class="explorer-empty">No hay archivos JSON en <strong>${DRIVE_CONFIG.rootFolderName} / ${cfg.folderLabel}</strong> todavía.</div>`;
+          listEl.innerHTML = `<div class="explorer-empty">No hay archivos en <strong>${DRIVE_CONFIG.rootFolderName} / ${cfg.folderLabel}</strong> todavía.</div>`;
           return;
         }
 
