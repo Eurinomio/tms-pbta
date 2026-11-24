@@ -149,11 +149,12 @@
     }
 
     button.btn-drive-delete {
-      background: #991b1b;
+      background: #b91c1c;
+      border: 1px solid #fca5a5;
     }
 
     button.btn-drive-delete:hover {
-      background: #b91c1c;
+      background: #991b1b;
     }
 
     /* --- MODAL FLOTANTE DE CONFIRMACIÓN PARA NUEVA FICHA --- */
@@ -308,6 +309,13 @@
       color: #cbd5e1;
     }
 
+    .drive-explorer-subbar.delete-mode {
+      background: rgba(127, 29, 29, 0.35);
+      border-bottom-color: #f87171;
+      color: #fecaca;
+      font-weight: 600;
+    }
+
     .drive-explorer-list {
       padding: 12px 15px;
       overflow-y: auto;
@@ -381,8 +389,11 @@
       flex-shrink: 0;
     }
 
-    .drive-file-delete-btn:hover {
+    .drive-file-delete-btn:hover,
+    .drive-file-delete-btn.highlighted {
       background: #dc2626;
+      border-color: #fca5a5;
+      box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.55);
       transform: translateY(-1px);
     }
 
@@ -1370,7 +1381,7 @@
         <span>EXPLORADOR DRIVE · TMS PBTA / PJ</span>
         <button class="concept-modal-close" onclick="closeDriveExplorer(event)" title="Cerrar">×</button>
       </div>
-      <div class="drive-explorer-subbar">
+      <div class="drive-explorer-subbar" id="driveExplorerSubbar">
         <span id="driveExplorerPath">Carpeta: TMS PBTA / PJ</span>
         <button type="button" class="roll-btn" style="background: #334155;" onclick="refreshDriveExplorerList()">🔄 Refrescar lista</button>
       </div>
@@ -1465,7 +1476,7 @@
       <div id="asistenciaSubModal">
         <button class="asistencia-close-btn" onclick="closeAsistenciaSubModal()">✕</button>
         <div style="font-family: 'Cinzel', serif; font-size: 0.8rem; color: #38bdf8; font-weight: 700;" id="asistenciaPromptText">ELIGE EL DADO A SUSTITUIR:</div>
-        
+
         <!-- Paso 1: Selección de iconos de dados -->
         <div class="dice-container" id="asistenciaDiceChoice">
           <div class="d6 d6-white" onclick="selectAsistenciaTarget('white')" title="Elegir Dado Blanco">B</div>
@@ -1497,7 +1508,7 @@
     <div class="dice-tab-content" id="diceTab2">
       <div id="damageMaxIndicator" style="font-size: 0.75rem; font-weight: 600; color: #38bdf8;">MAX: -</div>
       <div id="damageDiceContainer" class="dice-container"></div>
-      
+
       <!-- Botones de Acción Iniciales -->
       <div class="roll-btn-container" id="damageActionBtns">
         <button class="roll-btn" style="background: #ef4444;" onclick="rollDamage(false)">Daño desafortunado</button>
@@ -1519,7 +1530,7 @@
     <div class="dice-tab-content" id="diceTab3">
       <div id="healingMaxIndicator" style="font-size: 0.75rem; font-weight: 600; color: #38bdf8;">MAX: -</div>
       <div id="healingDiceContainer" class="dice-container"></div>
-      
+
       <!-- Botones de Acción Iniciales -->
       <div class="roll-btn-container" id="healingActionBtns">
         <button class="roll-btn" style="background: #0d9488;" onclick="rollHealing(false)">Recuperación</button>
@@ -1555,8 +1566,8 @@
     <div class="btn-group">
       <button type="button" class="btn-new-sheet" onclick="openNewSheetConfirmModal()">🆕 Nueva ficha</button>
       <button type="button" class="btn-drive-save" onclick="savePjToDrive()">☁️ Guardar online</button>
-      <button type="button" class="btn-drive-load" onclick="openPjDriveExplorer()">📥 Cargar ficha online</button>
-<button type="button" class="btn-drive-delete" onclick="openPjDriveExplorer('delete')">🗑️ Borrar de Drive</button>
+      <button type="button" class="btn-drive-load" onclick="openPjDriveExplorer('load')">📥 Cargar ficha online</button>
+      <button type="button" class="btn-drive-delete" onclick="openPjDriveExplorer('delete')">🗑️ Borrar de Drive</button>
       <button type="button" class="btn-drive-refresh" onclick="refreshPjFromDrive()">🔄 Actualizar</button>
       <button type="button" onclick="printSheet()">🖨️ Imprimir / Guardar PDF</button>
       <button type="button" onclick="exportData()">💾 Guardar JSON</button>
@@ -1568,7 +1579,7 @@
   </div>
 
   <div class="sheet-container">
-    
+
     <div class="header-row" style="margin-bottom: 15px;">
       <div class="header-item" style="flex: 2;">
         <label>NOMBRE:</label>
@@ -1581,9 +1592,9 @@
     </div>
 
     <div class="sheet-grid">
-      
+
       <div class="col">
-        
+
         <div class="box">
           <div class="box-title">
             <span class="concept-title-left">
@@ -1736,7 +1747,7 @@
       </div>
 
       <div class="col">
-        
+
         <div class="box">
           <div class="box-title">EQUIPAMIENTO</div>
           <div class="table-container">
@@ -1991,6 +2002,7 @@
     };
 
     let pendingDeleteDriveFile = null;
+    let driveExplorerMode = 'load';
 
     let localAutoSaveTimer = null;
     let driveAutoSaveTimer = null;
@@ -2381,35 +2393,57 @@
       }
     }
 
-async function openPjDriveExplorer(mode = 'load') {
-  const modal = document.getElementById('driveExplorerModal');
-  const listEl = document.getElementById('driveExplorerList');
-  const pathEl = document.getElementById('driveExplorerPath');
-  if (pathEl) {
-    pathEl.textContent = mode === 'delete'
-      ? 'Carpeta: TMS PBTA / PJ · Modo borrado (pulsa ✕)'
-      : 'Carpeta: TMS PBTA / PJ';
-  }
-  if (listEl) {
-    listEl.innerHTML = '<div class="drive-empty-state">Solicitando acceso a Google Drive...</div>';
-  }
-  if (modal) {
-    modal.style.display = 'flex';
-  }
-  try {
-    await ensureDriveAuth(false);
-    await refreshDriveExplorerList();
-  } catch (err) {
-    console.error('Error de autenticación en Drive:', err);
-    setDriveStatus('error', 'Error de acceso', err.message || 'Autenticación cancelada o fallida');
-    if (listEl) {
-      listEl.innerHTML = `<div class="drive-empty-state">No se completó la autenticación con Google Drive: ${err.message || err}</div>`;
+    function applyExplorerModeVisuals() {
+      const pathEl = document.getElementById('driveExplorerPath');
+      const subbarEl = document.getElementById('driveExplorerSubbar');
+      const isDelete = driveExplorerMode === 'delete';
+
+      if (subbarEl) {
+        subbarEl.classList.toggle('delete-mode', isDelete);
+      }
+      if (pathEl) {
+        pathEl.textContent = isDelete
+          ? 'Carpeta: TMS PBTA / PJ · Modo borrado (pulsa ✕ en un archivo)'
+          : 'Carpeta: TMS PBTA / PJ';
+      }
+
+      const delButtons = document.querySelectorAll('.drive-file-delete-btn');
+      delButtons.forEach(btn => {
+        btn.classList.toggle('highlighted', isDelete);
+      });
+
+      if (isDelete && delButtons.length > 0) {
+        delButtons[0].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
     }
-  }
-}
+
+    async function openPjDriveExplorer(mode = 'load') {
+      driveExplorerMode = mode === 'delete' ? 'delete' : 'load';
+      const modal = document.getElementById('driveExplorerModal');
+      const listEl = document.getElementById('driveExplorerList');
+      applyExplorerModeVisuals();
+
+      if (listEl) {
+        listEl.innerHTML = '<div class="drive-empty-state">Solicitando acceso a Google Drive...</div>';
+      }
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+      try {
+        await ensureDriveAuth(false);
+        await refreshDriveExplorerList();
+      } catch (err) {
+        console.error('Error de autenticación en Drive:', err);
+        setDriveStatus('error', 'Error de acceso', err.message || 'Autenticación cancelada o fallida');
+        if (listEl) {
+          listEl.innerHTML = `<div class="drive-empty-state">No se completó la autenticación con Google Drive: ${err.message || err}</div>`;
+        }
+      }
+    }
 
     function closeDriveExplorer(event) {
       if (event) event.stopPropagation();
+      driveExplorerMode = 'load';
       const modal = document.getElementById('driveExplorerModal');
       if (modal) {
         modal.style.display = 'none';
@@ -2529,7 +2563,7 @@ async function openPjDriveExplorer(mode = 'load') {
 
           const delBtn = document.createElement('button');
           delBtn.type = 'button';
-          delBtn.className = 'drive-file-delete-btn';
+          delBtn.className = 'drive-file-delete-btn' + (driveExplorerMode === 'delete' ? ' highlighted' : '');
           delBtn.title = `Borrar ${file.name} de Drive`;
           delBtn.textContent = '✕';
           delBtn.onclick = (ev) => openDriveDeleteConfirmModal(file.id, file.name, ev);
@@ -2541,6 +2575,8 @@ async function openPjDriveExplorer(mode = 'load') {
           itemBtn.appendChild(actionsDiv);
           listEl.appendChild(itemBtn);
         });
+
+        applyExplorerModeVisuals();
       } catch (err) {
         console.error('Error al listar PJ en Drive:', err);
         setDriveStatus('error', 'Error en Drive', err.message || 'No se pudo listar PJ');
@@ -2578,7 +2614,7 @@ async function openPjDriveExplorer(mode = 'load') {
     async function refreshPjFromDrive() {
       try {
         if (!linkedDriveFile.fileId) {
-          await openPjDriveExplorer();
+          await openPjDriveExplorer('load');
           return;
         }
         if (driveAutoSaveTimer) {
@@ -3089,7 +3125,7 @@ async function openPjDriveExplorer(mode = 'load') {
       if (currentRetoSum >= 7) {
         titleEl.innerText = "ÉXITO (" + currentRetoSum + ")";
         titleEl.style.color = "#22c55e";
-        
+
         if (currentRetoSum >= 10) {
           extraEl.innerText = "+1 etiqueta o +1 frag. XP";
           extraEl.style.color = "#22c55e";
@@ -3457,7 +3493,7 @@ async function openPjDriveExplorer(mode = 'load') {
 
       function onMove(clientX, clientY) {
         if (!isPointerDown) return;
-        
+
         const dx = Math.abs(clientX - initialX);
         const dy = Math.abs(clientY - initialY);
 
@@ -3694,7 +3730,7 @@ async function openPjDriveExplorer(mode = 'load') {
     async function exportData() {
       writeLocalSheetStorage();
       const data = getStorage().getItem('pbta_sheet_data_master_v5');
-      
+
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = document.getElementById('nombre').innerHTML;
       const nombreTexto = tempDiv.textContent || tempDiv.innerText || 'personaje';
