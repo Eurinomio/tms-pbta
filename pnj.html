@@ -53,6 +53,47 @@
       flex-wrap: wrap;
     }
 
+    .action-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .drive-status-bar {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .drive-badge {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .drive-badge.online {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .drive-badge.syncing {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .drive-badge.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
     .btn-group {
       display: flex;
       gap: 8px;
@@ -87,12 +128,277 @@
       background: #115e59;
     }
 
+    button.btn-drive-save {
+      background: #0284c7;
+    }
+
+    button.btn-drive-save:hover {
+      background: #0369a1;
+    }
+
     button.btn-reset {
       background: #ef4444;
     }
 
     button.btn-reset:hover {
       background: #dc2626;
+    }
+
+    /* --- MODALES FLOTANTES DE GESTIÓN DE DRIVE --- */
+    #driveExplorerModal,
+    #driveRenameModal,
+    #driveDeleteConfirmModal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      user-select: none;
+    }
+
+    #driveExplorerModal { z-index: 1250; }
+    #driveRenameModal { z-index: 1320; }
+    #driveDeleteConfirmModal { z-index: 1350; }
+
+    .drive-explorer-card,
+    .drive-action-modal-card {
+      width: 520px;
+      max-width: 100%;
+      background: #1e293b;
+      color: #f8fafc;
+      border-radius: 10px;
+      border: 1.5px solid #38bdf8;
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .drive-explorer-card {
+      max-height: 82vh;
+    }
+
+    .drive-action-modal-card {
+      width: 420px;
+    }
+
+    #driveDeleteConfirmModal .drive-action-modal-card {
+      border-color: #f87171;
+    }
+
+    .drive-explorer-header,
+    .drive-action-modal-header {
+      background: #0f172a;
+      padding: 11px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+    }
+
+    .drive-explorer-header span,
+    .drive-action-modal-header span {
+      font-family: 'Cinzel', serif;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #38bdf8;
+      letter-spacing: 0.04em;
+    }
+
+    #driveDeleteConfirmModal .drive-action-modal-header span {
+      color: #fca5a5;
+    }
+
+    .drive-explorer-subbar {
+      padding: 8px 15px;
+      background: rgba(15, 23, 42, 0.6);
+      border-bottom: 1px solid #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: #cbd5e1;
+    }
+
+    .drive-explorer-list {
+      padding: 12px 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .drive-file-item {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.15s;
+      text-align: left;
+    }
+
+    .drive-file-item:hover {
+      border-color: #38bdf8;
+      background: #172554;
+    }
+
+    .drive-file-info {
+      flex: 1;
+      min-width: 0;
+      cursor: pointer;
+    }
+
+    .drive-file-name {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: #f8fafc;
+      word-break: break-word;
+    }
+
+    .drive-file-meta {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    .drive-file-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .drive-file-load-tag {
+      background: #0284c7;
+      color: #ffffff;
+      padding: 5px 9px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .drive-file-load-tag:hover {
+      background: #0369a1;
+    }
+
+    .drive-file-rename-btn {
+      background: #334155;
+      color: #f8fafc;
+      border: 1px solid #64748b;
+      padding: 5px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .drive-file-rename-btn:hover {
+      background: #475569;
+      border-color: #38bdf8;
+    }
+
+    .drive-file-delete-btn {
+      background: #991b1b;
+      color: #ffffff;
+      border: 1px solid #ef4444;
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      line-height: 1;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .drive-file-delete-btn:hover {
+      background: #dc2626;
+      border-color: #fca5a5;
+      transform: translateY(-1px);
+    }
+
+    .drive-empty-state {
+      text-align: center;
+      padding: 24px 12px;
+      color: #94a3b8;
+      font-size: 0.84rem;
+    }
+
+    .drive-action-modal-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-align: center;
+    }
+
+    .drive-action-modal-text {
+      font-size: 0.9rem;
+      font-weight: 600;
+      line-height: 1.45;
+      color: #f8fafc;
+      word-break: break-word;
+    }
+
+    .drive-rename-input {
+      width: 100%;
+      background: #0f172a;
+      color: #f8fafc;
+      border: 1px solid #38bdf8;
+      border-radius: 6px;
+      padding: 9px 11px;
+      font-size: 0.88rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+    }
+
+    .drive-action-modal-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-confirm-yes {
+      background: #dc2626;
+      color: #ffffff;
+      padding: 8px 16px;
+    }
+
+    .btn-confirm-yes:hover {
+      background: #b91c1c;
+    }
+
+    .btn-confirm-save {
+      background: #0284c7;
+      color: #ffffff;
+      padding: 8px 16px;
+    }
+
+    .btn-confirm-save:hover {
+      background: #0369a1;
+    }
+
+    .btn-confirm-no {
+      background: #475569;
+      color: #ffffff;
+      padding: 8px 16px;
+    }
+
+    .btn-confirm-no:hover {
+      background: #334155;
     }
 
     .sheet-container {
@@ -526,7 +832,7 @@
         background: white;
         padding: 0;
       }
-      .action-bar, #floatingToolbar, .gemini-btn, .help-btn, .modal-backdrop, .toast-msg {
+      .action-bar, #floatingToolbar, .gemini-btn, .help-btn, .modal-backdrop, .toast-msg, #driveExplorerModal, #driveRenameModal, #driveDeleteConfirmModal {
         display: none !important;
       }
       .sheet-container {
@@ -614,13 +920,71 @@
     <button onmousedown="toggleStrike(event)"><s>S</s> Tachar / Limpiar</button>
   </div>
 
+  <!-- MODAL FLOTANTE PARA RENOMBRAR ARCHIVO EN DRIVE -->
+  <div id="driveRenameModal" onclick="closeDriveRenameModal(event)">
+    <div class="drive-action-modal-card" onclick="event.stopPropagation()">
+      <div class="drive-action-modal-header">
+        <span>RENOMBRAR ARCHIVO EN DRIVE</span>
+        <button type="button" class="modal-close" style="color: #94a3b8;" onclick="closeDriveRenameModal(event)" title="Cerrar">✕</button>
+      </div>
+      <div class="drive-action-modal-body">
+        <div class="drive-action-modal-text" id="driveRenameCurrentLabel">Nuevo nombre para la ficha de PNJ:</div>
+        <input type="text" id="driveRenameInput" class="drive-rename-input" onkeydown="handleRenameInputKeydown(event)" placeholder="Nombre del archivo...">
+        <div class="drive-action-modal-actions">
+          <button type="button" class="btn-confirm-save" onclick="confirmRenamePnjInDrive()">💾 Guardar nombre</button>
+          <button type="button" class="btn-confirm-no" onclick="closeDriveRenameModal(event)">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL FLOTANTE DE CONFIRMACIÓN PARA BORRAR ARCHIVO EN DRIVE -->
+  <div id="driveDeleteConfirmModal" onclick="closeDriveDeleteConfirmModal(event)">
+    <div class="drive-action-modal-card" onclick="event.stopPropagation()">
+      <div class="drive-action-modal-header">
+        <span>CONFIRMAR BORRADO EN DRIVE</span>
+        <button type="button" class="modal-close" style="color: #fca5a5;" onclick="closeDriveDeleteConfirmModal(event)" title="Cerrar">✕</button>
+      </div>
+      <div class="drive-action-modal-body">
+        <div class="drive-action-modal-text" id="driveDeleteConfirmText">¿Seguro que quieres borrar esta ficha de PNJ de Google Drive?</div>
+        <div class="drive-action-modal-actions">
+          <button type="button" class="btn-confirm-yes" onclick="confirmDeletePnjFromDrive()">Sí, borrar</button>
+          <button type="button" class="btn-confirm-no" onclick="closeDriveDeleteConfirmModal(event)">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VENTANA FLOTANTE DE EXPLORADOR DE GOOGLE DRIVE (SUBCARPETA PNJ) -->
+  <div id="driveExplorerModal" onclick="closeDriveExplorer(event)">
+    <div class="drive-explorer-card" onclick="event.stopPropagation()">
+      <div class="drive-explorer-header">
+        <span>EXPLORADOR DRIVE · TMS PBTA / PNJ</span>
+        <button type="button" class="modal-close" style="color: #94a3b8;" onclick="closeDriveExplorer(event)" title="Cerrar">✕</button>
+      </div>
+      <div class="drive-explorer-subbar">
+        <span>Carpeta: TMS PBTA / PNJ</span>
+        <button type="button" style="padding: 5px 10px; font-size: 0.74rem; background: #334155;" onclick="refreshDriveExplorerList()">🔄 Refrescar lista</button>
+      </div>
+      <div class="drive-explorer-list" id="driveExplorerList">
+        <div class="drive-empty-state">Pulsa «Cargar / Gestionar fichas» para listar los PNJ en Drive.</div>
+      </div>
+    </div>
+  </div>
+
   <div class="action-bar">
-    <div style="font-family: 'Cinzel', serif; font-weight: 700; color: var(--accent-color);">PBTA - FICHA DE PNJ</div>
+    <div class="action-title-group">
+      <div style="font-family: 'Cinzel', serif; font-weight: 700; color: var(--accent-color);">PBTA - FICHA DE PNJ</div>
+      <div class="drive-status-bar">
+        <span id="driveStatusBadge" class="drive-badge">Drive: local</span>
+        <span id="driveLinkedFileLabel">Sin archivo en TMS PBTA / PNJ</span>
+      </div>
+    </div>
     <div class="btn-group">
-      <button class="btn-drive" onclick="saveToGoogleDrive()">☁️ Guardar en Drive</button>
-      <button class="btn-drive" onclick="loadFromGoogleDrive()">📥 Cargar de Drive</button>
-      <button onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
-      <button onclick="exportData()">💾 Guardar JSON</button>
+      <button type="button" class="btn-drive-save" onclick="saveToGoogleDrive()">☁️ Guardar en Drive</button>
+      <button type="button" class="btn-drive" onclick="openPnjDriveExplorer()">📥 Cargar / Gestionar fichas</button>
+      <button type="button" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+      <button type="button" onclick="exportData()">💾 Guardar JSON</button>
       <label class="btn">
         📂 Cargar JSON
         <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importData(event)">
@@ -865,6 +1229,9 @@
     let cachedRootFolderId = DRIVE_CONFIG.rootFolderId || null;
     let cachedPnjFolderId = null;
 
+    let pendingRenameDriveFile = null;
+    let pendingDeleteDriveFile = null;
+
     const PNJ_RANDOM_CONCEPTS = [
       'Archivero ciego que intercambia secretos de la ciudad a cambio de recuerdos olvidados.',
       'Capitán de guardia cansado de las intrigas nobles, leal solo a los barrios bajos.',
@@ -891,6 +1258,18 @@
       window.__toastTimer = setTimeout(() => {
         toast.classList.remove('show');
       }, 3600);
+    }
+
+    function setDriveStatus(mode, badgeText, detailText) {
+      const badgeEl = document.getElementById('driveStatusBadge');
+      const labelEl = document.getElementById('driveLinkedFileLabel');
+      if (badgeEl) {
+        badgeEl.className = 'drive-badge' + (mode ? ' ' + mode : '');
+        badgeEl.textContent = badgeText;
+      }
+      if (labelEl && detailText !== undefined) {
+        labelEl.textContent = detailText;
+      }
     }
 
     function getPlainTextById(id) {
@@ -1331,9 +1710,23 @@
       localStorage.setItem(DRIVE_META_STORAGE_KEY, JSON.stringify(meta));
     }
 
+    function updateDriveStatusFromMeta(customNote) {
+      const meta = readDriveLinkMeta();
+      const activeFileName = meta.__activeFileName || null;
+      if (activeFileName) {
+        const notePart = customNote ? ` · ${customNote}` : '';
+        setDriveStatus('online', 'Drive vinculado', `Archivo: ${activeFileName}${notePart}`);
+      } else if (driveAccessToken && Date.now() < driveTokenExpiresAt) {
+        setDriveStatus('online', 'Drive conectado', customNote || 'Sin archivo vinculado · TMS PBTA / PNJ');
+      } else {
+        setDriveStatus('', 'Drive: local', customNote || 'Sin archivo en TMS PBTA / PNJ');
+      }
+    }
+
     async function saveToGoogleDrive() {
       try {
         autoSave();
+        setDriveStatus('syncing', 'Guardando en Drive...', 'Conectando con TMS PBTA / PNJ');
         showToast('Conectando con Google Drive...');
         const folderId = await ensurePnjFolderId();
         const fileName = `pnj_${getSanitizedPnjName()}.json`;
@@ -1378,7 +1771,10 @@
           );
           const updJson = await updResp.json();
           meta[fileName] = updJson.id;
+          meta.__activeFileId = updJson.id;
+          meta.__activeFileName = updJson.name || fileName;
           writeDriveLinkMeta(meta);
+          updateDriveStatusFromMeta('Guardado');
           showToast(`Actualizado en Drive (${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}/${fileName}).`);
         } else {
           const createMetadata = {
@@ -1405,51 +1801,148 @@
           );
           const crtJson = await crtResp.json();
           meta[fileName] = crtJson.id;
+          meta.__activeFileId = crtJson.id;
+          meta.__activeFileName = crtJson.name || fileName;
           writeDriveLinkMeta(meta);
+          updateDriveStatusFromMeta('Creado y guardado');
           showToast(`Guardado en Drive (${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}/${fileName}).`);
         }
       } catch (err) {
         console.error(err);
+        setDriveStatus('error', 'Error al guardar', err.message || 'No se pudo guardar en Drive');
         showToast(`No se pudo guardar en Drive: ${err.message}`);
       }
     }
 
-    async function loadFromGoogleDrive() {
+    async function openPnjDriveExplorer() {
+      const modal = document.getElementById('driveExplorerModal');
+      const listEl = document.getElementById('driveExplorerList');
+      if (listEl) {
+        listEl.innerHTML = '<div class="drive-empty-state">Conectando con Google Drive...</div>';
+      }
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+
       try {
-        showToast('Buscando fichas de PNJ en Drive...');
+        await getDriveAccessToken('');
+        await refreshDriveExplorerList();
+      } catch (err) {
+        console.error(err);
+        setDriveStatus('error', 'Error de acceso', err.message || 'Autenticación cancelada o fallida');
+        if (listEl) {
+          listEl.innerHTML = `<div class="drive-empty-state">No se pudo conectar con Google Drive: ${err.message || err}</div>`;
+        }
+      }
+    }
+
+    function closeDriveExplorer(event) {
+      if (event) event.stopPropagation();
+      const modal = document.getElementById('driveExplorerModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    async function refreshDriveExplorerList() {
+      const listEl = document.getElementById('driveExplorerList');
+      if (listEl) {
+        listEl.innerHTML = '<div class="drive-empty-state">Cargando fichas de PNJ en TMS PBTA / PNJ...</div>';
+      }
+
+      try {
+        setDriveStatus('syncing', 'Consultando Drive...', 'Buscando JSON en TMS PBTA / PNJ');
         const folderId = await ensurePnjFolderId();
         const q = encodeURIComponent(
           `'${escapeDriveQueryValue(folderId)}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`
         );
         const listResp = await driveApiFetch(
-          `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime)&orderBy=modifiedTime desc&pageSize=30`
+          `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime,mimeType)&orderBy=modifiedTime%20desc&pageSize=100`
         );
         const listJson = await listResp.json();
-        const files = listJson.files || [];
-
-        if (files.length === 0) {
-          showToast(`No hay archivos de PNJ en ${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}.`);
-          return;
-        }
-
-        const opciones = files
-          .map((f, idx) => `${idx + 1}. ${f.name}`)
-          .join('\n');
-        const selection = prompt(
-          `Selecciona el número de la ficha de PNJ a cargar desde ${DRIVE_CONFIG.rootFolderName}/${DRIVE_CONFIG.subFolderName}:\n\n${opciones}`,
-          '1'
+        const files = (listJson.files || []).filter(f =>
+          f.name.toLowerCase().endsWith('.json') || f.mimeType === 'application/json'
         );
-        if (!selection) return;
 
-        const chosenIndex = parseInt(selection.trim(), 10) - 1;
-        if (isNaN(chosenIndex) || chosenIndex < 0 || chosenIndex >= files.length) {
-          showToast('Selección no válida.');
+        updateDriveStatusFromMeta();
+
+        if (!listEl) return;
+        if (files.length === 0) {
+          listEl.innerHTML = `<div class="drive-empty-state">No hay archivos JSON de PNJ en <strong>${DRIVE_CONFIG.rootFolderName} / ${DRIVE_CONFIG.subFolderName}</strong> todavía.</div>`;
           return;
         }
 
-        const chosenFile = files[chosenIndex];
+        listEl.innerHTML = '';
+        files.forEach(file => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'drive-file-item';
+
+          const infoDiv = document.createElement('div');
+          infoDiv.className = 'drive-file-info';
+          infoDiv.onclick = () => selectPnjFromDriveExplorer(file.id, file.name);
+
+          const nameDiv = document.createElement('div');
+          nameDiv.className = 'drive-file-name';
+          nameDiv.textContent = file.name;
+
+          const metaDiv = document.createElement('div');
+          metaDiv.className = 'drive-file-meta';
+          const fechaText = file.modifiedTime
+            ? new Date(file.modifiedTime).toLocaleString('es-ES')
+            : 'Sin fecha';
+          metaDiv.textContent = `Actualizado: ${fechaText}`;
+
+          infoDiv.appendChild(nameDiv);
+          infoDiv.appendChild(metaDiv);
+
+          const actionsDiv = document.createElement('div');
+          actionsDiv.className = 'drive-file-actions';
+
+          const loadBtn = document.createElement('button');
+          loadBtn.type = 'button';
+          loadBtn.className = 'drive-file-load-tag';
+          loadBtn.textContent = 'Cargar';
+          loadBtn.onclick = (ev) => {
+            ev.stopPropagation();
+            selectPnjFromDriveExplorer(file.id, file.name);
+          };
+
+          const renameBtn = document.createElement('button');
+          renameBtn.type = 'button';
+          renameBtn.className = 'drive-file-rename-btn';
+          renameBtn.title = `Renombrar ${file.name}`;
+          renameBtn.textContent = '✏️ Renombrar';
+          renameBtn.onclick = (ev) => openDriveRenameModal(file.id, file.name, ev);
+
+          const delBtn = document.createElement('button');
+          delBtn.type = 'button';
+          delBtn.className = 'drive-file-delete-btn';
+          delBtn.title = `Borrar ${file.name} de Drive`;
+          delBtn.textContent = '✕';
+          delBtn.onclick = (ev) => openDriveDeleteConfirmModal(file.id, file.name, ev);
+
+          actionsDiv.appendChild(loadBtn);
+          actionsDiv.appendChild(renameBtn);
+          actionsDiv.appendChild(delBtn);
+
+          itemDiv.appendChild(infoDiv);
+          itemDiv.appendChild(actionsDiv);
+          listEl.appendChild(itemDiv);
+        });
+      } catch (err) {
+        console.error(err);
+        setDriveStatus('error', 'Error en Drive', err.message || 'No se pudo listar PNJ');
+        if (listEl) {
+          listEl.innerHTML = `<div class="drive-empty-state">Error al cargar la carpeta PNJ: ${err.message || err}</div>`;
+        }
+      }
+    }
+
+    async function selectPnjFromDriveExplorer(fileId, fileName) {
+      try {
+        setDriveStatus('syncing', 'Cargando ficha...', fileName);
         const fileResp = await driveApiFetch(
-          `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(chosenFile.id)}?alt=media`
+          `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}?alt=media`
         );
         const rawText = await fileResp.text();
         JSON.parse(rawText);
@@ -1458,17 +1951,170 @@
         loadAutoSave();
 
         const meta = readDriveLinkMeta();
-        meta[chosenFile.name] = chosenFile.id;
+        meta[fileName] = fileId;
+        meta.__activeFileId = fileId;
+        meta.__activeFileName = fileName;
         writeDriveLinkMeta(meta);
 
-        showToast(`Cargado "${chosenFile.name}" desde Google Drive.`);
+        closeDriveExplorer();
+        updateDriveStatusFromMeta('Cargado');
+        showToast(`Cargado "${fileName}" desde Google Drive.`);
       } catch (err) {
         console.error(err);
+        setDriveStatus('error', 'Error al cargar', err.message || 'No se pudo leer el JSON');
         showToast(`No se pudo cargar desde Drive: ${err.message}`);
       }
     }
 
-    window.onload = loadAutoSave;
+    function openDriveRenameModal(fileId, currentName, event) {
+      if (event) event.stopPropagation();
+      pendingRenameDriveFile = { fileId, currentName };
+      const labelEl = document.getElementById('driveRenameCurrentLabel');
+      const inputEl = document.getElementById('driveRenameInput');
+      if (labelEl) {
+        labelEl.textContent = `Renombrar "${currentName}":`;
+      }
+      if (inputEl) {
+        inputEl.value = currentName;
+        setTimeout(() => {
+          inputEl.focus();
+          const dotIdx = currentName.lastIndexOf('.');
+          inputEl.setSelectionRange(0, dotIdx > 0 ? dotIdx : currentName.length);
+        }, 30);
+      }
+      const modal = document.getElementById('driveRenameModal');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+    }
+
+    function closeDriveRenameModal(event) {
+      if (event) event.stopPropagation();
+      pendingRenameDriveFile = null;
+      const modal = document.getElementById('driveRenameModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    function handleRenameInputKeydown(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        confirmRenamePnjInDrive();
+      } else if (event.key === 'Escape') {
+        event.preventDefault();
+        closeDriveRenameModal();
+      }
+    }
+
+    async function confirmRenamePnjInDrive() {
+      if (!pendingRenameDriveFile) return;
+      const inputEl = document.getElementById('driveRenameInput');
+      let newName = inputEl ? inputEl.value.trim() : '';
+      if (!newName) {
+        showToast('Escribe un nombre válido para el archivo.');
+        return;
+      }
+
+      if (pendingRenameDriveFile.currentName.toLowerCase().endsWith('.json') && !newName.toLowerCase().endsWith('.json')) {
+        newName += '.json';
+      }
+
+      const { fileId, currentName } = pendingRenameDriveFile;
+      closeDriveRenameModal();
+
+      try {
+        setDriveStatus('syncing', 'Renombrando...', `${currentName} → ${newName}`);
+        const resp = await driveApiFetch(
+          `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}?fields=id,name`,
+          {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: newName })
+          }
+        );
+        const updated = await resp.json();
+        const finalName = updated.name || newName;
+
+        const meta = readDriveLinkMeta();
+        if (meta[currentName] === fileId) {
+          delete meta[currentName];
+        }
+        meta[finalName] = fileId;
+        if (meta.__activeFileId === fileId) {
+          meta.__activeFileName = finalName;
+        }
+        writeDriveLinkMeta(meta);
+
+        updateDriveStatusFromMeta('Renombrado');
+        showToast(`Renombrado a "${finalName}".`);
+        await refreshDriveExplorerList();
+      } catch (err) {
+        console.error(err);
+        setDriveStatus('error', 'Error al renombrar', err.message || 'No se pudo renombrar');
+        showToast(`No se pudo renombrar en Drive: ${err.message}`);
+      }
+    }
+
+    function openDriveDeleteConfirmModal(fileId, fileName, event) {
+      if (event) event.stopPropagation();
+      pendingDeleteDriveFile = { fileId, fileName };
+      const textEl = document.getElementById('driveDeleteConfirmText');
+      if (textEl) {
+        textEl.textContent = `Se borrará permanentemente "${fileName}" de Google Drive. ¿Continuar?`;
+      }
+      const modal = document.getElementById('driveDeleteConfirmModal');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+    }
+
+    function closeDriveDeleteConfirmModal(event) {
+      if (event) event.stopPropagation();
+      pendingDeleteDriveFile = null;
+      const modal = document.getElementById('driveDeleteConfirmModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    async function confirmDeletePnjFromDrive() {
+      if (!pendingDeleteDriveFile) return;
+      const { fileId, fileName } = pendingDeleteDriveFile;
+      closeDriveDeleteConfirmModal();
+
+      try {
+        setDriveStatus('syncing', 'Borrando en Drive...', fileName);
+        await driveApiFetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}`, {
+          method: 'DELETE'
+        });
+
+        const meta = readDriveLinkMeta();
+        if (meta[fileName] === fileId) {
+          delete meta[fileName];
+        }
+        if (meta.__activeFileId === fileId) {
+          delete meta.__activeFileId;
+          delete meta.__activeFileName;
+        }
+        writeDriveLinkMeta(meta);
+
+        updateDriveStatusFromMeta(`Borrado ${fileName}`);
+        showToast(`Borrado "${fileName}" de Google Drive.`);
+        await refreshDriveExplorerList();
+      } catch (err) {
+        console.error(err);
+        setDriveStatus('error', 'Error al borrar', err.message || 'No se pudo borrar el archivo');
+        showToast(`No se pudo borrar de Drive: ${err.message}`);
+      }
+    }
+
+    function initPnjPage() {
+      loadAutoSave();
+      updateDriveStatusFromMeta();
+    }
+
+    window.onload = initPnjPage;
   </script>
 </body>
 </html>
