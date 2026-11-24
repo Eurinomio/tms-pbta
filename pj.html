@@ -2029,12 +2029,31 @@
       return true;
     }
 
-    function ensureDriveAuth(forcePrompt = false) {
-      return new Promise((resolve, reject) => {
-        if (!forcePrompt && driveAccessToken && Date.now() < driveTokenExpiresAt) {
-          resolve(driveAccessToken);
+    function waitForGisScript(timeoutMs = 5000) {
+      return new Promise((resolve) => {
+        if (window.google && window.google.accounts && window.google.accounts.oauth2) {
+          resolve(true);
           return;
         }
+        const start = Date.now();
+        const interval = setInterval(() => {
+          if (window.google && window.google.accounts && window.google.accounts.oauth2) {
+            clearInterval(interval);
+            resolve(true);
+          } else if (Date.now() - start >= timeoutMs) {
+            clearInterval(interval);
+            resolve(false);
+          }
+        }, 100);
+      });
+    }
+
+    async function ensureDriveAuth(forcePrompt = false) {
+      if (!forcePrompt && driveAccessToken && Date.now() < driveTokenExpiresAt) {
+        return driveAccessToken;
+      }
+      await waitForGisScript(4000);
+      return new Promise((resolve, reject) => {
         if (!ensureTokenClient()) {
           reject(new Error('Token client no disponible'));
           return;
@@ -2226,6 +2245,7 @@
       setDriveStatus('syncing', 'Guardando en Drive...', linkedDriveFile.fileName || 'Creando ficha en Drive...');
 
       try {
+        await ensureDriveAuth(false);
         const folderId = await getPjSubfolderId();
         const payload = collectCurrentSheetPayload();
         const isCreatingNewFile = !linkedDriveFile.fileId;
@@ -2296,10 +2316,23 @@
 
     async function openPjDriveExplorer() {
       const modal = document.getElementById('driveExplorerModal');
+      const listEl = document.getElementById('driveExplorerList');
+      if (listEl) {
+        listEl.innerHTML = '<div class="drive-empty-state">Solicitando acceso a Google Drive...</div>';
+      }
       if (modal) {
         modal.style.display = 'flex';
       }
-      await refreshDriveExplorerList();
+      try {
+        await ensureDriveAuth(false);
+        await refreshDriveExplorerList();
+      } catch (err) {
+        console.error('Error de autenticación en Drive:', err);
+        setDriveStatus('error', 'Error de acceso', err.message || 'Autenticación cancelada o fallida');
+        if (listEl) {
+          listEl.innerHTML = `<div class="drive-empty-state">No se completó la autenticación con Google Drive: ${err.message || err}</div>`;
+        }
+      }
     }
 
     function closeDriveExplorer(event) {
@@ -2410,6 +2443,7 @@
           clearTimeout(driveAutoSaveTimer);
           driveAutoSaveTimer = null;
         }
+        await ensureDriveAuth(false);
         setDriveStatus('syncing', 'Actualizando...', linkedDriveFile.fileName || 'Consultando Drive');
         const res = await driveFetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(linkedDriveFile.fileId)}?alt=media`);
         const jsonData = await res.json();
@@ -3661,10 +3695,16 @@
       }
     }
 
-    window.onload = function() {
+    function initPjSheet() {
       loadAutoSave(true);
       loadDriveLinkMeta();
-    };
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initPjSheet);
+    } else {
+      initPjSheet();
+    }
   </script>
 </body>
 </html>
