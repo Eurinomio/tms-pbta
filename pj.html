@@ -117,11 +117,11 @@
     }
 
     button.btn-new-sheet {
-      background: #b45309;
+      background: #dc2626;
     }
 
     button.btn-new-sheet:hover {
-      background: #92400e;
+      background: #b91c1c;
     }
 
     button.btn-drive-save {
@@ -148,7 +148,7 @@
       background: #334155;
     }
 
-    /* --- AVISO FLOTANTE DE CONFIRMACIÓN PARA NUEVA FICHA --- */
+    /* --- MODAL FLOTANTE DE CONFIRMACIÓN PARA NUEVA FICHA --- */
     #newSheetConfirmModal {
       position: fixed;
       inset: 0;
@@ -161,61 +161,60 @@
       user-select: none;
     }
 
-    .new-sheet-card {
-      width: 410px;
+    .confirm-modal-card {
+      width: 400px;
       max-width: 100%;
       background: #1e293b;
       color: #f8fafc;
       border-radius: 10px;
-      border: 1.5px solid #f59e0b;
+      border: 1.5px solid #38bdf8;
       box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
       overflow: hidden;
       font-family: 'Inter', sans-serif;
     }
 
-    .new-sheet-header {
+    .confirm-modal-header {
       background: #0f172a;
-      padding: 11px 15px;
+      padding: 10px 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid #334155;
     }
 
-    .new-sheet-header span {
+    .confirm-modal-header span {
       font-family: 'Cinzel', serif;
       font-size: 0.84rem;
       font-weight: 700;
-      color: #fbbf24;
+      color: #38bdf8;
       letter-spacing: 0.04em;
     }
 
-    .new-sheet-body {
-      padding: 18px 16px;
+    .confirm-modal-body {
+      padding: 16px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
       text-align: center;
     }
 
-    .new-sheet-message {
+    .confirm-modal-text {
       font-size: 0.92rem;
       font-weight: 600;
       line-height: 1.45;
       color: #f8fafc;
     }
 
-    .new-sheet-actions {
+    .confirm-modal-actions {
       display: flex;
-      gap: 10px;
       justify-content: center;
+      gap: 10px;
     }
 
     .btn-confirm-yes {
       background: #dc2626;
       color: #ffffff;
-      min-width: 96px;
-      justify-content: center;
+      padding: 8px 18px;
     }
 
     .btn-confirm-yes:hover {
@@ -223,14 +222,13 @@
     }
 
     .btn-confirm-no {
-      background: #334155;
+      background: #475569;
       color: #ffffff;
-      min-width: 96px;
-      justify-content: center;
+      padding: 8px 18px;
     }
 
     .btn-confirm-no:hover {
-      background: #475569;
+      background: #334155;
     }
 
     /* --- VENTANA FLOTANTE DE EXPLORADOR DE GOOGLE DRIVE (PJ) --- */
@@ -1284,18 +1282,18 @@
   <a href="mapas.html">Generador de mapas</a>
 </nav>
 
-  <!-- AVISO FLOTANTE DE CONFIRMACIÓN PARA NUEVA FICHA -->
-  <div id="newSheetConfirmModal" onclick="closeNewSheetConfirm(event)">
-    <div class="new-sheet-card" onclick="event.stopPropagation()">
-      <div class="new-sheet-header">
+  <!-- MODAL FLOTANTE DE CONFIRMACIÓN PARA NUEVA FICHA -->
+  <div id="newSheetConfirmModal" onclick="closeNewSheetConfirmModal(event)">
+    <div class="confirm-modal-card" onclick="event.stopPropagation()">
+      <div class="confirm-modal-header">
         <span>NUEVA FICHA DE PERSONAJE</span>
-        <button class="concept-modal-close" onclick="closeNewSheetConfirm(event)" title="Cerrar">×</button>
+        <button type="button" class="concept-modal-close" onclick="closeNewSheetConfirmModal(event)" title="Cerrar">×</button>
       </div>
-      <div class="new-sheet-body">
-        <div class="new-sheet-message">Se borrará la información en pantalla para comenzar de cero</div>
-        <div class="new-sheet-actions">
+      <div class="confirm-modal-body">
+        <div class="confirm-modal-text">Se borrará la información en pantalla para comenzar de cero</div>
+        <div class="confirm-modal-actions">
           <button type="button" class="btn-confirm-yes" onclick="confirmNewSheet()">Sí</button>
-          <button type="button" class="btn-confirm-no" onclick="closeNewSheetConfirm(event)">No</button>
+          <button type="button" class="btn-confirm-no" onclick="closeNewSheetConfirmModal(event)">No</button>
         </div>
       </div>
     </div>
@@ -1491,7 +1489,7 @@
       </div>
     </div>
     <div class="btn-group">
-      <button type="button" class="btn-new-sheet" onclick="openNewSheetConfirm()">🆕 Nueva ficha</button>
+      <button type="button" class="btn-new-sheet" onclick="openNewSheetConfirmModal()">🆕 Nueva ficha</button>
       <button type="button" class="btn-drive-save" onclick="savePjToDrive()">☁️ Guardar online</button>
       <button type="button" class="btn-drive-load" onclick="openPjDriveExplorer()">📥 Cargar ficha online</button>
       <button type="button" class="btn-drive-refresh" onclick="refreshPjFromDrive()">🔄 Actualizar</button>
@@ -1948,12 +1946,12 @@
     function updateDriveStatusSummary(customNote) {
       if (linkedDriveFile.fileId && linkedDriveFile.autoSync) {
         const namePart = linkedDriveFile.fileName || 'personaje.json';
-        const notePart = customNote ? ` · ${customNote}` : ' · Vinculado a Drive';
+        const notePart = customNote ? ` · ${customNote}` : ' · Autoguardado activo';
         setDriveStatus('online', 'Drive conectado', `Archivo: ${namePart}${notePart}`);
       } else if (driveAccessToken && Date.now() < driveTokenExpiresAt) {
-        setDriveStatus('online', 'Drive conectado', customNote || 'Sin ficha vinculada en TMS PBTA / PJ');
+        setDriveStatus('online', 'Drive conectado', customNote || 'Ficha nueva sin vincular · Guardará como archivo nuevo');
       } else {
-        setDriveStatus('', 'Drive: local', customNote || 'Se conecta al guardar, cargar o actualizar online');
+        setDriveStatus('', 'Drive: local', customNote || 'Ficha nueva · Guardará como archivo nuevo en TMS PBTA / PJ');
       }
     }
 
@@ -2056,16 +2054,116 @@
     async function driveFetch(url, options = {}, retriedOn401 = false) {
       const token = await ensureDriveAuth(false);
       const headers = new Headers(options.headers || {});
-      headers.set('Authorization', `Bearer ${token}`);  const response = await fetch(url, { ...options, headers });  if (response.status === 401 && !retriedOn401) { driveAccessToken = null; driveTokenExpiresAt = 0; await ensureDriveAuth(false); return driveFetch(url, options, true); }  if (!response.ok) { let errorDetail = `${response.status} ${response.statusText}`; try { const errJson = await response.json(); if (errJson && errJson.error && errJson.error.message) { errorDetail = errJson.error.message; } } catch (e) {} throw new Error(errorDetail); }  return response; }  function escapeDriveQuery(str) { return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'"); }  async function findOrCreateFolder(name, parentId = null) { const parentClause = parentId ? `'${escapeDriveQuery(parentId)}' in parents`
+      headers.set('Authorization', `Bearer ${token}`);
+
+      const response = await fetch(url, { ...options, headers });
+
+      if (response.status === 401 && !retriedOn401) {
+        driveAccessToken = null;
+        driveTokenExpiresAt = 0;
+        await ensureDriveAuth(false);
+        return driveFetch(url, options, true);
+      }
+
+      if (!response.ok) {
+        let errorDetail = `${response.status} ${response.statusText}`;
+        try {
+          const errJson = await response.json();
+          if (errJson && errJson.error && errJson.error.message) {
+            errorDetail = errJson.error.message;
+          }
+        } catch (e) {}
+        throw new Error(errorDetail);
+      }
+
+      return response;
+    }
+
+    function escapeDriveQuery(str) {
+      return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    }
+
+    async function findOrCreateFolder(name, parentId = null) {
+      const parentClause = parentId
+        ? `'${escapeDriveQuery(parentId)}' in parents`
         : `'root' in parents`;
       const q = encodeURIComponent(
-        `name = '${escapeDriveQuery(name)}' and mimeType = 'application/vnd.google-apps.folder' and${parentClause} and trashed = false`
+        `name = '${escapeDriveQuery(name)}' and mimeType = 'application/vnd.google-apps.folder' and ${parentClause} and trashed = false`
       );
-      const listRes = await driveFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)&pageSize=10`); const listData = await listRes.json();  if (listData.files && listData.files.length > 0) { return listData.files[0].id; }  const metadata = { name, mimeType: 'application/vnd.google-apps.folder' }; if (parentId) { metadata.parents = [parentId]; }  const createRes = await driveFetch('https://www.googleapis.com/drive/v3/files?fields=id,name', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(metadata) }); const created = await createRes.json(); return created.id; }  async function getPjSubfolderId() { if (cachedPjFolderId) { return cachedPjFolderId; } if (!cachedRootFolderId) { cachedRootFolderId = DRIVE_CONFIG.rootFolderId ? DRIVE_CONFIG.rootFolderId.trim() : await findOrCreateFolder(DRIVE_CONFIG.rootFolderName, null); } cachedPjFolderId = await findOrCreateFolder(DRIVE_CONFIG.subFolderName, cachedRootFolderId); saveDriveLinkMeta(); return cachedPjFolderId; }  function getCharacterPlainName() { const nombreEl = document.getElementById('nombre'); if (!nombreEl) return 'personaje'; const txt = (nombreEl.textContent \vert{}\vert{} nombreEl.innerText \vert{}\vert{} '').trim(); return txt \vert{}\vert{} 'personaje'; }  function buildPjDriveFileName() { const baseName = getCharacterPlainName() .toLowerCase() .normalize('NFD') .replace(/[\u0300-\u036f]/g, '') .replace(/[^a-z0-9]+/g, '_') .replace(/^_+\vert{}_+$/g, '') \vert{}\vert{} 'personaje'; if (!linkedDriveFile.fileId) { const stamp = new Date().toISOString().replace(/[-:T.Z]/g, '').slice(0, 14); return `pj_${baseName}_${stamp}.json`; } return linkedDriveFile.fileName \vert{}\vert{} `pj_${baseName}.json`;
+      const listRes = await driveFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)&pageSize=10`);
+      const listData = await listRes.json();
+
+      if (listData.files && listData.files.length > 0) {
+        return listData.files[0].id;
+      }
+
+      const metadata = {
+        name,
+        mimeType: 'application/vnd.google-apps.folder'
+      };
+      if (parentId) {
+        metadata.parents = [parentId];
+      }
+
+      const createRes = await driveFetch('https://www.googleapis.com/drive/v3/files?fields=id,name', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(metadata)
+      });
+      const created = await createRes.json();
+      return created.id;
+    }
+
+    async function getPjSubfolderId() {
+      if (cachedPjFolderId) {
+        return cachedPjFolderId;
+      }
+      if (!cachedRootFolderId) {
+        cachedRootFolderId = DRIVE_CONFIG.rootFolderId
+          ? DRIVE_CONFIG.rootFolderId.trim()
+          : await findOrCreateFolder(DRIVE_CONFIG.rootFolderName, null);
+      }
+      cachedPjFolderId = await findOrCreateFolder(DRIVE_CONFIG.subFolderName, cachedRootFolderId);
+      saveDriveLinkMeta();
+      return cachedPjFolderId;
+    }
+
+    function getCharacterPlainName() {
+      const nombreEl = document.getElementById('nombre');
+      if (!nombreEl) return 'personaje';
+      const txt = (nombreEl.textContent || nombreEl.innerText || '').trim();
+      return txt || 'personaje';
+    }
+
+    function buildPjDriveFileName() {
+      const baseName = getCharacterPlainName()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '') || 'personaje';
+      return `pj_${baseName}.json`;
+    }
+
+    async function getUniqueDriveFileName(folderId, baseFileName) {
+      const q = encodeURIComponent(
+        `name = '${escapeDriveQuery(baseFileName)}' and '${escapeDriveQuery(folderId)}' in parents and trashed = false`
+      );
+      const listRes = await driveFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)&pageSize=5`);
+      const listData = await listRes.json();
+      if (!listData.files || listData.files.length === 0) {
+        return baseFileName;
+      }
+
+      const dotIdx = baseFileName.lastIndexOf('.');
+      const stem = dotIdx > 0 ? baseFileName.slice(0, dotIdx) : baseFileName;
+      const ext = dotIdx > 0 ? baseFileName.slice(dotIdx) : '';
+      const stamp = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 12);
+      return `${stem}_${stamp}${ext}`;
     }
 
     function collectCurrentSheetPayload() {
-      autoSave();
+      writeLocalSheetStorage();
       const rawLocal = getStorage().getItem('pbta_sheet_data_master_v5');
       let sheetData = {};
       try {
@@ -2093,19 +2191,84 @@
       }
 
       const multipartBody =
-        `--${boundary}\r\n` + `Content-Type: application/json; charset=UTF-8\r\n\r\n` + `${JSON.stringify(metadataPart)}\r\n` +
-        `--${boundary}\r\n` + `Content-Type: application/json; charset=UTF-8\r\n\r\n` + `${jsonString}\r\n` +
-        `--${boundary}--`;  const url = fileId ? `https://www.googleapis.com/upload/drive/v3/files/${encodeURIComponent(fileId)}?uploadType=multipart&fields=id,name,modifiedTime`
+        `--${boundary}\r\n` +
+        `Content-Type: application/json; charset=UTF-8\r\n\r\n` +
+        `${JSON.stringify(metadataPart)}\r\n` +
+        `--${boundary}\r\n` +
+        `Content-Type: application/json; charset=UTF-8\r\n\r\n` +
+        `${jsonString}\r\n` +
+        `--${boundary}--`;
+
+      const url = fileId
+        ? `https://www.googleapis.com/upload/drive/v3/files/${encodeURIComponent(fileId)}?uploadType=multipart&fields=id,name,modifiedTime`
         : `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,modifiedTime`;
 
       const method = fileId ? 'PATCH' : 'POST';
       const res = await driveFetch(url, {
         method,
         headers: {
-          'Content-Type': `multipart/related; boundary=${boundary}` }, body: multipartBody }); return res.json(); }  async function flushDriveAutoSave(isManualSave = false) { if (!linkedDriveFile.fileId && !isManualSave) return;  if (isDriveSyncInProgress) { queuedDriveSave = true; return; }  isDriveSyncInProgress = true; setDriveStatus('syncing', 'Guardando en Drive...', linkedDriveFile.fileName \vert{}\vert{} 'Subiendo nueva ficha...');  try { const folderId = await getPjSubfolderId(); const payload = collectCurrentSheetPayload(); const isCreatingNew = !linkedDriveFile.fileId; const fileName = buildPjDriveFileName(); const result = await uploadJsonToDriveFile(linkedDriveFile.fileId, fileName, folderId, payload);  linkedDriveFile.fileId = result.id; linkedDriveFile.fileName = result.name \vert{}\vert{} fileName; linkedDriveFile.autoSync = true; saveDriveLinkMeta();  const hora = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); updateDriveStatusSummary(isCreatingNew ? `Creado ${hora}` : `Guardado ${hora}`); } catch (err) { console.error('Error al guardar PJ en Drive:', err); setDriveStatus('error', 'Error al guardar', err.message \vert{}\vert{} 'No se pudo subir a Drive'); if (isManualSave) { alert('No se pudo guardar la ficha en Google Drive: ' + (err.message \vert{}\vert{} err)); } } finally { isDriveSyncInProgress = false; if (queuedDriveSave) { queuedDriveSave = false; flushDriveAutoSave(false); } } }  function scheduleDriveAutoSave() { if (isApplyingRemoteDriveData) return; if (!linkedDriveFile.fileId \vert{}\vert{} !linkedDriveFile.autoSync) return;  if (driveAutoSaveTimer) { clearTimeout(driveAutoSaveTimer); } setDriveStatus('syncing', 'Pendiente de guardar...', `${linkedDriveFile.fileName || 'Ficha'} · Cambios sin subir`);
+          'Content-Type': `multipart/related; boundary=${boundary}`
+        },
+        body: multipartBody
+      });
+      return res.json();
+    }
+
+    async function flushDriveAutoSave(isManualSave = false) {
+      if (!linkedDriveFile.fileId && !isManualSave) return;
+
+      if (isDriveSyncInProgress) {
+        queuedDriveSave = true;
+        return;
+      }
+
+      isDriveSyncInProgress = true;
+      setDriveStatus('syncing', 'Guardando en Drive...', linkedDriveFile.fileName || 'Creando ficha en Drive...');
+
+      try {
+        const folderId = await getPjSubfolderId();
+        const payload = collectCurrentSheetPayload();
+        const isCreatingNewFile = !linkedDriveFile.fileId;
+        const candidateName = isCreatingNewFile
+          ? await getUniqueDriveFileName(folderId, buildPjDriveFileName())
+          : (linkedDriveFile.fileName || buildPjDriveFileName());
+
+        const result = await uploadJsonToDriveFile(linkedDriveFile.fileId, candidateName, folderId, payload);
+
+        linkedDriveFile.fileId = result.id;
+        linkedDriveFile.fileName = result.name || candidateName;
+        linkedDriveFile.autoSync = true;
+        saveDriveLinkMeta();
+
+        const hora = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const actionLabel = isCreatingNewFile ? `Creado y guardado ${hora}` : `Actualizado ${hora}`;
+        updateDriveStatusSummary(actionLabel);
+      } catch (err) {
+        console.error('Error al guardar PJ en Drive:', err);
+        setDriveStatus('error', 'Error al guardar', err.message || 'No se pudo subir a Drive');
+        if (isManualSave) {
+          alert('No se pudo guardar la ficha en Google Drive: ' + (err.message || err));
+        }
+      } finally {
+        isDriveSyncInProgress = false;
+        if (queuedDriveSave) {
+          queuedDriveSave = false;
+          flushDriveAutoSave(false);
+        }
+      }
+    }
+
+    function scheduleDriveAutoSave() {
+      if (isApplyingRemoteDriveData) return;
+      if (!linkedDriveFile.fileId || !linkedDriveFile.autoSync) return;
+
+      if (driveAutoSaveTimer) {
+        clearTimeout(driveAutoSaveTimer);
+      }
+      setDriveStatus('syncing', 'Pendiente de guardar...', `${linkedDriveFile.fileName || 'Ficha'} · Cambios sin subir`);
       driveAutoSaveTimer = setTimeout(() => {
         flushDriveAutoSave(false);
-      }, 1500);
+      }, 1600);
     }
 
     async function savePjToDrive() {
@@ -2125,7 +2288,7 @@
       isApplyingRemoteDriveData = true;
       try {
         getStorage().setItem('pbta_sheet_data_master_v5', JSON.stringify(sheetData));
-        loadAutoSave();
+        loadAutoSave(true);
       } finally {
         isApplyingRemoteDriveData = false;
       }
@@ -2158,7 +2321,39 @@
         const pjFolderId = await getPjSubfolderId();
         const q = encodeURIComponent(`'${escapeDriveQuery(pjFolderId)}' in parents and trashed = false`);
         const fields = encodeURIComponent('files(id,name,modifiedTime,mimeType)');
-        const res = await driveFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=${fields}&orderBy=modifiedTime\%20desc&pageSize=100`); const data = await res.json();  const files = (data.files \vert{}\vert{} []).filter(f => f.name.toLowerCase().endsWith('.json') \vert{}\vert{} f.mimeType === 'application/json' );  updateDriveStatusSummary();  if (!listEl) return; if (files.length === 0) { listEl.innerHTML = '<div class="drive-empty-state">No hay archivos JSON de personajes en <strong>TMS PBTA / PJ</strong> todavía.</div>'; return; }  listEl.innerHTML = ''; files.forEach(file => { const itemBtn = document.createElement('button'); itemBtn.type = 'button'; itemBtn.className = 'drive-file-item'; itemBtn.onclick = () => selectPjFromDriveExplorer(file.id, file.name);  const infoDiv = document.createElement('div'); const nameDiv = document.createElement('div'); nameDiv.className = 'drive-file-name'; nameDiv.textContent = file.name;  const metaDiv = document.createElement('div'); metaDiv.className = 'drive-file-meta'; const fechaText = file.modifiedTime ? new Date(file.modifiedTime).toLocaleString('es-ES') : 'Sin fecha'; metaDiv.textContent = `Actualizado: ${fechaText}`;
+        const res = await driveFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=${fields}&orderBy=modifiedTime%20desc&pageSize=100`);
+        const data = await res.json();
+
+        const files = (data.files || []).filter(f =>
+          f.name.toLowerCase().endsWith('.json') || f.mimeType === 'application/json'
+        );
+
+        updateDriveStatusSummary();
+
+        if (!listEl) return;
+        if (files.length === 0) {
+          listEl.innerHTML = '<div class="drive-empty-state">No hay archivos JSON de personajes en <strong>TMS PBTA / PJ</strong> todavía.</div>';
+          return;
+        }
+
+        listEl.innerHTML = '';
+        files.forEach(file => {
+          const itemBtn = document.createElement('button');
+          itemBtn.type = 'button';
+          itemBtn.className = 'drive-file-item';
+          itemBtn.onclick = () => selectPjFromDriveExplorer(file.id, file.name);
+
+          const infoDiv = document.createElement('div');
+          const nameDiv = document.createElement('div');
+          nameDiv.className = 'drive-file-name';
+          nameDiv.textContent = file.name;
+
+          const metaDiv = document.createElement('div');
+          metaDiv.className = 'drive-file-meta';
+          const fechaText = file.modifiedTime
+            ? new Date(file.modifiedTime).toLocaleString('es-ES')
+            : 'Sin fecha';
+          metaDiv.textContent = `Actualizado: ${fechaText}`;
 
           infoDiv.appendChild(nameDiv);
           infoDiv.appendChild(metaDiv);
@@ -2183,7 +2378,21 @@
     async function selectPjFromDriveExplorer(fileId, fileName) {
       try {
         setDriveStatus('syncing', 'Cargando ficha...', fileName);
-        const res = await driveFetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}?alt=media`); const jsonData = await res.json();  applyLoadedSheetObject(jsonData);  linkedDriveFile = { fileId, fileName: fileName \vert{}\vert{} 'personaje.json', autoSync: true }; saveDriveLinkMeta(); closeDriveExplorer();  const hora = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); updateDriveStatusSummary(`Cargado ${hora}`);
+        const res = await driveFetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}?alt=media`);
+        const jsonData = await res.json();
+
+        applyLoadedSheetObject(jsonData);
+
+        linkedDriveFile = {
+          fileId,
+          fileName: fileName || 'personaje.json',
+          autoSync: true
+        };
+        saveDriveLinkMeta();
+        closeDriveExplorer();
+
+        const hora = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        updateDriveStatusSummary(`Cargado ${hora}`);
       } catch (err) {
         console.error('Error al cargar ficha desde Drive:', err);
         setDriveStatus('error', 'Error al cargar', err.message || 'No se pudo leer el JSON');
@@ -2202,7 +2411,15 @@
           driveAutoSaveTimer = null;
         }
         setDriveStatus('syncing', 'Actualizando...', linkedDriveFile.fileName || 'Consultando Drive');
-        const res = await driveFetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(linkedDriveFile.fileId)}?alt=media`); const jsonData = await res.json();  applyLoadedSheetObject(jsonData); linkedDriveFile.autoSync = true; saveDriveLinkMeta();  const hora = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); updateDriveStatusSummary(`Actualizado ${hora}`);
+        const res = await driveFetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(linkedDriveFile.fileId)}?alt=media`);
+        const jsonData = await res.json();
+
+        applyLoadedSheetObject(jsonData);
+        linkedDriveFile.autoSync = true;
+        saveDriveLinkMeta();
+
+        const hora = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        updateDriveStatusSummary(`Actualizado ${hora}`);
       } catch (err) {
         console.error('Error al actualizar ficha desde Drive:', err);
         setDriveStatus('error', 'Error al actualizar', err.message || 'No se pudo refrescar');
@@ -2210,58 +2427,20 @@
       }
     }
 
-    // --- NUEVA FICHA CON AVISO FLOTANTE DE CONFIRMACIÓN ---
-    function openNewSheetConfirm() {
+    // --- NUEVA FICHA CON CONFIRMACIÓN FLOTANTE ---
+    function openNewSheetConfirmModal() {
       const modal = document.getElementById('newSheetConfirmModal');
       if (modal) {
         modal.style.display = 'flex';
       }
     }
 
-    function closeNewSheetConfirm(event) {
+    function closeNewSheetConfirmModal(event) {
       if (event) event.stopPropagation();
       const modal = document.getElementById('newSheetConfirmModal');
       if (modal) {
         modal.style.display = 'none';
       }
-    }
-
-    function clearSheetFieldsInDom() {
-      document.querySelectorAll('.editable').forEach(el => {
-        el.innerHTML = '';
-      });
-
-      document.querySelectorAll('.checkbox-square, .exp-check').forEach(check => {
-        check.classList.remove('checked');
-      });
-      ['exp_6', 'exp_7'].forEach(id => {
-        const dashedEl = document.getElementById(id);
-        if (dashedEl) dashedEl.classList.add('dashed');
-      });
-
-      healthLevel = 0;
-      snapshotDamageHealth = null;
-      snapshotHealingHealth = null;
-      lastDamageResults = null;
-      lastHealingResults = null;
-
-      const img = document.getElementById('portraitImg');
-      const placeholder = document.getElementById('portraitPlaceholder');
-      const portraitInput = document.getElementById('portraitInput');
-      if (img) {
-        img.src = '';
-        img.style.display = 'none';
-      }
-      if (placeholder) {
-        placeholder.style.display = 'block';
-      }
-      if (portraitInput) {
-        portraitInput.value = '';
-      }
-
-      updateHeartsDisplay(true);
-      resetDamageRoll();
-      resetHealingRoll();
     }
 
     function confirmNewSheet() {
@@ -2274,20 +2453,61 @@
         driveAutoSaveTimer = null;
       }
 
-      linkedDriveFile = { fileId: null, fileName: null, autoSync: false };
-      saveDriveLinkMeta();
-
       isApplyingRemoteDriveData = true;
       try {
-        clearSheetFieldsInDom();
-        getStorage().removeItem('pbta_sheet_data_master_v5');
-        autoSave(true);
+        document.querySelectorAll('.editable').forEach(el => {
+          el.innerHTML = '';
+        });
+
+        document.querySelectorAll('.checkbox-square, .exp-check').forEach(check => {
+          check.classList.remove('checked');
+        });
+        ['exp_6', 'exp_7'].forEach(dashedId => {
+          const el = document.getElementById(dashedId);
+          if (el) el.classList.add('dashed');
+        });
+
+        healthLevel = 0;
+        snapshotDamageHealth = null;
+        snapshotHealingHealth = null;
+        lastDamageResults = null;
+        lastHealingResults = null;
+
+        const portraitImg = document.getElementById('portraitImg');
+        const portraitPlaceholder = document.getElementById('portraitPlaceholder');
+        const portraitInput = document.getElementById('portraitInput');
+        if (portraitImg) {
+          portraitImg.src = '';
+          portraitImg.style.display = 'none';
+        }
+        if (portraitPlaceholder) {
+          portraitPlaceholder.style.display = 'block';
+        }
+        if (portraitInput) {
+          portraitInput.value = '';
+        }
+
+        const msgEl = document.getElementById('bienestarMsg');
+        const heartsRow = document.getElementById('heartsRow');
+        if (msgEl) msgEl.style.display = 'none';
+        if (heartsRow) heartsRow.innerHTML = '';
+
+        linkedDriveFile = {
+          fileId: null,
+          fileName: null,
+          autoSync: false
+        };
+        saveDriveLinkMeta();
+
+        writeLocalSheetStorage();
+        updateDamageDiceDisplay();
+        updateHealingDiceDisplay();
+        updateDriveStatusSummary('Ficha nueva en blanco');
       } finally {
         isApplyingRemoteDriveData = false;
       }
 
-      updateDriveStatusSummary('Nueva ficha lista · Al guardar online creará un archivo en Drive');
-      closeNewSheetConfirm();
+      closeNewSheetConfirmModal();
     }
 
     // --- RANDOMIZADOR ABSURDO DE CONCEPTO (ESTILO HORA DE AVENTURAS / REGULAR SHOW / FANTASÍA / MITOLOGÍA / TERROR) ---
@@ -2532,7 +2752,291 @@
       const adj = pickRandom(ABSURD_ADJECTIVES);
       const comp = pickRandom(ABSURD_COMPLEMENTS);
 
-      const phrase = `${noun}${adj} ${comp}`; currentGeneratedConcept = phrase;  document.getElementById('conceptRandomPhrase').innerText = phrase; document.getElementById('partNoun').innerText = noun; document.getElementById('partAdj').innerText = adj; document.getElementById('partComp').innerText = comp; }  function toggleConceptRandomizer(event) { if (event) event.stopPropagation(); const modal = document.getElementById('conceptRandomizerModal'); if (modal.dataset.moved === "true") { modal.dataset.moved = "false"; return; } const willOpen = modal.style.display !== 'flex'; modal.style.display = willOpen ? 'flex' : 'none'; if (willOpen && !currentGeneratedConcept) { generateRandomConcept(); } }  function closeConceptRandomizer(event) { if (event) event.stopPropagation(); const modal = document.getElementById('conceptRandomizerModal'); modal.style.display = 'none'; modal.dataset.moved = "false"; }  function useGeneratedConcept() { if (!currentGeneratedConcept) { generateRandomConcept(); } const conceptoEl = document.getElementById('concepto'); if (conceptoEl) { conceptoEl.innerText = currentGeneratedConcept; conceptoEl.focus(); scheduleLocalAutoSave(); } }  // --- LÓGICA DE DADOS Y ARRASTRE MULTI-ELEMENTO --- function toggleDiceWidget() { const launcher = document.getElementById('floatingDiceLauncher'); if (launcher.dataset.moved === "true") { launcher.dataset.moved = "false"; return; } const modal = document.getElementById('diceWidgetModal'); if (modal.dataset.moved === "true") { modal.dataset.moved = "false"; return; } const willOpen = modal.style.display !== 'flex'; modal.style.display = willOpen ? 'flex' : 'none'; if (willOpen) { updateDamageDiceDisplay(); updateHealingDiceDisplay(); } }  function closeDiceWidget(event) { if (event) event.stopPropagation(); const modal = document.getElementById('diceWidgetModal'); modal.style.display = 'none'; modal.dataset.moved = "false"; }  function switchDiceTab(tabIndex) { closeAsistenciaSubModal(); const tabs = document.querySelectorAll('.dice-tab'); const contents = document.querySelectorAll('.dice-tab-content'); tabs.forEach((t, i) => { if(i === tabIndex) t.classList.add('active'); else t.classList.remove('active'); }); contents.forEach((c, i) => { if(i === tabIndex) c.classList.add('active'); else c.classList.remove('active'); });  if (tabIndex === 2) updateDamageDiceDisplay(); if (tabIndex === 3) updateHealingDiceDisplay(); }  function rollRetoDice() { lastWhiteVal = Math.floor(Math.random() * 6) + 1; lastBlackVal = Math.floor(Math.random() * 6) + 1; isBlackWhite = false;  const blackDiceEl = document.getElementById('diceBlack'); blackDiceEl.className = "d6 d6-black";  document.getElementById('diceWhite').innerText = lastWhiteVal; blackDiceEl.innerText = lastBlackVal;  currentRetoSum = lastWhiteVal + lastBlackVal; evaluateRetoResult(); }  function modifyRetoSum(amount) { if (lastWhiteVal === null \vert{}\vert{} lastBlackVal === null) return; currentRetoSum += amount; evaluateRetoResult(); }  function openAsistenciaSubModal() { selectedAsistenciaTarget = null; document.getElementById('asistenciaDiceChoice').style.display = 'flex'; document.getElementById('asistenciaInputContainer').style.display = 'none'; document.getElementById('asistenciaPromptText').innerText = "ELIGE EL DADO A SUSTITUIR:"; document.getElementById('asistenciaSubModal').style.display = 'flex'; }  function closeAsistenciaSubModal() { document.getElementById('asistenciaSubModal').style.display = 'none'; }  function selectAsistenciaTarget(target) { selectedAsistenciaTarget = target; document.getElementById('asistenciaDiceChoice').style.display = 'none'; document.getElementById('asistenciaInputContainer').style.display = 'flex'; document.getElementById('asistenciaPromptText').innerText = "INTRODUCE VALOR DE ASISTENCIA:"; document.getElementById('asistenciaTargetLabel').innerText = target === 'white' ? "Dado Blanco seleccionado" : "Dado Negro seleccionado"; document.getElementById('asistenciaValueInput').value = "6"; document.getElementById('asistenciaValueInput').focus(); }  function confirmAsistencia() { const val = parseInt(document.getElementById('asistenciaValueInput').value); if (isNaN(val) \vert{}\vert{} val < 1 \vert{}\vert{} val > 6) { alert("Introduce un valor válido del 1 al 6."); return; }  if (selectedAsistenciaTarget === 'white') { lastWhiteVal = val; document.getElementById('diceWhite').innerText = lastWhiteVal; } else if (selectedAsistenciaTarget === 'black') { lastBlackVal = val; isBlackWhite = true; const blackDiceEl = document.getElementById('diceBlack'); blackDiceEl.className = "d6 d6-white"; blackDiceEl.innerText = lastBlackVal; }  currentRetoSum = lastWhiteVal + lastBlackVal; evaluateRetoResult(); closeAsistenciaSubModal(); }  function evaluateRetoResult() { const titleEl = document.getElementById('retoResultTitle'); const subEl = document.getElementById('retoSubStatus'); const extraEl = document.getElementById('retoExtraInfo');  if (currentRetoSum >= 7) { titleEl.innerText = "ÉXITO (" + currentRetoSum + ")"; titleEl.style.color = "#22c55e";  if (currentRetoSum >= 10) { extraEl.innerText = "+1 etiqueta o +1 frag. XP"; extraEl.style.color = "#22c55e"; } else { extraEl.innerText = ""; } } else { titleEl.innerText = "FRACASO (" + currentRetoSum + ")"; titleEl.style.color = "#ef4444";  if (currentRetoSum <= 3) { extraEl.innerText = "+1 marca de Amenaza"; extraEl.style.color = "#ef4444"; } else { extraEl.innerText = ""; } }  if (isBlackWhite) { subEl.innerText = "AFORTUNADO (Asistencia)"; subEl.style.color = "#38bdf8"; } else if (lastBlackVal > lastWhiteVal) { subEl.innerText = "DESAFORTUNADO"; subEl.style.color = "#f87171"; } else if (lastWhiteVal > lastBlackVal) { subEl.innerText = "AFORTUNADO"; subEl.style.color = "#38bdf8"; } else { subEl.innerText = "NEUTRO (Empates)"; subEl.style.color = "#94a3b8"; } }  function rollSingleDice() { const val = Math.floor(Math.random() * 6) + 1; document.getElementById('diceSingle').innerText = val; document.getElementById('singleResultTitle').innerText = "Resultado: " + val; }  // --- LÓGICA DE DAÑO, CURACIÓN Y BIENESTAR CON SNAPSHOTS --- function updateHeartsDisplay(skipSnapshotReset = false, skipAutoSave = false) { const maxEl = document.getElementById('max_bienestar'); const msgEl = document.getElementById('bienestarMsg'); const heartsRow = document.getElementById('heartsRow'); if (!maxEl \vert{}\vert{} !heartsRow \vert{}\vert{} !msgEl) return;  const maxText = maxEl.textContent.trim(); const maxVal = parseInt(maxText);  if (maxText === '' \vert{}\vert{} isNaN(maxVal) \vert{}\vert{} maxVal <= 0) { msgEl.style.display = 'block'; heartsRow.innerHTML = ''; healthLevel = 0; resetDamageRoll(); resetHealingRoll(); if (!skipAutoSave) scheduleLocalAutoSave(); return; }  msgEl.style.display = 'none';  if (healthLevel > maxVal) { healthLevel = maxVal; }  heartsRow.innerHTML = ''; for (let i = 1; i <= Math.min(maxVal, 10); i++) { const btn = document.createElement('button'); btn.className = 'heart-btn' + (i <= healthLevel ? ' active' : ''); btn.innerHTML = '♥'; btn.onclick = () => { snapshotDamageHealth = null; snapshotHealingHealth = null; toggleHeart(i); }; heartsRow.appendChild(btn); }  if (!skipSnapshotReset) { snapshotDamageHealth = null; snapshotHealingHealth = null; }  updateDamageDiceDisplay(); updateHealingDiceDisplay(); if (!skipAutoSave) scheduleLocalAutoSave(); }  function setHealthLevel(val) { const maxEl = document.getElementById('max_bienestar'); const maxVal = parseInt(maxEl ? maxEl.textContent.trim() : ''); if (isNaN(maxVal) \vert{}\vert{} maxVal <= 0) return;  healthLevel = Math.max(0, Math.min(maxVal, val)); snapshotDamageHealth = null; snapshotHealingHealth = null; updateHeartsDisplay(); }  function toggleHeart(index) { const maxEl = document.getElementById('max_bienestar'); const maxVal = parseInt(maxEl ? maxEl.textContent.trim() : ''); if (isNaN(maxVal) \vert{}\vert{} maxVal <= 0) return;  if (index > maxVal) return;  if (healthLevel === index) { setHealthLevel(index - 1); } else { setHealthLevel(index); } }  function updateDamageDiceDisplay() { renderDamageDice(); }  function renderDamageDice() { const container = document.getElementById('damageDiceContainer'); const maxInd = document.getElementById('damageMaxIndicator'); const maxEl = document.getElementById('max_bienestar'); const maxVal = maxEl ? maxEl.textContent.trim() : '-'; if (maxInd) maxInd.innerText = `MAX: ${maxVal}`;
+      const phrase = `${noun} ${adj} ${comp}`;
+      currentGeneratedConcept = phrase;
+
+      document.getElementById('conceptRandomPhrase').innerText = phrase;
+      document.getElementById('partNoun').innerText = noun;
+      document.getElementById('partAdj').innerText = adj;
+      document.getElementById('partComp').innerText = comp;
+    }
+
+    function toggleConceptRandomizer(event) {
+      if (event) event.stopPropagation();
+      const modal = document.getElementById('conceptRandomizerModal');
+      if (modal.dataset.moved === "true") {
+        modal.dataset.moved = "false";
+        return;
+      }
+      const willOpen = modal.style.display !== 'flex';
+      modal.style.display = willOpen ? 'flex' : 'none';
+      if (willOpen && !currentGeneratedConcept) {
+        generateRandomConcept();
+      }
+    }
+
+    function closeConceptRandomizer(event) {
+      if (event) event.stopPropagation();
+      const modal = document.getElementById('conceptRandomizerModal');
+      modal.style.display = 'none';
+      modal.dataset.moved = "false";
+    }
+
+    function useGeneratedConcept() {
+      if (!currentGeneratedConcept) {
+        generateRandomConcept();
+      }
+      const conceptoEl = document.getElementById('concepto');
+      if (conceptoEl) {
+        conceptoEl.innerText = currentGeneratedConcept;
+        conceptoEl.focus();
+        autoSave();
+      }
+    }
+
+    // --- LÓGICA DE DADOS Y ARRASTRE MULTI-ELEMENTO ---
+    function toggleDiceWidget() {
+      const launcher = document.getElementById('floatingDiceLauncher');
+      if (launcher.dataset.moved === "true") {
+        launcher.dataset.moved = "false";
+        return;
+      }
+      const modal = document.getElementById('diceWidgetModal');
+      if (modal.dataset.moved === "true") {
+        modal.dataset.moved = "false";
+        return;
+      }
+      const willOpen = modal.style.display !== 'flex';
+      modal.style.display = willOpen ? 'flex' : 'none';
+      if (willOpen) {
+        updateDamageDiceDisplay();
+        updateHealingDiceDisplay();
+      }
+    }
+
+    function closeDiceWidget(event) {
+      if (event) event.stopPropagation();
+      const modal = document.getElementById('diceWidgetModal');
+      modal.style.display = 'none';
+      modal.dataset.moved = "false";
+    }
+
+    function switchDiceTab(tabIndex) {
+      closeAsistenciaSubModal();
+      const tabs = document.querySelectorAll('.dice-tab');
+      const contents = document.querySelectorAll('.dice-tab-content');
+      tabs.forEach((t, i) => {
+        if(i === tabIndex) t.classList.add('active');
+        else t.classList.remove('active');
+      });
+      contents.forEach((c, i) => {
+        if(i === tabIndex) c.classList.add('active');
+        else c.classList.remove('active');
+      });
+
+      if (tabIndex === 2) updateDamageDiceDisplay();
+      if (tabIndex === 3) updateHealingDiceDisplay();
+    }
+
+    function rollRetoDice() {
+      lastWhiteVal = Math.floor(Math.random() * 6) + 1;
+      lastBlackVal = Math.floor(Math.random() * 6) + 1;
+      isBlackWhite = false;
+
+      const blackDiceEl = document.getElementById('diceBlack');
+      blackDiceEl.className = "d6 d6-black";
+
+      document.getElementById('diceWhite').innerText = lastWhiteVal;
+      blackDiceEl.innerText = lastBlackVal;
+
+      currentRetoSum = lastWhiteVal + lastBlackVal;
+      evaluateRetoResult();
+    }
+
+    function modifyRetoSum(amount) {
+      if (lastWhiteVal === null || lastBlackVal === null) return;
+      currentRetoSum += amount;
+      evaluateRetoResult();
+    }
+
+    // Control de Sub-ventana de Asistencia
+    function openAsistenciaSubModal() {
+      selectedAsistenciaTarget = null;
+      document.getElementById('asistenciaDiceChoice').style.display = 'flex';
+      document.getElementById('asistenciaInputContainer').style.display = 'none';
+      document.getElementById('asistenciaPromptText').innerText = "ELIGE EL DADO A SUSTITUIR:";
+      document.getElementById('asistenciaSubModal').style.display = 'flex';
+    }
+
+    function closeAsistenciaSubModal() {
+      document.getElementById('asistenciaSubModal').style.display = 'none';
+    }
+
+    function selectAsistenciaTarget(target) {
+      selectedAsistenciaTarget = target;
+      document.getElementById('asistenciaDiceChoice').style.display = 'none';
+      document.getElementById('asistenciaInputContainer').style.display = 'flex';
+      document.getElementById('asistenciaPromptText').innerText = "INTRODUCE VALOR DE ASISTENCIA:";
+      document.getElementById('asistenciaTargetLabel').innerText = target === 'white' ? "Dado Blanco seleccionado" : "Dado Negro seleccionado";
+      document.getElementById('asistenciaValueInput').value = "6";
+      document.getElementById('asistenciaValueInput').focus();
+    }
+
+    function confirmAsistencia() {
+      const val = parseInt(document.getElementById('asistenciaValueInput').value);
+      if (isNaN(val) || val < 1 || val > 6) {
+        alert("Introduce un valor válido del 1 al 6.");
+        return;
+      }
+
+      if (selectedAsistenciaTarget === 'white') {
+        lastWhiteVal = val;
+        document.getElementById('diceWhite').innerText = lastWhiteVal;
+      } else if (selectedAsistenciaTarget === 'black') {
+        lastBlackVal = val;
+        isBlackWhite = true;
+        const blackDiceEl = document.getElementById('diceBlack');
+        blackDiceEl.className = "d6 d6-white";
+        blackDiceEl.innerText = lastBlackVal;
+      }
+
+      currentRetoSum = lastWhiteVal + lastBlackVal;
+      evaluateRetoResult();
+      closeAsistenciaSubModal();
+    }
+
+    function evaluateRetoResult() {
+      const titleEl = document.getElementById('retoResultTitle');
+      const subEl = document.getElementById('retoSubStatus');
+      const extraEl = document.getElementById('retoExtraInfo');
+
+      if (currentRetoSum >= 7) {
+        titleEl.innerText = "ÉXITO (" + currentRetoSum + ")";
+        titleEl.style.color = "#22c55e";
+        
+        if (currentRetoSum >= 10) {
+          extraEl.innerText = "+1 etiqueta o +1 frag. XP";
+          extraEl.style.color = "#22c55e";
+        } else {
+          extraEl.innerText = "";
+        }
+      } else {
+        titleEl.innerText = "FRACASO (" + currentRetoSum + ")";
+        titleEl.style.color = "#ef4444";
+
+        if (currentRetoSum <= 3) {
+          extraEl.innerText = "+1 marca de Amenaza";
+          extraEl.style.color = "#ef4444";
+        } else {
+          extraEl.innerText = "";
+        }
+      }
+
+      if (isBlackWhite) {
+        subEl.innerText = "AFORTUNADO (Asistencia)";
+        subEl.style.color = "#38bdf8";
+      } else if (lastBlackVal > lastWhiteVal) {
+        subEl.innerText = "DESAFORTUNADO";
+        subEl.style.color = "#f87171";
+      } else if (lastWhiteVal > lastBlackVal) {
+        subEl.innerText = "AFORTUNADO";
+        subEl.style.color = "#38bdf8";
+      } else {
+        subEl.innerText = "NEUTRO (Empates)";
+        subEl.style.color = "#94a3b8";
+      }
+    }
+
+    function rollSingleDice() {
+      const val = Math.floor(Math.random() * 6) + 1;
+      document.getElementById('diceSingle').innerText = val;
+      document.getElementById('singleResultTitle').innerText = "Resultado: " + val;
+    }
+
+    // --- LÓGICA DE DAÑO, CURACIÓN Y BIENESTAR CON SNAPSHOTS ---
+    function updateHeartsDisplay(skipSnapshotReset = false) {
+      const maxEl = document.getElementById('max_bienestar');
+      const msgEl = document.getElementById('bienestarMsg');
+      const heartsRow = document.getElementById('heartsRow');
+      if (!maxEl || !heartsRow || !msgEl) return;
+
+      const maxText = maxEl.textContent.trim();
+      const maxVal = parseInt(maxText);
+
+      if (maxText === '' || isNaN(maxVal) || maxVal <= 0) {
+        msgEl.style.display = 'block';
+        heartsRow.innerHTML = '';
+        healthLevel = 0;
+        resetDamageRoll();
+        resetHealingRoll();
+        scheduleLocalAutoSave();
+        return;
+      }
+
+      msgEl.style.display = 'none';
+
+      if (healthLevel > maxVal) {
+        healthLevel = maxVal;
+      }
+
+      heartsRow.innerHTML = '';
+      for (let i = 1; i <= Math.min(maxVal, 10); i++) {
+        const btn = document.createElement('button');
+        btn.className = 'heart-btn' + (i <= healthLevel ? ' active' : '');
+        btn.innerHTML = '♥';
+        btn.onclick = () => {
+          snapshotDamageHealth = null;
+          snapshotHealingHealth = null;
+          toggleHeart(i);
+        };
+        heartsRow.appendChild(btn);
+      }
+
+      if (!skipSnapshotReset) {
+        snapshotDamageHealth = null;
+        snapshotHealingHealth = null;
+      }
+
+      updateDamageDiceDisplay();
+      updateHealingDiceDisplay();
+      scheduleLocalAutoSave();
+    }
+
+    function setHealthLevel(val) {
+      const maxEl = document.getElementById('max_bienestar');
+      const maxVal = parseInt(maxEl ? maxEl.textContent.trim() : '');
+      if (isNaN(maxVal) || maxVal <= 0) return;
+
+      healthLevel = Math.max(0, Math.min(maxVal, val));
+      snapshotDamageHealth = null;
+      snapshotHealingHealth = null;
+      updateHeartsDisplay();
+    }
+
+    function toggleHeart(index) {
+      const maxEl = document.getElementById('max_bienestar');
+      const maxVal = parseInt(maxEl ? maxEl.textContent.trim() : '');
+      if (isNaN(maxVal) || maxVal <= 0) return;
+
+      if (index > maxVal) return;
+
+      if (healthLevel === index) {
+        setHealthLevel(index - 1);
+      } else {
+        setHealthLevel(index);
+      }
+    }
+
+    function updateDamageDiceDisplay() {
+      renderDamageDice();
+    }
+
+    function renderDamageDice() {
+      const container = document.getElementById('damageDiceContainer');
+      const maxInd = document.getElementById('damageMaxIndicator');
+      const maxEl = document.getElementById('max_bienestar');
+      const maxVal = maxEl ? maxEl.textContent.trim() : '-';
+      if (maxInd) maxInd.innerText = `MAX: ${maxVal}`;
 
       if (!container) return;
       container.innerHTML = '';
@@ -2601,7 +3105,40 @@
 
       renderDamageDice();
 
-      titleEl.innerText = `Daño: ${damageCount}`; titleEl.style.color = damageCount > 0 ? '#ef4444' : '#22c55e';  if (damageCount === 0) { subEl.innerText = "Ganas una etiqueta de estado perjudicial"; subEl.style.color = "#f59e0b"; } else { subEl.innerText = ""; }  if (damageCount > 0) { healthLevel = Math.max(0, healthLevel - damageCount); updateHeartsDisplay(true); }  document.getElementById('damageActionBtns').style.display = 'none'; document.getElementById('damageNewRollBtnContainer').style.display = 'flex'; }  function updateHealingDiceDisplay() { renderHealingDice(); }  function renderHealingDice() { const container = document.getElementById('healingDiceContainer'); const titleEl = document.getElementById('healingResultTitle'); const subEl = document.getElementById('healingSubStatus'); const extraEl = document.getElementById('healingExtraInfo'); const maxInd = document.getElementById('healingMaxIndicator'); const maxEl = document.getElementById('max_bienestar'); const maxText = maxEl ? maxEl.textContent.trim() : ''; const maxVal = parseInt(maxText);  if (maxInd) maxInd.innerText = `MAX: ${maxText || '-'}`;
+      titleEl.innerText = `Daño: ${damageCount}`;
+      titleEl.style.color = damageCount > 0 ? '#ef4444' : '#22c55e';
+
+      if (damageCount === 0) {
+        subEl.innerText = "Ganas una etiqueta de estado perjudicial";
+        subEl.style.color = "#f59e0b";
+      } else {
+        subEl.innerText = "";
+      }
+
+      if (damageCount > 0) {
+        healthLevel = Math.max(0, healthLevel - damageCount);
+        updateHeartsDisplay(true);
+      }
+
+      document.getElementById('damageActionBtns').style.display = 'none';
+      document.getElementById('damageNewRollBtnContainer').style.display = 'flex';
+    }
+
+    function updateHealingDiceDisplay() {
+      renderHealingDice();
+    }
+
+    function renderHealingDice() {
+      const container = document.getElementById('healingDiceContainer');
+      const titleEl = document.getElementById('healingResultTitle');
+      const subEl = document.getElementById('healingSubStatus');
+      const extraEl = document.getElementById('healingExtraInfo');
+      const maxInd = document.getElementById('healingMaxIndicator');
+      const maxEl = document.getElementById('max_bienestar');
+      const maxText = maxEl ? maxEl.textContent.trim() : '';
+      const maxVal = parseInt(maxText);
+
+      if (maxInd) maxInd.innerText = `MAX: ${maxText || '-'}`;
       if (!container) return;
 
       container.innerHTML = '';
@@ -2698,4 +3235,436 @@
 
       renderHealingDice();
 
-      titleEl.innerText = `+
+      titleEl.innerText = `+ ${recovered} de Bienestar`;
+      titleEl.style.color = recovered > 0 ? '#22c55e' : '#f59e0b';
+
+      if (recovered === 0) {
+        subEl.innerText = "Ganas una etiqueta de estado beneficiosa";
+        subEl.style.color = "#38bdf8";
+      } else {
+        subEl.innerText = "";
+      }
+
+      if (isRest) {
+        extraEl.innerText = "Recuerda recuperar todas tus etiquetas y eliminar una etiqueta de estado al descansar. El Director pierde 1 Amenaza";
+        extraEl.style.color = "#cbd5e1";
+      } else {
+        extraEl.innerText = "";
+      }
+
+      if (recovered > 0) {
+        healthLevel = Math.min(maxVal, healthLevel + recovered);
+        updateHeartsDisplay(true);
+      }
+
+      document.getElementById('healingActionBtns').style.display = 'none';
+      document.getElementById('healingNewRollBtnContainer').style.display = 'flex';
+    }
+
+    // --- ARRASTRE UNIVERSAL ROBUSTO (RATÓN Y TÁCTIL) ---
+    function makeDraggable(el, handleEl) {
+      let isPointerDown = false;
+      let isDragging = false;
+      let startX = 0, startY = 0;
+      let initialX = 0, initialY = 0;
+
+      function onStart(clientX, clientY, target) {
+        if (target && (target.classList.contains('dice-modal-close') || target.classList.contains('concept-modal-close'))) return;
+        isPointerDown = true;
+        isDragging = false;
+        initialX = clientX;
+        initialY = clientY;
+        const rect = el.getBoundingClientRect();
+        startX = clientX - rect.left;
+        startY = clientY - rect.top;
+      }
+
+      function onMove(clientX, clientY) {
+        if (!isPointerDown) return;
+        
+        const dx = Math.abs(clientX - initialX);
+        const dy = Math.abs(clientY - initialY);
+
+        if (!isDragging && (dx > 6 || dy > 6)) {
+          isDragging = true;
+          el.style.bottom = 'auto';
+          el.style.right = 'auto';
+          el.style.transform = 'none';
+          el.dataset.moved = "true";
+        }
+
+        if (isDragging) {
+          el.style.left = (clientX - startX) + 'px';
+          el.style.top = (clientY - startY) + 'px';
+        }
+      }
+
+      function onEnd() {
+        isPointerDown = false;
+        setTimeout(() => { isDragging = false; }, 50);
+      }
+
+      handleEl.addEventListener('mousedown', (e) => {
+        onStart(e.clientX, e.clientY, e.target);
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        onMove(e.clientX, e.clientY);
+      });
+
+      document.addEventListener('mouseup', () => {
+        onEnd();
+      });
+
+      handleEl.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          onStart(e.touches[0].clientX, e.touches[0].clientY, e.target);
+        }
+      }, { passive: true });
+
+      document.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 1) {
+          onMove(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+
+      document.addEventListener('touchend', () => {
+        onEnd();
+      });
+    }
+
+    const launcher = document.getElementById('floatingDiceLauncher');
+    const modalBox = document.getElementById('diceWidgetModal');
+    const modalHeader = document.getElementById('diceModalHeader');
+    const conceptModal = document.getElementById('conceptRandomizerModal');
+    const conceptModalHeader = document.getElementById('conceptModalHeader');
+
+    makeDraggable(launcher, launcher);
+    makeDraggable(modalBox, modalHeader);
+    makeDraggable(conceptModal, conceptModalHeader);
+
+    launcher.addEventListener('click', toggleDiceWidget);
+
+    // --- SELECCIÓN Y EDICIÓN ---
+    document.addEventListener('selectionchange', () => {
+      const selection = window.getSelection();
+      const toolbar = document.getElementById('floatingToolbar');
+
+      if (!selection.isCollapsed && selection.toString().trim().length > 0) {
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+
+        toolbar.style.display = 'flex';
+        toolbar.style.top = `${rect.top + window.scrollY - 38}px`;
+        toolbar.style.left = `${rect.left + window.scrollX + (rect.width / 2) - 50}px`;
+      } else {
+        setTimeout(() => {
+          if (window.getSelection().isCollapsed) {
+            toolbar.style.display = 'none';
+          }
+        }, 150);
+      }
+    });
+
+    function toggleStrike(e) {
+      if (e) e.preventDefault();
+      document.execCommand('strikethrough', false, null);
+      autoSave();
+    }
+
+    function toggleCheck(el) {
+      if (el.classList.contains('dashed')) {
+        el.classList.remove('dashed');
+      }
+      el.classList.toggle('checked');
+      autoSave();
+    }
+
+    function loadPortrait(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.getElementById('portraitImg');
+          img.src = e.target.result;
+          img.style.display = 'block';
+          document.getElementById('portraitPlaceholder').style.display = 'none';
+          autoSave();
+        }
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function getStorage() {
+      try {
+        if (window.parent && window.parent.localStorage) {
+          return window.parent.localStorage;
+        }
+      } catch(e) {}
+      return window.localStorage;
+    }
+
+    function writeLocalSheetStorage() {
+      const data = {};
+      const editables = document.querySelectorAll('.editable');
+      editables.forEach(el => {
+        if (el.id) data[el.id] = el.innerHTML;
+      });
+
+      const checks = document.querySelectorAll('.checkbox-square, .exp-check');
+      checks.forEach(check => {
+        if (check.id) {
+          data[check.id] = {
+            checked: check.classList.contains('checked'),
+            dashed: check.classList.contains('dashed')
+          };
+        }
+      });
+
+      data['healthLevel'] = healthLevel;
+
+      const portraitImg = document.getElementById('portraitImg');
+      if (portraitImg.src && portraitImg.style.display !== 'none') {
+        data['portraitSrc'] = portraitImg.src;
+      }
+
+      try {
+        getStorage().setItem('pbta_sheet_data_master_v5', JSON.stringify(data));
+      } catch (err) {
+        console.error('Error al guardar:', err);
+      }
+    }
+
+    function scheduleLocalAutoSave() {
+      if (isApplyingRemoteDriveData) return;
+      if (localAutoSaveTimer) {
+        clearTimeout(localAutoSaveTimer);
+      }
+      localAutoSaveTimer = setTimeout(() => {
+        localAutoSaveTimer = null;
+        writeLocalSheetStorage();
+        scheduleDriveAutoSave();
+      }, 450);
+    }
+
+    function autoSave() {
+      writeLocalSheetStorage();
+      scheduleDriveAutoSave();
+    }
+
+    function loadAutoSave(skipDriveSchedule = false) {
+      const saved = getStorage().getItem('pbta_sheet_data_master_v5');
+      if (!saved) return;
+      try {
+        const data = JSON.parse(saved);
+
+        Object.keys(data).forEach(id => {
+          const el = document.getElementById(id);
+          if (el) {
+            if (el.classList.contains('editable')) {
+              el.innerHTML = data[id];
+            } else if (el.classList.contains('checkbox-square') || el.classList.contains('exp-check')) {
+              if (data[id].checked) el.classList.add('checked');
+              else el.classList.remove('checked');
+
+              if (data[id].dashed !== undefined) {
+                if (data[id].dashed) el.classList.add('dashed');
+                else el.classList.remove('dashed');
+              }
+            }
+          }
+        });
+
+        if (data.healthLevel !== undefined) {
+          healthLevel = data.healthLevel;
+        }
+
+        if (data.portraitSrc) {
+          const img = document.getElementById('portraitImg');
+          img.src = data.portraitSrc;
+          img.style.display = 'block';
+          document.getElementById('portraitPlaceholder').style.display = 'none';
+        }
+      } catch (e) {
+        console.error('Error al cargar:', e);
+      }
+      updateHeartsDisplay(skipDriveSchedule);
+      updateDamageDiceDisplay();
+      updateHealingDiceDisplay();
+    }
+
+    document.querySelectorAll('.editable').forEach(el => {
+      const handleEditableChange = () => {
+        if (el.id === 'max_bienestar') {
+          snapshotDamageHealth = null;
+          snapshotHealingHealth = null;
+          updateHeartsDisplay();
+        } else {
+          scheduleLocalAutoSave();
+        }
+        updateHealingDiceDisplay();
+      };
+      el.addEventListener('input', handleEditableChange);
+      el.addEventListener('blur', () => {
+        if (localAutoSaveTimer) {
+          clearTimeout(localAutoSaveTimer);
+          localAutoSaveTimer = null;
+        }
+        autoSave();
+      });
+    });
+
+    // --- GUARDAR JSON CON VENTANA NATIVA "GUARDAR COMO..." ---
+    async function exportData() {
+      writeLocalSheetStorage();
+      const data = getStorage().getItem('pbta_sheet_data_master_v5');
+      
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = document.getElementById('nombre').innerHTML;
+      const nombreTexto = tempDiv.textContent || tempDiv.innerText || 'personaje';
+      const nombreSugerido = `ficha_${nombreTexto.toLowerCase().replace(/\s+/g, '_')}.json`;
+
+      if ('showSaveFilePicker' in window) {
+        try {
+          const opciones = {
+            suggestedName: nombreSugerido,
+            types: [{
+              description: 'Archivo JSON de PbtA',
+              accept: { 'application/json': ['.json'] }
+            }]
+          };
+          const handle = await window.showSaveFilePicker(opciones);
+          const writable = await handle.createWritable();
+          await writable.write(data);
+          await writable.close();
+          return;
+        } catch (err) {
+          if (err.name === 'AbortError') return;
+        }
+      }
+
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = nombreSugerido;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        linkedDriveFile = { fileId: null, fileName: null, autoSync: false };
+        saveDriveLinkMeta();
+        getStorage().setItem('pbta_sheet_data_master_v5', e.target.result);
+        loadAutoSave(true);
+        updateDriveStatusSummary('Importado desde JSON local');
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    function printSheet() {
+      const sheetContainer = document.querySelector('.sheet-container').innerHTML;
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = document.getElementById('nombre').innerHTML;
+      const nombreTexto = tempDiv.textContent || tempDiv.innerText || 'Ficha de Personaje';
+
+      const printHtml = `
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+          <meta charset="UTF-8">
+          <title>${nombreTexto}</title>
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+          <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+          <style>
+            :root {
+              --card-bg: #ffffff;
+              --border-color: #cbd5e1;
+              --accent-color: #1e293b;
+              --accent-light: #f8fafc;
+              --text-main: #0f172a;
+              --text-muted: #64748b;
+              --danger: #e11d48;
+              --radius: 6px;
+            }
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            body { font-family: 'Inter', sans-serif; background: white; color: var(--text-main); padding: 20px; }
+            .sheet-container { width: 100%; max-width: 1000px; margin: 0 auto; background: white; }
+            .sheet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+            .col { display: flex; flex-direction: column; gap: 16px; }
+            .box { border: 1.5px solid var(--border-color); border-radius: var(--radius); background: #fff; padding: 8px 12px; position: relative; }
+            .box-title { font-family: 'Cinzel', serif; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.05em; color: var(--accent-color); text-transform: uppercase; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+            .concept-random-btn, .concept-sheet-actions { display: none; }
+            .editable { width: 100%; min-height: 24px; font-family: 'Inter', sans-serif; font-size: 0.9rem; color: var(--text-main); background: transparent; word-break: break-word; padding: 2px 4px; border: none; }
+            .header-row { display: flex; gap: 15px; align-items: flex-end; margin-bottom: 15px; }
+            .header-item { flex: 1; min-width: 180px; border-bottom: 2px solid var(--accent-color); padding-bottom: 2px; }
+            .header-item label { font-family: 'Cinzel', serif; font-weight: 700; font-size: 0.8rem; color: var(--accent-color); display: block; }
+            .portrait-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
+            .portrait-area { border: 2px dashed var(--border-color); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--accent-light); padding: 4px; }
+            .portrait-area img { width: 100%; height: auto; max-height: 300px; object-fit: contain; display: block; border-radius: 3px; }
+            .portrait-placeholder { display: none; }
+            .tags-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+            .tag-input { border: 1px solid var(--border-color); border-radius: 4px; padding: 4px 6px; font-size: 0.82rem; background: #fafafa; text-align: center; min-height: 28px; }
+            .flujo-box { background: #fafafa; }
+            .flujo-note { font-size: 0.7rem; color: var(--text-muted); margin-top: 6px; text-align: right; font-style: italic; }
+            .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+            .stat-box { border: 1.5px solid var(--border-color); border-radius: var(--radius); padding: 6px; text-align: center; }
+            .stat-title { font-family: 'Cinzel', serif; font-size: 0.7rem; font-weight: 700; margin-bottom: 4px; color: var(--accent-color); }
+            .bienestar-container { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 0; }
+            .bienestar-top-row { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 15px; width: 100%; }
+            .hearts-row { display: flex; gap: 6px; justify-content: center; }
+            .heart-btn { background: none; border: none; font-size: 1.5rem; color: #cbd5e1; padding: 0; line-height: 1; }
+            .heart-btn.active { color: var(--danger); }
+            .checkbox-square { width: 16px; height: 16px; border: 1.5px solid var(--accent-color); display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 2px; }
+            .checkbox-square.checked::after { content: "✔"; font-size: 11px; color: var(--accent-color); }
+            .table-container { width: 100%; overflow-x: auto; }
+            .table-custom { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+            .table-custom th { font-family: 'Cinzel', serif; text-align: left; font-size: 0.7rem; padding: 4px; border-bottom: 1px solid var(--border-color); color: var(--accent-color); }
+            .table-custom td { padding: 3px 2px; border-bottom: 1px solid #f1f5f9; }
+            .check-cell { width: 24px; text-align: center; }
+            .flex-row-boxes { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; }
+            .exp-boxes { display: flex; gap: 4px; align-items: center; justify-content: center; }
+            .exp-check { width: 16px; height: 16px; border: 1.5px solid var(--accent-color); display: flex; align-items: center; justify-content: center; border-radius: 2px; }
+            .exp-check.dashed { border-style: dashed; }
+            .exp-check.checked::after { content: "■"; font-size: 10px; color: var(--accent-color); }
+          </style>
+        </head>
+        <body>
+          <div class="sheet-container">
+            ${sheetContainer}
+          </div>
+        </body>
+        </html>
+      `;
+
+      try {
+        const printWindow = window.open('', '_blank');
+        if (printWindow) {
+          printWindow.document.write(printHtml);
+          printWindow.document.close();
+          printWindow.focus();
+          setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+          }, 300);
+        } else {
+          window.print();
+        }
+      } catch (e) {
+        window.print();
+      }
+    }
+
+    window.onload = function() {
+      loadAutoSave(true);
+      loadDriveLinkMeta();
+    };
+  </script>
+</body>
+</html>
