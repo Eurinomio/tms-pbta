@@ -507,14 +507,14 @@
       margin-top: 8px;
       width: 100%;
       justify-content: center;
-      background: #334155;
+      background: #2563eb;
       color: #ffffff;
       font-size: 0.78rem;
       padding: 6px 10px;
     }
 
     .gemini-btn:hover {
-      background: var(--accent-active);
+      background: #1d4ed8;
     }
 
     .editable {
@@ -574,6 +574,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
+      align-items: start;
     }
 
     @media (max-width: 500px) {
@@ -583,7 +584,7 @@
     }
 
     .portrait-area {
-      height: 140px;
+      min-height: 150px;
       border: 2px dashed var(--border-color);
       border-radius: var(--radius);
       display: flex;
@@ -594,12 +595,16 @@
       position: relative;
       background: var(--accent-light);
       cursor: pointer;
+      padding: 4px;
     }
 
     .portrait-area img {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      height: auto;
+      max-height: 280px;
+      object-fit: contain;
+      display: block;
+      border-radius: 3px;
     }
 
     .portrait-placeholder {
@@ -821,6 +826,117 @@
       justify-content: flex-end;
     }
 
+    /* --- VENTANA SUPERPUESTA PARA PEGAR EL PROMPT EN GEMINI --- */
+    #geminiPromptOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 2200;
+      user-select: none;
+    }
+
+    .gemini-overlay-card {
+      width: 440px;
+      max-width: 100%;
+      background: #1e293b;
+      color: #f8fafc;
+      border-radius: 10px;
+      border: 1.5px solid #38bdf8;
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .gemini-overlay-header {
+      background: #0f172a;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+    }
+
+    .gemini-overlay-header span {
+      font-family: 'Cinzel', serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #38bdf8;
+      letter-spacing: 0.04em;
+    }
+
+    .gemini-overlay-body {
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: left;
+    }
+
+    .gemini-overlay-instruction {
+      font-size: 0.78rem;
+      line-height: 1.4;
+      color: #e2e8f0;
+    }
+
+    .gemini-prompt-textarea {
+      width: 100%;
+      min-height: 115px;
+      background: #0f172a;
+      color: #f8fafc;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 0.8rem;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.4;
+      resize: vertical;
+      user-select: text;
+    }
+
+    .gemini-overlay-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      margin-top: 2px;
+    }
+
+    .btn-go-gemini {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+
+    .btn-go-gemini:hover {
+      background: #1d4ed8;
+    }
+
+    .btn-copy-again {
+      background: #334155;
+      color: #ffffff;
+      border: none;
+      padding: 8px 11px;
+      border-radius: 5px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-copy-again:hover {
+      background: #475569;
+    }
+
     .toast-msg {
       position: fixed;
       bottom: 18px;
@@ -850,7 +966,7 @@
         background: white;
         padding: 0;
       }
-      .action-bar, #floatingToolbar, .gemini-btn, .help-btn, .modal-backdrop, .toast-msg, #newSheetConfirmModal, #driveExplorerModal, #driveRenameModal, #driveDeleteConfirmModal {
+      .action-bar, #floatingToolbar, .gemini-btn, .help-btn, .modal-backdrop, #geminiPromptOverlay, .toast-msg, #newSheetConfirmModal, #driveExplorerModal, #driveRenameModal, #driveDeleteConfirmModal {
         display: none !important;
       }
       .sheet-container {
@@ -936,6 +1052,26 @@
 </nav>
   <div id="floatingToolbar">
     <button onmousedown="toggleStrike(event)"><s>S</s> Tachar / Limpiar</button>
+  </div>
+
+  <!-- VENTANA SUPERPUESTA PARA PEGAR EL PROMPT EN GEMINI -->
+  <div id="geminiPromptOverlay" onclick="closeGeminiPromptOverlay(event)">
+    <div class="gemini-overlay-card" onclick="event.stopPropagation()">
+      <div class="gemini-overlay-header">
+        <span>PROMPT DE PNJ PARA GEMINI (HORA DE AVENTURAS)</span>
+        <button type="button" class="modal-close" style="color: #94a3b8;" onclick="closeGeminiPromptOverlay(event)" title="Cerrar">✕</button>
+      </div>
+      <div class="gemini-overlay-body">
+        <div class="gemini-overlay-instruction" id="geminiOverlayStatus">
+          Este es el prompt que hay que pegar en Gemini. Gemini no lo pega automáticamente en una nueva conversación: pégalo a mano con <strong>Ctrl+V</strong> (o <strong>Cmd+V</strong>).
+        </div>
+        <textarea id="geminiPromptTextarea" class="gemini-prompt-textarea" readonly></textarea>
+        <div class="gemini-overlay-actions">
+          <button type="button" class="btn-copy-again" onclick="copyOverlayPromptAgain()">📋 Copiar prompt</button>
+          <button type="button" class="btn-go-gemini" onclick="goToGeminiAndPastePrompt()">🚀 Ir a Gemini para pegar el prompt</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- MODAL FLOTANTE DE CONFIRMACIÓN PARA NUEVA FICHA -->
@@ -1285,6 +1421,7 @@
     ];
 
     let currentRandomConcept = '';
+    let currentGeminiPromptText = '';
 
     function showToast(message) {
       const toast = document.getElementById('toastMsg');
@@ -1315,7 +1452,15 @@
       return (el.innerText || el.textContent || '').trim();
     }
 
-    // --- CONCEPTO ALEATORIO Y GENERACIÓN DE IMAGEN EN GEMINI ---
+    function getActivePnjTags() {
+      const tagIds = [
+        'pnj_tag_1', 'pnj_tag_2', 'pnj_tag_3',
+        'pnj_tag_4', 'pnj_tag_5', 'pnj_tag_6'
+      ];
+      return tagIds.map(id => getPlainTextById(id)).filter(Boolean);
+    }
+
+    // --- CONCEPTO ALEATORIO Y GENERACIÓN DE IMAGEN EN GEMINI (ESTILO HORA DE AVENTURAS) ---
     function openConceptModal() {
       pickRandomConcept();
       document.getElementById('conceptModal').classList.add('open');
@@ -1349,14 +1494,73 @@
       showToast('Concepto aplicado a la ficha de PNJ.');
     }
 
-    function buildGeminiPrompt(conceptText, nameText, categoryText) {
-      const parts = [
-        'Retrato de personaje de rol (PNJ) para juego PbtA, ilustración detallada y expresiva, estilo fantasía/aventura moderna limpia, encuadre de busto o medio cuerpo.'
-      ];
-      if (nameText) parts.push(`Nombre: ${nameText}.`);
-      if (categoryText) parts.push(`Categoría: ${categoryText}.`);
-      parts.push(`Concepto: ${conceptText}.`);
-      return parts.join(' ');
+    function buildPnjAdventureTimeGeminiPrompt(conceptText, nameText, categoryText, tagsList = []) {
+      const subjectParts = [conceptText];
+      if (nameText) subjectParts.push(`llamado "${nameText}"`);
+      if (categoryText) subjectParts.push(`de categoría ${categoryText}`);
+      if (tagsList.length > 0) subjectParts.push(`con rasgos y etiquetas: ${tagsList.join(', ')}`);
+
+      const subjectPhrase = subjectParts.join(', ');
+
+      return (
+        `Genera una imagen de cuerpo entero (de pies a cabeza, ocupando bien el alto del encuadre sin verse pequeño) de un PNJ de rol: "${subjectPhrase}" ` +
+        `en formato rectangular y vertical, con el estilo artístico de la serie de animación Hora de Aventuras: ` +
+        `contornos oscuros orgánicos y limpios, proporciones expresivas, ojos sencillos y carismáticos, ` +
+        `colores planos vibrantes y atmósfera de fantasía absurda y aventurera.`
+      );
+    }
+
+    async function copyTextToClipboard(text) {
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+      } catch (err) {}
+
+      try {
+        const tempArea = document.createElement('textarea');
+        tempArea.value = text;
+        tempArea.setAttribute('readonly', '');
+        tempArea.style.position = 'fixed';
+        tempArea.style.opacity = '0';
+        document.body.appendChild(tempArea);
+        tempArea.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(tempArea);
+        return Boolean(ok);
+      } catch (err) {
+        return false;
+      }
+    }
+
+    async function openGeminiPromptOverlay(promptText) {
+      currentGeminiPromptText = promptText;
+
+      const overlayEl = document.getElementById('geminiPromptOverlay');
+      const statusEl = document.getElementById('geminiOverlayStatus');
+      const textareaEl = document.getElementById('geminiPromptTextarea');
+
+      if (textareaEl) {
+        textareaEl.value = promptText;
+      }
+
+      const copied = await copyTextToClipboard(promptText);
+
+      if (statusEl) {
+        if (copied) {
+          statusEl.innerHTML =
+            '✅ <strong>Prompt copiado al portapapeles.</strong> Este es el prompt que hay que pegar en Gemini. ' +
+            'Como no se pega automáticamente en una nueva conversación, pégalo a mano con <strong>Ctrl+V</strong> (o <strong>Cmd+V</strong>).';
+        } else {
+          statusEl.innerHTML =
+            '⚠️ <strong>Este es el prompt que hay que pegar en Gemini.</strong> Cópialo y, como no se pega automáticamente en una nueva conversación, pégalo a mano con <strong>Ctrl+V</strong> (o <strong>Cmd+V</strong>).';
+        }
+      }
+
+      if (overlayEl) {
+        overlayEl.style.display = 'flex';
+      }
     }
 
     async function openGeminiWithConcept(conceptId, nameId, categoryId) {
@@ -1367,27 +1571,17 @@
         return;
       }
 
-      const prompt = buildGeminiPrompt(
+      const prompt = buildPnjAdventureTimeGeminiPrompt(
         conceptText,
         nameId ? getPlainTextById(nameId) : '',
-        categoryId ? getPlainTextById(categoryId) : ''
+        categoryId ? getPlainTextById(categoryId) : '',
+        getActivePnjTags()
       );
 
-      try {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          await navigator.clipboard.writeText(prompt);
-          showToast('Prompt copiado al portapapeles. Abriendo Gemini...');
-        } else {
-          showToast('Abriendo Gemini...');
-        }
-      } catch (_) {
-        showToast('Abriendo Gemini...');
-      }
-
-      window.open('https://gemini.google.com/app', '_blank', 'noopener,noreferrer');
+      await openGeminiPromptOverlay(prompt);
     }
 
-    function generateImageFromModalConcept() {
+    async function generateImageFromModalConcept() {
       if (!currentRandomConcept) pickRandomConcept();
       const conceptoEl = document.getElementById('pnj_concepto');
       if (conceptoEl) {
@@ -1395,7 +1589,41 @@
         autoSave();
       }
       closeConceptModal();
-      openGeminiWithConcept('pnj_concepto', 'pnj_nombre', 'pnj_categoria');
+
+      const prompt = buildPnjAdventureTimeGeminiPrompt(
+        currentRandomConcept,
+        getPlainTextById('pnj_nombre'),
+        getPlainTextById('pnj_categoria'),
+        getActivePnjTags()
+      );
+
+      await openGeminiPromptOverlay(prompt);
+    }
+
+    async function copyOverlayPromptAgain() {
+      const textareaEl = document.getElementById('geminiPromptTextarea');
+      const statusEl = document.getElementById('geminiOverlayStatus');
+      const text = textareaEl ? textareaEl.value : currentGeminiPromptText;
+      if (!text) return;
+
+      const copied = await copyTextToClipboard(text);
+      if (statusEl) {
+        statusEl.innerHTML = copied
+          ? '✅ <strong>Prompt copiado al portapapeles.</strong> Pégalo a mano en Gemini con <strong>Ctrl+V</strong> (o <strong>Cmd+V</strong>).'
+          : '⚠️ Selecciona el texto y cópialo; luego pégalo a mano en Gemini con <strong>Ctrl+V</strong> (o <strong>Cmd+V</strong>).';
+      }
+    }
+
+    function goToGeminiAndPastePrompt() {
+      window.open('https://gemini.google.com/app', '_blank', 'noopener,noreferrer');
+    }
+
+    function closeGeminiPromptOverlay(event) {
+      if (event) event.stopPropagation();
+      const overlayEl = document.getElementById('geminiPromptOverlay');
+      if (overlayEl) {
+        overlayEl.style.display = 'none';
+      }
     }
 
     // --- TACHADO FLOTANTE AL SELECCIONAR TEXTO ---
