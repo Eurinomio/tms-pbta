@@ -1556,7 +1556,7 @@
       <button type="button" class="btn-new-sheet" onclick="openNewSheetConfirmModal()">🆕 Nueva ficha</button>
       <button type="button" class="btn-drive-save" onclick="savePjToDrive()">☁️ Guardar online</button>
       <button type="button" class="btn-drive-load" onclick="openPjDriveExplorer()">📥 Cargar ficha online</button>
-      <button type="button" class="btn-drive-delete" onclick="openPjDriveExplorer()">🗑️ Borrar de Drive</button>
+<button type="button" class="btn-drive-delete" onclick="openPjDriveExplorer('delete')">🗑️ Borrar de Drive</button>
       <button type="button" class="btn-drive-refresh" onclick="refreshPjFromDrive()">🔄 Actualizar</button>
       <button type="button" onclick="printSheet()">🖨️ Imprimir / Guardar PDF</button>
       <button type="button" onclick="exportData()">💾 Guardar JSON</button>
@@ -2381,26 +2381,32 @@
       }
     }
 
-    async function openPjDriveExplorer() {
-      const modal = document.getElementById('driveExplorerModal');
-      const listEl = document.getElementById('driveExplorerList');
-      if (listEl) {
-        listEl.innerHTML = '<div class="drive-empty-state">Solicitando acceso a Google Drive...</div>';
-      }
-      if (modal) {
-        modal.style.display = 'flex';
-      }
-      try {
-        await ensureDriveAuth(false);
-        await refreshDriveExplorerList();
-      } catch (err) {
-        console.error('Error de autenticación en Drive:', err);
-        setDriveStatus('error', 'Error de acceso', err.message || 'Autenticación cancelada o fallida');
-        if (listEl) {
-          listEl.innerHTML = `<div class="drive-empty-state">No se completó la autenticación con Google Drive: ${err.message || err}</div>`;
-        }
-      }
+async function openPjDriveExplorer(mode = 'load') {
+  const modal = document.getElementById('driveExplorerModal');
+  const listEl = document.getElementById('driveExplorerList');
+  const pathEl = document.getElementById('driveExplorerPath');
+  if (pathEl) {
+    pathEl.textContent = mode === 'delete'
+      ? 'Carpeta: TMS PBTA / PJ · Modo borrado (pulsa ✕)'
+      : 'Carpeta: TMS PBTA / PJ';
+  }
+  if (listEl) {
+    listEl.innerHTML = '<div class="drive-empty-state">Solicitando acceso a Google Drive...</div>';
+  }
+  if (modal) {
+    modal.style.display = 'flex';
+  }
+  try {
+    await ensureDriveAuth(false);
+    await refreshDriveExplorerList();
+  } catch (err) {
+    console.error('Error de autenticación en Drive:', err);
+    setDriveStatus('error', 'Error de acceso', err.message || 'Autenticación cancelada o fallida');
+    if (listEl) {
+      listEl.innerHTML = `<div class="drive-empty-state">No se completó la autenticación con Google Drive: ${err.message || err}</div>`;
     }
+  }
+}
 
     function closeDriveExplorer(event) {
       if (event) event.stopPropagation();
